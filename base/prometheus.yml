@@ -2,7 +2,6 @@
 meta:
   vault: (( concat "secret/" params.vault "/" ))
   grafanadb_password: (( vault meta.vault "grafanadb:password" ))
-  pg_password: (( vault params.pg_password ))
 
 name: (( concat params.env "-prometheus" ))
 instance_groups:

@@ -1,4 +1,6 @@
 ---
+meta:
+  pg_password: (( vault params.pg_password ))
 params:
   pg_user: shield
   pg_password: (( param "Specify the Vault path to the password for the monitored PG instance" ))

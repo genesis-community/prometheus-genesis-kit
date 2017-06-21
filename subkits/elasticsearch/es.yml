@@ -2,13 +2,13 @@
 properties:
   elasticsearch_exporter:
     es:
-      all: enable
+      all: true
       uri: (( grab params.elasticsearch_uri ))
   grafana:
     prometheus:
       dashboard_files:
       - (( append ))
-      - /var/vcap/elasticsearch_dashboards/*.json
+      - /var/vcap/jobs/elasticsearch_dashboards/*.json
 
 instance_groups:
 - name: prometheus
