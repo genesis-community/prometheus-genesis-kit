@@ -1,0 +1,20 @@
+---
+properties:
+  elasticsearch_exporter:
+    es:
+      all: enable
+      uri: (( grab params.elasticsearch_uri ))
+  grafana:
+    prometheus:
+      dashboard_files:
+      - (( append ))
+      - /var/vcap/elasticsearch_dashboards/*.json
+
+instance_groups:
+- name: prometheus
+  jobs:
+  - (( append ))
+  - name: elasticsearch_exporter
+    release: prometheus
+  - name: elasticsearch_dashboards
+    release: prometheus

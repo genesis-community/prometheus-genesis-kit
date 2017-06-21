@@ -1,0 +1,318 @@
+---
+meta:
+  vault: (( concat "secret/" params.vault "/" ))
+  grafanadb_password: (( vault meta.vault "grafanadb:password" ))
+  pg_password: (( vault params.pg_password ))
+
+name: (( concat params.env "-prometheus" ))
+instance_groups:
+- instances: 1
+  azs: (( grab params.availability_zones ))
+  stemcell: default
+  name: prometheus
+  networks:
+  - name: (( grab params.network ))
+  persistent_disk_pool: (( grab params.disk_pool ))
+  vm_type: (( grab params.vm_type ))
+  jobs:
+  - name: alertmanager
+    release: prometheus
+  - name: prometheus
+    release: prometheus
+  - name: pushgateway
+    release: prometheus
+  - name: grafana
+    release: prometheus
+  - name: postgres
+    release: postgres
+  - name: probe_alerts
+    release: prometheus
+  - name: probe_dashboards
+    release: prometheus
+  - name: prometheus_alerts
+    release: prometheus
+  - name: prometheus_dashboards
+    release: prometheus
+  - name: system_dashboards
+    release: prometheus
+  - name: blackbox_exporter
+    release: prometheus
+
+  # need subkits:
+  #- name: consul_alerts
+  #  release: prometheus
+  #- name: consul_dashboards
+  #  release: prometheus
+  #- name: consul_exporter
+  #  release: prometheus
+  #- name: haproxy_alerts
+  #  release: prometheus
+  #- name: haproxy_dashboards
+  #  release: prometheus
+  #- name: haproxy_exporter
+  #  release: prometheus
+  #- name: kubernetes_alerts
+  #  release: prometheus
+  #- name: kubernetes_dashboards
+  #  release: prometheus
+  #- name: kubernetes_exporter
+  #  release: prometheus
+  #- name: mysql_alerts
+  #  release: prometheus
+  #- name: mysql_dashboards
+  #  release: prometheus
+  #- name: mysql_exporter
+  #  release: prometheus
+  #- name: p_rabbitmq_alerts
+  #  release: prometheus
+  #- name: p_rabbitmq_dashboards
+  #  release: prometheus
+  #- name: p_rabbitmq_exporter
+  #  release: prometheus
+  #- name: p_redis_alerts
+  #  release: prometheus
+  #- name: p_redis_dashboards
+  #  release: prometheus
+  #- name: p_redis_exporter
+  #  release: prometheus
+  #- name: redis_alerts
+  #  release: prometheus
+  #- name: redis_dashboards
+  #  release: prometheus
+  #- name: redis_exporter
+  #  release: prometheus
+properties:
+  alertmanager:
+    receivers:
+    - name: default-receiver
+    route:
+      receiver: default-receiver
+  blackbox_exporter:
+    config:
+      modules:
+        http:
+          prober: http
+          timeout: 5s
+          http:
+            tls_config:
+              insecure_skip_verify: (( grab params.skip_ssl_validation ))
+        tcp:
+          prober: tcp
+          timeout: 5s
+  grafana:
+    dashboards:
+      json:
+        enabled: true
+    database:
+      host: 127.0.0.1
+      name: grafanadb
+      password: (( grab meta.grafanadb_password ))
+      type: postgres
+      user: grafanadbadmin
+    prometheus:
+      dashboard_files: 
+      - /var/vcap/jobs/prometheus_dashboards/*.json
+      - /var/vcap/jobs/probe_dashboards/*.json
+      - /var/vcap/jobs/system_dashboards/*.json
+      # need subkits:
+      #- /var/vcap/jobs/consul_dashboards/*.json
+      #- /var/vcap/jobs/haproxy_dashboards/*.json
+      #- /var/vcap/jobs/kubernetes_dashboards/*.json
+      #- /var/vcap/jobs/mysql_dashboards/*.json
+      #- /var/vcap/jobs/p_rabbitmq_dashboards/*.json
+      #- /var/vcap/jobs/p_redis_dashboards/*.json
+      #- /var/vcap/jobs/redis_dashboards/*.json
+    security:
+      admin_password: (( vault meta.vault "grafana:password" ))
+      admin_user: admin
+      secret_key: (( vault meta.vault "grafana:secret_key" ))
+    session:
+      provider: postgres
+      provider_config: (( concat "user=grafanadbadmin password=" meta.grafanadb_password " host=127.0.0.1 dbname=grafanadb port=5432 sslmode=disable" ))
+  nats:
+    machines: (( grab params.nats_servers ))
+    password: (( vault params.nats_password ))
+    port: (( grab params.nats_port ))
+    user: (( grab params.nats_user ))
+  nginx:
+    alertmanager:
+      auth_password: (( vault meta.vault "grafana:password" ))
+      auth_username: admin
+    prometheus:
+      auth_password: (( vault meta.vault "grafana:password" ))
+      auth_username: admin
+  pgpool:
+    databases:
+    - extensions:
+      - citext
+      - pgcrypto
+      name: grafanadb
+      users:
+      - grafanadbadmin
+    users:
+    - password: (( grab meta.grafanadb_password ))
+      username: grafanadbadmin
+  postgres:
+    config:
+      listen_addresses: '*'
+      port: 5432
+    hba:
+    - host all all 0.0.0.0/0 md5
+    - host all all ::/0 md5
+    replication:
+      enabled: false
+  prometheus:
+    rule_files:
+    - /var/vcap/jobs/probe_alerts/*.alerts
+    - /var/vcap/jobs/prometheus_alerts/*.alerts
+    # need subkits:
+    #- /var/vcap/jobs/consul_alerts/*.alerts
+    #- /var/vcap/jobs/haproxy_alerts/*.alerts
+    #- /var/vcap/jobs/kubernetes_alerts/*.alerts
+    #- /var/vcap/jobs/mysql_alerts/*.alerts
+    #- /var/vcap/jobs/p_rabbitmq_alerts/*.alerts
+    #- /var/vcap/jobs/p_redis_alerts/*.alerts
+    #- /var/vcap/jobs/redis_alerts/*.alerts
+    scrape_interval: 30s
+    scrape_timeout: 30s
+    scrape_configs:
+    - job_name: blackbox
+      metrics_path: /probe
+      params:
+        module:
+          - http
+      static_configs:
+        - targets: (( grab params.monitored_endpoints ))
+      relabel_configs:
+        - source_labels: [__address__]
+          regex: (.*)(:80)?
+          target_label: __param_target
+          replacement: ${1}
+        - source_labels: [__param_target]
+          regex: (.*)
+          target_label: instance
+          replacement: ${1}
+        - source_labels: []
+          regex: .*
+          target_label: __address__
+          replacement: localhost:9115
+    - job_name: bosh
+      scrape_interval: 1m
+      scrape_timeout: 1m
+      static_configs:
+        - targets:
+          - localhost:9190
+    - job_name: bosh_tsdb
+      static_configs:
+        - targets:
+          - localhost:9194
+    - job_name: cf
+      static_configs:
+        - targets:
+          - localhost:9193
+    - job_name: collectd
+      static_configs:
+        - targets:
+          - localhost:9103
+    - job_name: consul
+      static_configs:
+        - targets:
+          - localhost:9107
+    - job_name: elasticsearch
+      static_configs:
+        - targets:
+          - localhost:9114
+    - job_name: firehose
+      static_configs:
+        - targets:
+          - localhost:9186
+    - job_name: github
+      static_configs:
+        - targets:
+          - localhost:9171
+    - job_name: graphite
+      static_configs:
+        - targets:
+          - localhost:9108
+    - job_name: haproxy
+      static_configs:
+        - targets:
+          - localhost:9101
+    - job_name: influxdb
+      static_configs:
+        - targets:
+          - localhost:9122
+    - job_name: kube_state_metrics_exporter
+      static_configs:
+        - targets:
+          - localhost:9188
+    - job_name: memcached_exporter
+      static_configs:
+        - targets:
+          - localhost:9150
+    - job_name: mysql
+      static_configs:
+        - targets:
+          - localhost:9104
+    - job_name: nats
+      static_configs:
+        - targets:
+          - localhost:9118
+    - job_name: node
+      static_configs:
+        - targets:
+          - localhost:9100
+    - job_name: postgres_exporter
+      static_configs:
+        - targets:
+          - localhost:9113
+    - job_name: prometheus
+      static_configs:
+        - targets:
+          - localhost:9090
+    - job_name: pushgateway
+      static_configs:
+        - targets:
+          - localhost:9091
+    - job_name: rabbitmq
+      static_configs:
+        - targets:
+          - localhost:9125
+    - job_name: redis
+      static_configs:
+        - targets:
+          - localhost:9121
+    - job_name: shield
+      static_configs:
+        - targets:
+          - localhost:9179
+    - job_name: stackdriver
+      static_configs:
+        - targets:
+          - localhost:9255
+    - job_name: statsd
+      static_configs:
+        - targets:
+          - localhost:9102
+releases:
+- name: postgres
+  version: 1.0.4
+  url: https://github.com/cloudfoundry-community/postgres-boshrelease/releases/download/v1.0.4/postgres-1.0.4.tgz
+  sha1: 8b82c86b7763abdb8f117523b852d1e1c9a20eeb
+- name: prometheus
+  version: 17.4.1
+  url: https://bosh.io/d/github.com/cloudfoundry-community/prometheus-boshrelease?v=17.4.1
+  sha1: e750d60c051b7eb4582f1adf00b64a80cca6e01c
+- name: shield
+  version: latest
+stemcells:
+- alias: default
+  os: (( grab params.stemcell_os ))
+  version: (( grab params.stemcell_version ))
+update:
+  canaries: 1
+  canary_watch_time: 1000-120000
+  max_in_flight: 1
+  serial: true
+  update_watch_time: 1000-120000
+

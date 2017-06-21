@@ -1,0 +1,29 @@
+---
+properties:
+  rabbitmq_exporter:
+    rabbitmq:
+      url: (( grab params.rabbitmq_url ))
+      user: (( grab params.rabbitmq_user ))
+      password: (( vault params.rabbitmq_password ))
+      skip_queues: (( grab params.rabbitmq_exlcude_queues )0
+      include_queues: (( grab params.rabbitmq_include_queues ))
+      skip_tls_verify: (( grab params.skip_ssl_validation ))
+  grafana:
+    prometheus:
+      dashboard_files:
+      - (( append ))
+      - /var/vcap/jobs/rabbitmq_dashboards/*.json
+  prometheus:
+    rule_files:
+    - /var/vcap/jobs/rabbitmq_alerts/*.alerts
+
+instance_groups:
+- name: prometheus
+  jobs:
+  - (( append ))
+  - name: rabbitmq_alerts
+    release: prometheus
+  - name: rabbitmq_dashboards
+    release: prometheus
+  - name: rabbitmq_exporter
+    release: prometheus

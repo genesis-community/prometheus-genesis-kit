@@ -1,0 +1,13 @@
+---
+# Contains the defaults for the parameters needed for the base prometheus kit.
+params:
+  availability_zones: [ z1 ]
+  disk_pool: prometheus
+  vm_type: small
+  network: default
+  stemcell_os: ubuntu-trusty
+  stemcell_version: latest
+
+  skip_ssl_validation: false
+
+  monitored_endpoints: (( param "Specify the URLs that prometheus should monitor" ))

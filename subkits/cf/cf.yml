@@ -1,0 +1,66 @@
+---
+properties:
+  cf_exporter:
+    skip_ssl_verify: (( grab params.skip_ssl_validation ))
+    cf:
+      api_url: (( concat "https://api." params.cf_system_domain ))
+      client_id: (( grab params.cf_firehose_client ))
+      client_secret: (( vault params.cf_firehose_client_secret ))
+      deployment_name: (( concat params.env "-cf" ))
+      password: (( vault params.cf_admin_password ))
+      username: (( grab params.cf_admin_user ))
+    metrics:
+      environment: (( grab params.env ))
+  firehose_exporter:
+    doppler:
+      url: (( concat "wss://doppler." params.cf_system_domain ":" params.cf_doppler_port ))
+    metrics:
+      environment: (( grab params.env ))
+    skip_ssl_verify: (( grab params.skip_ssl_validation ))
+    uaa:
+      client_id: (( grab params.cf_firehose_client ))
+      client_secret: (( vault params.cf_firehose_client_secret ))
+      url: (( concat "https://uaa." params.cf_system_domain ))
+  prometheus:
+    rule_files:
+      - (( append ))
+      - /var/vcap/jobs/cloudfoundry_alerts/*.alerts
+  grafana:
+    prometheus:
+      dashboard_files:
+      - /var/vcap/jobs/cloudfoundry_dashboards/*.json
+
+  route_registrar:
+    routes:
+    - name: monitoring
+      port: 3000
+      registration_interval: 20s
+      uris:
+      - (( concat "monitoring." params.cf_system_domain ))
+    - name: alerts
+      port: 9093
+      registration_interval: 20s
+      uris:
+      - (( concat "alerts." params.cf_system_domain ))
+
+instance_groups:
+- name: prometheus
+  jobs:
+  - (( append ))
+  - name: cf_exporter
+    release: prometheus
+  - name: firehose_exporter
+    release: prometheus
+  - name: route_registrar
+    release: routing
+  - name: cloudfoundry_alerts
+    release: prometheus
+  - name: cloudfoundry_dashboards
+    release: prometheus
+
+releases:
+- (( append ))
+- name: routing
+  sha1: c0cbf0a4851a36e16a3d8c8cd735d9f64fc4c702
+  version: 0.156.0
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=0.156.0

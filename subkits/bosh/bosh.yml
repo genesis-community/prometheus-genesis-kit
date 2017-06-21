@@ -1,0 +1,29 @@
+---
+properties:
+  bosh_exporter:
+    bosh:
+      ca_cert: (( vault params.bosh_ca_cert ))
+      password: (( vault params.bosh_password ))
+      url: ((concat "https://" params.bosh_host ":" params.bosh_port ))
+      username: (( grab params.bosh_user ))
+    metrics:
+      environment: (( grab params.env ))
+  grafana:
+    prometheus:
+      dashboard_files:
+      - (( append ))
+      - /var/vcap/jobs/bosh_dashboards/*.json
+  prometheus:
+    rule_files:
+    - /var/vcap/jobs/bosh_alerts/*.alerts
+
+instance_groups:
+- name: prometheus
+  jobs:
+  - (( append ))
+  - name: bosh_exporter
+    release: prometheus
+  - name: bosh_alerts
+    release: prometheus
+  - name: bosh_dashboards
+    release: prometheus

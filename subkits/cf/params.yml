@@ -1,0 +1,13 @@
+---
+params:
+  cf_system_domain: (( param "Specify the system domain of the monitored Cloud Foundry" ))
+  cf_firehose_client: firehose
+  cf_firehose_client_secret: (( param "Specify the secret for the UAA firehose client of the monitored CLoud Foundry" ))
+  cf_admin_user: admin
+  cf_admin_password: (( param "Specify the vault path to the admin password for the monitored Cloud Foundry" ))
+  cf_doppler_port: 443
+
+  nats_servers: (( param "Specify the NATS servers to advertise prometheus routes with" ))
+  nats_port: 4222
+  nats_user: nats_user
+  nats_password: (( param "Specify the vault path to the NATS password for advertising the prometheus routes" ))
