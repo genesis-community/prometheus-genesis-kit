@@ -53,6 +53,10 @@ instance_groups:
     release: prometheus
   - name: route_registrar
     release: routing
+    consumes:
+      nats:
+        from: nats
+        deployment: (( grab params.cf_deployment ))
   - name: cloudfoundry_alerts
     release: prometheus
   - name: cloudfoundry_dashboards

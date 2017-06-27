@@ -75,13 +75,6 @@ params:
     description: System domain of the monitored Cloud Foundry
     ask: What is your Cloud Foundry's system domain?
     example: system.bosh-lite.com
-  - param: cf_firehose_client
-    description: Name of the UAA Client with the `doppler.firehose` scope to monitor CF with
-  - param: cf_firehose_client_secret
-    description: Vault path to the client secret of the firehose UAA client
-    ask: What is the vault path to the client secret for the firehose UAA client?
-    default: secret/${params.vault_prefix}/../cf/uaa/client_secrets:firehose
-    validate: vault_path
   - param: cf_admin_user
     description: Admin user to connect to the Cloud Foundry API with
   - param: cf_admin_password
@@ -91,20 +84,17 @@ params:
     validate: vault_path
   - param: cf_doppler_port
     description: TCP port used to connect to Doppler/the firehose (usually 443 or 4443)
-
-  - param: nats_servers
-    type: list
-    description: IPs of NATS VMs, used to register prometheus's monitoring/alerting routes with CF
-    ask: What are your Cloud Foundry's NATS IPs?
-  - param: nats_port
-    description: TCP Port that NATS is listening on
-  - param: nats_user
-    description: Username to connect to NATS with
-  - param: nats_password
-    description: Vault path to the NATS password for Cloud Foundry
-    ask: What is the vault path to the NATS password for Cloud Foundry?
-    default: secret/${params.vault_prefix}/../cf/nats:password
+  - param: cf_firehose_client
+    description: Name of the UAA Client with the `doppler.firehose` scope to monitor CF with
+  - param: cf_firehose_client_secret
+    description: Vault path to the client secret of the firehose UAA client
+    ask: What is the vault path to the client secret for the firehose UAA client?
+    default: secret/${params.vault_prefix}/../cf/uaa/client_secrets:firehose
     validate: vault_path
+  - param: cf_deployment
+    description: |
+      Override the deployment name of your Cloud Foundry (used to find
+      the information for connecting to NATS to register routes)
 
   elasticsearch:
   - param: elasticsearch_uri

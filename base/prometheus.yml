@@ -128,11 +128,6 @@ properties:
     session:
       provider: postgres
       provider_config: (( concat "user=grafanadbadmin password=" meta.grafanadb_password " host=127.0.0.1 dbname=grafanadb port=5432 sslmode=disable" ))
-  nats:
-    machines: (( grab params.nats_servers ))
-    password: (( vault params.nats_password ))
-    port: (( grab params.nats_port ))
-    user: (( grab params.nats_user ))
   nginx:
     alertmanager:
       auth_password: (( vault meta.vault "grafana:password" ))
