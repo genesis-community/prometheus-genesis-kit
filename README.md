@@ -149,6 +149,22 @@ Default values of the `rabbitmq` subkit are set up to work well with the [cf-rab
 - **params.rabbitmq_include_queues** - A regex of queues to explicitly include in monitoring
 - **params.rabbitmq_exclude_queues** - A regex of queues to explicitly exclude in monitoring
 
+Cloud Config
+------------
+
+By default, Promethesu uses the following VM types/networks/disk pools from your
+Cloud Config. Feel free to override them in your environment, if you would
+rather they use entities already existing in your Cloud Foundry:
+
+```
+params:
+  prometheus_network:   prometheus
+  prometheus_disk_pool: prometheus # should be at least 50GB of fast (SSD) storage
+  prometheus_vm_type:   small      # VMs should have at least 1 CPU, and 1GB of memory,
+                                   # but will quickly scale up, the more you monitor
+```
+
+
 [1]: https://github.com/cloudfoundry-community/prometheus-boshrelease
 [2]: https://github.com/prometheus/blackbox_exporter
 [3]: https://github.com/genesis-community/cf-genesis-kit
