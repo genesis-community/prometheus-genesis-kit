@@ -34,8 +34,6 @@ instance_groups:
     release: prometheus
   - name: system_dashboards
     release: prometheus
-  - name: blackbox_exporter
-    release: prometheus
 
   # need subkits:
   #- name: consul_alerts
@@ -86,18 +84,6 @@ properties:
     - name: default-receiver
     route:
       receiver: default-receiver
-  blackbox_exporter:
-    config:
-      modules:
-        http:
-          prober: http
-          timeout: 5s
-          http:
-            tls_config:
-              insecure_skip_verify: (( grab params.skip_ssl_validation ))
-        tcp:
-          prober: tcp
-          timeout: 5s
   grafana:
     dashboards:
       json:
@@ -111,7 +97,6 @@ properties:
     prometheus:
       dashboard_files: 
       - /var/vcap/jobs/prometheus_dashboards/*.json
-      - /var/vcap/jobs/probe_dashboards/*.json
       - /var/vcap/jobs/system_dashboards/*.json
       # need subkits:
       #- /var/vcap/jobs/consul_dashboards/*.json
@@ -157,7 +142,6 @@ properties:
       enabled: false
   prometheus:
     rule_files:
-    - /var/vcap/jobs/probe_alerts/*.alerts
     - /var/vcap/jobs/prometheus_alerts/*.alerts
     # need subkits:
     #- /var/vcap/jobs/consul_alerts/*.alerts
@@ -170,26 +154,6 @@ properties:
     scrape_interval: 30s
     scrape_timeout: 30s
     scrape_configs:
-    - job_name: blackbox
-      metrics_path: /probe
-      params:
-        module:
-          - http
-      static_configs:
-        - targets: (( grab params.monitored_endpoints ))
-      relabel_configs:
-        - source_labels: [__address__]
-          regex: (.*)(:80)?
-          target_label: __param_target
-          replacement: ${1}
-        - source_labels: [__param_target]
-          regex: (.*)
-          target_label: instance
-          replacement: ${1}
-        - source_labels: []
-          regex: .*
-          target_label: __address__
-          replacement: localhost:9115
     - job_name: bosh
       scrape_interval: 1m
       scrape_timeout: 1m

@@ -1,0 +1,4 @@
+---
+params:
+  skip_ssl_verify: false
+  monitored_endpoints: (( param "Specify the URLs that prometheus should monitor" ))

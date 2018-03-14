@@ -61,12 +61,6 @@ Params
 
 #### Base
 
-- **params.monitored_endpoints** - A list of URLs that Prometheus should monitor
-  with its [blackbox_exporter][2]. These will show up in the `Probe: HTTPS Summary` dashboard
-- **params.skip_ssl_validation** - Defines whether the Promtheus exporters skip SSL cert
-  validation when connecting to the various monitored components they watch. Off by default
-  (certs are checked). Enable this if you have self-signed certs in your deployment.
-
 - **params.prometheus_disk_pool** - used to define the persistent disk pool that the Vault VMs will
   be given. This pool must exist in the Cloud Config of the BOSH director that deploys
   Vault. This defaults to `prometheus`. It is highly advised that you make this on fast/SSD
@@ -119,6 +113,13 @@ the [bosh-genesis-kit][4].
   `secret/us/west/bosh/users/admin:password`.
 - **params.bosh_ca_cert** - A vault path which contains the CA certificate for the CA that signed the BOSH
   monitored director's SSL certificate. For example: `secret/us/west/prod/bosh/ssl/ca:certificate`.
+
+#### blackbox
+- **params.monitored_endpoints** - A list of URLs that Prometheus should monitor
+  with its [blackbox_exporter][2]. These will show up in the `Probe: HTTPS Summary` dashboard
+- **params.skip_ssl_verify** - Defines whether the Promtheus exporters skip SSL cert
+  validation when connecting to the various monitored components they watch. Off by default
+  (certs are checked). Enable this if you have self-signed certs in your deployment.
 
 #### postgres
 

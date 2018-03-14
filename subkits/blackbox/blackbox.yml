@@ -1,0 +1,52 @@
+---
+instance_groups:
+- name: prometheus
+  jobs:
+  - (( append ))
+  - name: blackbox_exporter
+    release: prometheus
+
+properties:
+  blackbox_exporter:
+    config:
+      modules:
+        http:
+          prober: http
+          timeout: 5s
+          http:
+            tls_config:
+              insecure_skip_verify: (( grab params.skip_ssl_verify ))
+        tcp:
+          prober: tcp
+          timeout: 5s
+  grafana:
+    prometheus:
+      dashboard_files: 
+      - (( append ))
+      - /var/vcap/jobs/probe_dashboards/*.json
+  prometheus:
+    rule_files:
+    - (( append ))
+    - /var/vcap/jobs/probe_alerts/*.alerts
+    scrape_configs:
+    - (( append ))
+    - job_name: blackbox
+      metrics_path: /probe
+      params:
+        module:
+          - http
+      static_configs:
+        - targets: (( grab params.monitored_endpoints ))
+      relabel_configs:
+        - source_labels: [__address__]
+          regex: (.*)(:80)?
+          target_label: __param_target
+          replacement: ${1}
+        - source_labels: [__param_target]
+          regex: (.*)
+          target_label: instance
+          replacement: ${1}
+        - source_labels: []
+          regex: .*
+          target_label: __address__
+          replacement: localhost:9115

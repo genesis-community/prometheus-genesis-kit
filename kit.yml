@@ -27,13 +27,13 @@ params:
   - param: network
     description: Override the BOSH network that prometheus is deployed onto
 
-  - param: skip_ssl_validation
-    description: Should SSL validation be skipped (do you have any self-signed certs in your deployments?)
-
+  blackbox:
   - param: monitored_endpoints
     description: URLs that should be proped for aliveness
     type: list
     ask: What URLs should prometheus monitor?
+  - param: skip_ssl_verify
+    description: Should SSL validation be skipped (do you have any self-signed certs in your deployments?)
 
   postgres:
   - param: pg_host
@@ -95,6 +95,9 @@ params:
     description: |
       Override the deployment name of your Cloud Foundry (used to find
       the information for connecting to NATS to register routes)
+  - param: skip_ssl_validation
+    description: Should SSL validation be skipped (do you have any self-signed certs in your CF deployments?)
+
 
   elasticsearch:
   - param: elasticsearch_uri
