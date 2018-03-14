@@ -1,6 +1,6 @@
 ---
 meta:
-  kit:     Prometheus 
+  kit:     prometheus 
   release: Prometheus Genesis Kit
   target:  buf
   url:     https://10.200.131.2.netip.cc
