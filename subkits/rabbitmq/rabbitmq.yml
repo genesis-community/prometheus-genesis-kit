@@ -5,7 +5,7 @@ properties:
       url: (( grab params.rabbitmq_url ))
       user: (( grab params.rabbitmq_user ))
       password: (( vault params.rabbitmq_password ))
-      skip_queues: (( grab params.rabbitmq_exlcude_queues )0
+      skip_queues: (( grab params.rabbitmq_exclude_queues ))
       include_queues: (( grab params.rabbitmq_include_queues ))
       skip_tls_verify: (( grab params.skip_ssl_validation ))
   grafana:
