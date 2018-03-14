@@ -7,3 +7,9 @@ params:
   network: default
   stemcell_os: ubuntu-trusty
   stemcell_version: latest
+
+  bosh_ca_cert: (( param "Specify the Vault path to the monitored BOSH instance's CA Certificate" ))
+  bosh_user: admin
+  bosh_password: (( param "Specify the password with which to authenticate to the monitored BOSH" ))
+  bosh_host: (( param "Specify the IP/hostname of the monitored BOSH" ))
+  bosh_port: 25555
