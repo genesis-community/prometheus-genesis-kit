@@ -109,6 +109,7 @@ properties:
       password: (( grab meta.grafanadb_password ))
       type: postgres
       user: grafanadbadmin
+      port: 5432
     prometheus:
       dashboard_files: 
       - /var/vcap/jobs/prometheus_dashboards/*.json
