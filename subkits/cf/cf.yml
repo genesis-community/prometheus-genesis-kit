@@ -28,6 +28,7 @@ properties:
   grafana:
     prometheus:
       dashboard_files:
+      - (( append ))
       - /var/vcap/jobs/cloudfoundry_dashboards/*.json
 
   route_registrar:

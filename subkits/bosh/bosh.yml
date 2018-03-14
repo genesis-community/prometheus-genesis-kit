@@ -15,6 +15,7 @@ properties:
       - /var/vcap/jobs/bosh_dashboards/*.json
   prometheus:
     rule_files:
+    - (( append ))
     - /var/vcap/jobs/bosh_alerts/*.alerts
 
 instance_groups:
