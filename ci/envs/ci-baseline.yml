@@ -1,0 +1,15 @@
+---
+kit:
+  subkits: []
+
+params:
+  env:   ci-baseline
+  vault: genesis-ci/prometheus/ci/baseline
+  bosh:  genesis-ci
+
+  network: genesis-ci
+
+  bosh_host: 10.200.130.1
+  bosh_ca_cert: secret/pipelines/genesis-ci/ca:certificate
+  bosh_password: secret/pipelines/genesis-ci/admin:password
+
