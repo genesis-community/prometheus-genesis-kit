@@ -488,9 +488,9 @@ properties:
         replacement: "${1}:9102"
 releases:
 - name: postgres
-  version: 1.0.4
-  url: https://github.com/cloudfoundry-community/postgres-boshrelease/releases/download/v1.0.4/postgres-1.0.4.tgz
-  sha1: 8b82c86b7763abdb8f117523b852d1e1c9a20eeb
+  version: 2.0.0
+  url: https://github.com/cloudfoundry-community/postgres-boshrelease/releases/download/v2.0.0/postgres-2.0.0.tgz
+  sha1: dea5cad517c62afaf97a1b31df41ad691928d960
 - name: prometheus
   version: 21.1.1
   url: https://bosh.io/d/github.com/cloudfoundry-community/prometheus-boshrelease?v=21.1.1
