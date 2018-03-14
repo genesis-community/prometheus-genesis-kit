@@ -131,11 +131,13 @@ properties:
       provider_config: (( concat "user=grafanadbadmin password=" meta.grafanadb_password " host=127.0.0.1 dbname=grafanadb port=5432 sslmode=disable" ))
   nginx:
     alertmanager:
-      auth_password: (( vault meta.vault "grafana:password" ))
-      auth_username: admin
+      auth_users:
+      - name: admin
+        password: (( vault meta.vault "grafana:password" ))
     prometheus:
-      auth_password: (( vault meta.vault "grafana:password" ))
-      auth_username: admin
+      auth_users:
+      - name: admin
+        password: (( vault meta.vault "grafana:password" ))
   pgpool:
     databases:
     - extensions:
@@ -489,9 +491,9 @@ releases:
   url: https://github.com/cloudfoundry-community/postgres-boshrelease/releases/download/v1.0.4/postgres-1.0.4.tgz
   sha1: 8b82c86b7763abdb8f117523b852d1e1c9a20eeb
 - name: prometheus
-  version: 17.4.2
-  url: https://bosh.io/d/github.com/cloudfoundry-community/prometheus-boshrelease?v=17.4.2
-  sha1: 72686b66f5f018326c761e05d61d9235a6500ac5
+  version: 21.1.1
+  url: https://bosh.io/d/github.com/cloudfoundry-community/prometheus-boshrelease?v=21.1.1
+  sha1: a191bc2ad321a9670fdf5ff5eb545cb3474cd1e6
 - name: shield
   version: latest
 stemcells:
