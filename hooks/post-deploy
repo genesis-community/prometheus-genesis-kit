@@ -1,0 +1,24 @@
+#!/bin/bash
+set -eu
+
+if [[ $GENESIS_DEPLOY_RC == 0 ]]; then
+      echo; echo;
+  describe "#M{$GENESIS_ENVIRONMENT} Minio deployed!"
+      echo
+      echo "For details about the deployment, run"
+      echo
+  describe "  #G{genesis info $GENESIS_ENVIRONMENT}"
+      echo
+      echo "To visit the Prometheus page:"
+      echo
+  describe "  #G{genesis do $GENESIS_ENVIRONMENT -- visit-prom}"
+      echo
+      echo "To visit the Grafana page:"
+      echo
+  describe "  #G{genesis do $GENESIS_ENVIRONMENT -- visit-grafana}"
+      echo
+      echo "To visit the AlertManager page:"
+      echo
+  describe "  #G{genesis do $GENESIS_ENVIRONMENT -- visit-alert}"
+      echo
+fi

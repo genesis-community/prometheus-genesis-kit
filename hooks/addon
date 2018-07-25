@@ -1,0 +1,71 @@
+#!/bin/bash
+set -eu
+vault="secret/$GENESIS_VAULT_PREFIX"
+target=$GENESIS_ENVIRONMENT
+
+
+list() {
+  echo "The following addons are defined:"
+  echo
+  echo "  list            List out all supported addons."
+  echo "  visit-prom      Visit the Prometheus Web UI (macOS only)"
+  echo "  visit-grafana   Visit the Grafana dashboard (macOS only)"
+  echo "  visit-alert     Visit the AlertManager dashboard (macOS only)"
+  echo
+}
+
+case $GENESIS_ADDON_SCRIPT in
+list)
+  list
+  exit 0
+  ;;
+
+visit-prom*)
+  if ! command -v open >/dev/null 2>&1; then
+    echo "The 'visit' addon script only works on macOS, currently."
+    exit 1
+  fi
+  url=$(exodus prometheus_url)
+  if [[ $(exodus http_auth) == "1" ]]; then
+    password=$(safe get $vault/nginx/prometheus:password)
+    open "https://admin:$password@$url"
+  else
+    open "https://$url"
+  fi
+  ;;
+
+visit-alert*)
+  if ! command -v open >/dev/null 2>&1; then
+    echo "The 'visit' addon script only works on macOS, currently."
+    exit 1
+  fi
+  url=$(exodus alertmanager_url)
+  if [[ $(exodus http_auth) == "1" ]]; then
+    password=$(safe get $vault/nginx/alert_manager:password)
+    open "https://admin:$password@$url"
+  else
+    open "https://$url"
+  fi
+  ;;
+
+visit-graf*)
+  if ! command -v open >/dev/null 2>&1; then
+    echo "The 'visit' addon script only works on macOS, currently."
+    exit 1
+  fi
+  url=$(exodus grafana_url)
+  password=$(safe get $vault/grafana:password)
+  echo "Here's the credentials you'll need to sign in: "
+  echo
+  echo -e "  \033[1m\033[1;36m username: \033[0m admin"
+  echo -e "  \033[1m\033[1;36m password: \033[0m $password"
+  echo
+  open "https://$url"
+  ;;
+
+*)
+  echo "Unrecognized Prometheus Genesis Kit addon."
+  list
+  exit 1
+  ;;
+esac

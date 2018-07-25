@@ -1,44 +1,16 @@
-Prometheus Genesis Kit
-=================
+# Prometheus Genesis Kit Manual 
+The Prometheus Genesis Kit deploys a single-VM installation of
+Prometheus, Grafana, and AlertManager. It's capable of monitoring BOSH
+and Cloudfoundry.
 
-This is a Genesis Kit for the [Prometheus Boshrelease][1]. It deploys
-a single-VM prometheus deployment, with all jobs colocated on the
-single VM, for a smaller footprint. As more metrics are
-consumed/monitored, and additional services are added, this node will
-likely need to scale out to increase its I/O throughput first. If
-possible, use SSD-backed storage for its persistent disk pool in your
-Cloud Config.
+## Requirements
 
-Generally, you will have one prometheus VM per environment being
-deployed/monitored, each prometheus would then monitor the BOSH
-deployments + services of that environment.
+[Node Exporter][1] must be installed on all BOSH VMs you would like
+to monitor. Please consult the README of that repository on how to
+setup the BOSH addon.
 
-Additionally, you will want to ensure that the [node_exporter][2] is
-included in your BOSH Runtime Config as an add-on, so that all BOSH
-VMs report their system health metrics back to Prometheus.
 
-Quick Start
------------
-
-To use it, you don't even need to clone this repository! Just run the
-following (using Genesis v2):
-
-```
-# create a prometheus-deployments repo using the latest version of the prometheus kit
-genesis init --kit prometheus
-
-# create a prometheus-deployments repo using v1.0.0 of the prometheus kit
-genesis init --kit prometheus/1.0.0
-
-# create a my-prometheus-configs repo using the latest version of the prometheus kit
-genesis init --kit prometheus -d my-prometheus-configs
-```
-
-Once created, refer to the deployment repository README for
-information on provisioning and deploying new environments.
-
-Features
--------
+## Features
 
 ## SSL Certificates
 
@@ -59,11 +31,40 @@ Features
 ## Monitoring
 
 * `monitor-cf` - Have Prometheus connect to the CF Firehose to track
-  CF app status + more. Requires two UAA accounts (more info in
-  [MANUAL.md][3])
+  CF app status + more. Requires two UAA accounts, one with the
+  `cloud_controller.admin_read_only` scope, and the `doppler.firehose`
+  scope. To create these accounts, here's an example:
+```
+uaac client add prometheus-cf \
+  --name prometheus-cf \
+  --secret <64 char secret> \
+  --authorized_grant_types client_credentials,refresh_token \
+  --authorities cloud_controller.admin_read_only
 
-Params
-------
+uaac client add prometheus-firehose \
+  --name prometheus-firehose \
+  --secret <64 char secret> \
+  --authorized_grant_types client_credentials,refresh_token \
+  --authorities doppler.firehose
+```
+
+  This will add the user `prometheus-cf` and `prometheus-firehose`,
+  with the secrets of your choice. `prometheus-cf` will have the
+  `cloud_controller.admin_read_only` scope, and the
+  `prometheus-firehose` will have the `doppler.firehose` scope.
+
+  These credentials are stored in `$GENESIS_VAULT_PATH/cf_uaa_logins`:
+
+  *cloud_controller.admin_read_only* scope:
+  * `cf_uaa_logins:cf_exporter_client_id`
+  * `cf_uaa_logins:cf_exporter_client_secret`
+
+  *doppler.firehose* scope:
+  * `cf_uaa_logins:firehose_exporter_client_id`
+  * `cf_uaa_logins:firehose_exporter_client_secret`
+
+
+## Params
 
 ### General Infrastructure Configuration
 * `disk_type` - The `persistent_disk_type` that Prometheus should use
@@ -78,7 +79,7 @@ Params
   to deploy on. (default: `latest`)
 * `static_ip` - The static IP to assign to the VM. (no default)
 
-### Minio Related Configuration
+### Prometheus Related Configuration
 * `prometheus_port` - The port for Nginx to use to reverse proxy to
   Prometheus. (default: `443`)
 * `grafana_port` - The port for the Nginx to use to reverse proxy to
@@ -88,16 +89,11 @@ Params
 * `external_domain` - The domain used to access this Prometheus
   deployment. Can be either a FQDN or IP address. (no default)
 
-
-Cloud Config
-------------
+## Cloud Config
 
 The Prometheus Genesis Kit requires a static IP address to be defined
 in the selected network configuration (by default, `prometheus`). It
 also requires a `persistent_disk_type` (of about `1024MB`) to store
 graph history and Grafana DB.
 
-
-[1]: https://github.com/cloudfoundry-community/prometheus-boshrelease
-[2]: https://github.com/bosh-prometheus/node-exporter-boshrelease
-[3]: MANUAL.md
+[1]: https://github.com/bosh-prometheus/node-exporter-boshrelease

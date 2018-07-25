@@ -1,7 +1,0 @@
----
-params:
-  rabbitmq_url: (( param "Specify the URL for your rabbitmq instance" ))
-  rabbitmq_user: admin
-  rabbitmq_password: (( param "Specify the Vault path to your rabbitmq users's password" ))
-  rabbitmq_exclude_queues: ~
-  rabbitmq_include_queues: ~

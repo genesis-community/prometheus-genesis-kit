@@ -1,0 +1,547 @@
+---
+meta:
+  passthru: ((grab params.bosh_exodus_path || params.bosh || params.env))
+  default:
+    azs: [z1]
+  prometheus_port:   (( grab params.prometheus_port   || 8080 ))
+  grafana_port:      (( grab param.grafana_port       || 443 ))
+  alertmanager_port: (( grab params.alertmanager_port || 8082 ))
+
+exodus:
+  prometheus_url:   (( concat params.external_domain ":" meta.prometheus_port    ))
+  grafana_url:      (( concat params.external_domain ":" meta.grafana_port       ))
+  alertmanager_url: (( concat params.external_domain ":" meta.alertmanager_port  ))
+
+instance_groups:
+- name:      prometheus
+  instances: 1
+  azs:       (( grab params.availability_zones || meta.default.azs ))
+  stemcell:  default
+  persistent_disk_type: (( grab params.persistent_disk_type || "prometheus" ))
+  networks:   
+    - name: (( grab params.network || "default" ))
+      static_ips: (( grab params.static_ip ))
+  vm_type:   (( grab params.vm_type || "default" ))
+  jobs:
+  - name: alertmanager
+    properties:
+      alertmanager:
+        mesh:
+          password: (( vault meta.vault "/alertmanager:password" ))
+        receivers:
+        - name: default
+        route:
+          receiver: default
+        test_alert:
+          daily: true
+    release: prometheus
+  - name: prometheus2
+    properties:
+      prometheus:
+        rule_files:
+        - /var/vcap/jobs/postgres_alerts/*.alerts.yml
+        - /var/vcap/jobs/prometheus_alerts/*.alerts.yml
+        - /var/vcap/jobs/bosh_alerts/*.alerts.yml
+        scrape_configs:
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: prometheus
+          relabel_configs:
+          - action: keep
+            regex: prometheus\d?
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9001
+            source_labels:
+            - __address__
+            target_label: __address__
+        - job_name: bosh
+          scrape_interval: 2m
+          scrape_timeout: 1m
+          static_configs:
+          - targets:
+            - localhost:9190
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: bosh_tsdb
+          relabel_configs:
+          - action: keep
+            regex: bosh_tsdb_exporter
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9194
+            source_labels:
+            - __address__
+            target_label: __address__
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: cadvisor
+          relabel_configs:
+          - action: keep
+            regex: cadvisor
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:8080
+            source_labels:
+            - __address__
+            target_label: __address__
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: cf
+          relabel_configs:
+          - action: keep
+            regex: cf_exporter
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9193
+            source_labels:
+            - __address__
+            target_label: __address__
+          scrape_interval: 4m
+          scrape_timeout: 2m
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: collectd
+          relabel_configs:
+          - action: keep
+            regex: collectd_exporter
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9103
+            source_labels:
+            - __address__
+            target_label: __address__
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: consul
+          relabel_configs:
+          - action: keep
+            regex: consul_exporter
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9107
+            source_labels:
+            - __address__
+            target_label: __address__
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: elasticsearch
+          relabel_configs:
+          - action: keep
+            regex: elasticsearch_exporter
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9114
+            source_labels:
+            - __address__
+            target_label: __address__
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: concourse
+          relabel_configs:
+          - action: keep
+            regex: atc
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            source_labels:
+            - __meta_bosh_deployment
+            target_label: bosh_deployment
+          - regex: (.*)
+            replacement: ${1}:9391
+            source_labels:
+            - __address__
+            target_label: __address__
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: firehose
+          relabel_configs:
+          - action: keep
+            regex: firehose_exporter
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9186
+            source_labels:
+            - __address__
+            target_label: __address__
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: grafana
+          relabel_configs:
+          - action: keep
+            regex: grafana
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:3001
+            source_labels:
+            - __address__
+            target_label: __address__
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: graphite
+          relabel_configs:
+          - action: keep
+            regex: graphite_exporter
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9108
+            source_labels:
+            - __address__
+            target_label: __address__
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: haproxy
+          relabel_configs:
+          - action: keep
+            regex: haproxy_exporter
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9101
+            source_labels:
+            - __address__
+            target_label: __address__
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: influxdb
+          relabel_configs:
+          - action: keep
+            regex: influxdb_exporter
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9122
+            source_labels:
+            - __address__
+            target_label: __address__
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: kubernetes
+          relabel_configs:
+          - action: keep
+            regex: kube_state_metrics_exporter
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9188
+            source_labels:
+            - __address__
+            target_label: __address__
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: memcached
+          relabel_configs:
+          - action: keep
+            regex: memcached_exporter
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9150
+            source_labels:
+            - __address__
+            target_label: __address__
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: mongodb
+          relabel_configs:
+          - action: keep
+            regex: mongodb_exporter
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9001
+            source_labels:
+            - __address__
+            target_label: __address__
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: mysql
+          relabel_configs:
+          - action: keep
+            regex: mysqld_exporter
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9104
+            source_labels:
+            - __address__
+            target_label: __address__
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: nats
+          relabel_configs:
+          - action: keep
+            regex: nats_exporter
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9118
+            source_labels:
+            - __address__
+            target_label: __address__
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: node
+          relabel_configs:
+          - action: keep
+            regex: node_exporter
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9100
+            source_labels:
+            - __address__
+            target_label: __address__
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: postgres
+          relabel_configs:
+          - action: keep
+            regex: postgres_exporter
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9187
+            source_labels:
+            - __address__
+            target_label: __address__
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          honor_labels: true
+          job_name: pushgateway
+          relabel_configs:
+          - action: keep
+            regex: pushgateway
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9091
+            source_labels:
+            - __address__
+            target_label: __address__
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: rabbitmq
+          relabel_configs:
+          - action: keep
+            regex: rabbitmq_exporter
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9125
+            source_labels:
+            - __address__
+            target_label: __address__
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: redis
+          relabel_configs:
+          - action: keep
+            regex: redis_exporter
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9121
+            source_labels:
+            - __address__
+            target_label: __address__
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: shield
+          relabel_configs:
+          - action: keep
+            regex: shield_exporter
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9179
+            source_labels:
+            - __address__
+            target_label: __address__
+          scrape_interval: 4m
+          scrape_timeout: 2m
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: stackdriver
+          relabel_configs:
+          - action: keep
+            regex: stackdriver_exporter
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9255
+            source_labels:
+            - __address__
+            target_label: __address__
+        - file_sd_configs:
+          - files:
+            - /var/vcap/store/bosh_exporter/bosh_target_groups.json
+          job_name: statsd
+          relabel_configs:
+          - action: keep
+            regex: statsd_exporter
+            source_labels:
+            - __meta_bosh_job_process_name
+          - regex: (.*)
+            replacement: ${1}:9102
+            source_labels:
+            - __address__
+            target_label: __address__
+    release: prometheus
+  - name: postgres_alerts
+    release: prometheus
+  - name: prometheus_alerts
+    release: prometheus
+  - name: bosh_exporter
+    properties:
+      bosh_exporter:
+        bosh:
+          ca_cert: (( vault "secret/exodus/" meta.passthru "/bosh:ca_cert"))
+          password: (( vault "secret/exodus/" meta.passthru "/bosh:admin_password"))
+          url: ((vault "secret/exodus/" meta.passthru "/bosh:url"))
+          username: (( vault "secret/exodus/" meta.passthru "/bosh:admin_username"))
+        metrics:
+          environment: (( grab params.env ))
+    release: prometheus
+  - name: bosh_alerts
+    release: prometheus
+  - name: grafana
+    properties:
+      grafana:
+        dashboards: null
+        database:
+          name: grafana
+          password: (( vault meta.vault "/grafanadb:password" ))
+          port: 5432
+          type: postgres
+          user: grafana
+        prometheus:
+          dashboard_folders:
+          - files:
+            - /var/vcap/jobs/grafana_dashboards/*.json
+            name: Grafana
+          - files:
+            - /var/vcap/jobs/postgres_dashboards/*.json
+            name: PostgreSQL
+          - files:
+            - /var/vcap/jobs/prometheus_dashboards/*.json
+            - /var/vcap/jobs/bosh_dashboards/prometheus*.json
+            name: Prometheus
+          - files:
+            - /var/vcap/jobs/bosh_dashboards/bosh*.json
+            - /var/vcap/jobs/system_dashboards/bosh*.json
+            name: BOSH
+          - files:
+            - /var/vcap/jobs/system_dashboards/system*.json
+            name: System
+        security:
+          admin_password: (( vault meta.vault "/grafana:password"))
+          admin_user: admin
+          secret_key: (( vault meta.vault "/grafana:secret_key"))
+        session:
+          provider: postgres
+          provider_name: grafana
+          provider_password: (( vault meta.vault "/grafanadb:password" ))
+          provider_port: 5432
+          provider_user: grafana
+    release: prometheus
+  - name: grafana_dashboards
+    release: prometheus
+  - name: postgres_dashboards
+    release: prometheus
+  - name: prometheus_dashboards
+    release: prometheus
+  - name: bosh_dashboards
+    release: prometheus
+  - name: system_dashboards
+    release: prometheus
+  - name: postgres
+    properties:
+      databases:
+        databases:
+        - citext: true
+          name: grafana
+        port: 5432
+        roles:
+        - name: grafana
+          password: (( vault meta.vault "/grafanadb:password" ))
+    release: postgres
+  
+  - name: nginx
+    release: prometheus
+    properties:
+      nginx:
+        ssl_cert: (( vault meta.vault "/nginx/ssl_certificate:certificate" ))
+        ssl_key: (( vault meta.vault "/nginx/ssl_certificate:key" ))
+        prometheus:
+          https_port: (( grab meta.prometheus_port ))
+          http_port:  (( calc "meta.prometheus_port + 1" ))
+        grafana:
+          https_port: (( grab meta.grafana_port ))
+          http_port: 80
+        alertmanager:
+          https_port: (( grab meta.alertmanager_port ))
+          http_port:  (( calc "meta.alertmanager_port + 1" ))
+
+
+
+releases:
+- name: postgres
+  sha1: c1fcec62cb9d2e95e3b191e3c91d238e2b9d23fa
+  url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=28
+  version: "28"
+- name: prometheus
+  sha1: 23e5f469c2e290efefde1166107f874c32374ff7
+  url: https://github.com/bosh-prometheus/prometheus-boshrelease/releases/download/v23.1.0/prometheus-23.1.0.tgz
+  version: 23.1.0
+
+
+
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: latest
+
+
+
+update:
+  canaries: 1
+  canary_watch_time: 1000-100000
+  max_in_flight: 32
+  serial: false
+  update_watch_time: 1000-100000

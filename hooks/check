@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Cloud Config checks
+if [[ -n "$GENESIS_CLOUD_CONFIG" ]] ; then
+    cloud_config_needs vm_type    $(lookup params.vm_type    default)
+    cloud_config_needs network    $(lookup params.network    prometheus)
+    cloud_config_needs disk_type  $(lookup params.disk_type  prometheus)
+    check_cloud_config && describe "  cloud-config [#G{OK}]"
+fi
+
+
+ok=yes
+vault="secret/$GENESIS_VAULT_PREFIX"
+domain="$(lookup params.static_ip)"
+for cert in nginx/ssl_certificate; do
+  if ! safe exists "$vault/$cert"; then
+    describe "  ❌  $vault/$cert [#Y{MISSING}]"
+    ok=no
+  else
+    if safe --quiet x509 validate "$vault/$cert" --for "$(lookup params.static_ip)" --for "$(lookup params.external_domain)" >/dev/null 2>&1; then
+      describe "  #G{✔}  $vault/$cert [#G{OK}]"
+    else
+      describe "  ❌  $vault/$cert [#R{INVALID}]"
+      safe x509 validate "$vault/$cert" --for "*.$domain" 2>&1 | sed -e 's/^/      /';
+      ok=no
+      echo
+    fi
+  fi
+done;
+
+if [[ "$ok" = "yes" ]]; then
+  describe "  environment files [#G{OK}]"
+else
+  describe "  environment files [#R{FAILED}]"
+  exit 1
+fi

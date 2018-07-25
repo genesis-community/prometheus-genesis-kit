@@ -1,0 +1,34 @@
+#!/bin/bash
+shopt -s nullglob
+set -eu
+
+# Genesis Kit `blueprint' Hook
+#
+# This script outputs the list of merge files needed to support the desired
+# feature set selected by the environment parameter file.  As generated, it
+# lists all *.yml files in the base, then all *.yml files in each detected
+# feature directory, in the order the features are specified in the environment
+# yml file.  If finer control is desired, add logic around the wants_kit_feature()
+# function (takes a feature as a string, returns exit code 0 if present, non-
+# zero exit code otherwise).
+
+
+validate_features self-signed-cert provided-cert monitor-cf http-auth
+
+declare -a manifests
+manifests+=( manifests/prometheus.yml )
+
+if want_feature http-auth ; then
+  manifests+=( manifests/http_auth.yml )
+fi
+
+if want_feature monitor-cf ; then
+  manifests+=( manifests/cf.yml )
+fi
+
+# for dir in features/*; do
+# 	if want_feature $basename($dir); then
+# 		manifests+=( $dir/*.yml )
+# 	fi
+# done
+echo ${manifests[@]}

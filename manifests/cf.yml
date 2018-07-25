@@ -1,0 +1,62 @@
+---
+exodus:
+  monitor-cf: true
+
+meta:
+  cf_system_domain: (( vault "secret/exodus/" meta.passthru "/cf:system_domain" )) 
+
+instance_groups:
+- name:      prometheus
+  jobs:
+  - name: cf_exporter
+    release: prometheus
+    properties:
+      cf_exporter:
+        cf:
+          api_url: (( vault "secret/exodus/" meta.passthru "/cf:api_url" ))
+          client_id: (( vault meta.vault "/cf_uaa_logins:cf_exporter_client_id" ))
+          client_secret: (( vault meta.vault "/cf_uaa_logins:cf_exporter_client_secret" ))
+          deployment_name: (( grab params.env ))
+        metrics:
+          environment: (( grab params.env ))
+        skip_ssl_verify: (( grab params.skip_ssl_validation || false ))
+
+  - name: firehose_exporter
+    release: prometheus
+    properties:
+      firehose_exporter:
+        doppler:
+          url: (( concat "wss://doppler." meta.cf_system_domain ":4443" ))
+          subscription_id: (( grab params.env ))
+          max_retry_count: 300
+        uaa:
+          url: ((concat "https://uaa." meta.cf_system_domain ))
+          client_id: (( vault meta.vault "/cf_uaa_logins:firehose_exporter_client_id" ))
+          client_secret: (( vault meta.vault "/cf_uaa_logins:firehose_exporter_client_secret" ))
+        metrics:
+          environment: (( grab params.env ))
+        skip_ssl_verify: (( grab params.skip_ssl_validation || false ))
+
+
+  - name: cloudfoundry_dashboards
+    release: prometheus
+  - name: cloudfoundry_alerts
+    release: prometheus
+
+  - name: grafana
+    properties:
+      grafana:
+        prometheus:
+          dashboard_folders:
+          - files:
+            - /var/vcap/jobs/cloudfoundry_dashboards/cf*.json
+            name: Cloudfoundry
+          - files:
+            - /var/vcap/jobs/cloudfoundry_dashboards/prometheus*.json
+            name: Prometheus
+
+  - name: prometheus2
+    properties:
+      prometheus:
+        rule_files:
+        - /var/vcap/jobs/cloudfoundry_alerts/*.alerts.yml
