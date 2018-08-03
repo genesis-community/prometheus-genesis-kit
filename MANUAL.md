@@ -74,7 +74,7 @@ uaac client add prometheus-cf \
 
 The Prometheus Genesis Kit requires a static IP address to be defined
 in the selected network configuration (by default, `prometheus`). It
-also requires a `persistent_disk_type` (of about `1024MB`) to store
+also requires a `persistent_disk_type` (of about `51200MB`) to store
 graph history and Grafana DB.
 
 [1]: https://github.com/bosh-prometheus/node-exporter-boshrelease
