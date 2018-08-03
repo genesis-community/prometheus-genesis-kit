@@ -11,6 +11,7 @@ list() {
   echo "  visit-prom      Visit the Prometheus Web UI (macOS only)"
   echo "  visit-grafana   Visit the Grafana dashboard (macOS only)"
   echo "  visit-alert     Visit the AlertManager dashboard (macOS only)"
+  echo "  runtime-config  Generate a runtime configuration for node-exporter"
   echo
 }
 

@@ -21,4 +21,8 @@ if [[ $GENESIS_DEPLOY_RC == 0 ]]; then
       echo
   describe "  #G{genesis do $GENESIS_ENVIRONMENT -- visit-alert}"
       echo
+      echo "To generate a node exporter runtime config:"
+      echo
+  describe "  #G{genesis do $GENESIS_ENVIRONMENT -- runtime-config}"
+      echo
 fi
