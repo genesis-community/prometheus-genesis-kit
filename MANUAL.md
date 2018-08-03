@@ -68,7 +68,7 @@ uaac client add prometheus-cf \
 * `alertmanager_port` - The port for the Nginx to use to reverse proxy
   to AlertManager. (default: `8082`)
 * `external_domain` - The domain used to access this Prometheus
-  deployment. Can be either a FQDN or IP address. (no default)
+  deployment. Can be either a FQDN or IP address. (default: `static_ip`)
 
 ## Cloud Config
 
