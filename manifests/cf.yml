@@ -3,7 +3,7 @@ exodus:
   monitor-cf: true
 
 meta:
-  cf_system_domain: (( vault "secret/exodus/" meta.passthru "/cf:system_domain" )) 
+  cf_system_domain: (( vault "secret/exodus/" meta.bosh_exodus_path "/cf:system_domain" ))
 
 instance_groups:
 - name:      prometheus
@@ -13,7 +13,7 @@ instance_groups:
     properties:
       cf_exporter:
         cf:
-          api_url:         (( vault "secret/exodus/" meta.passthru "/cf:api_url" ))
+          api_url:         (( vault "secret/exodus/" meta.bosh_exodus_path "/cf:api_url" ))
           client_id:       (( vault meta.vault "/cf_uaa_login:client_id" ))
           client_secret:   (( vault meta.vault "/cf_uaa_login:client_secret" ))
           deployment_name: (( grab params.env ))
@@ -54,7 +54,7 @@ instance_groups:
           - name: Prometheus
             files:
             - /var/vcap/jobs/cloudfoundry_dashboards/prometheus*.json
-            
+
 
   - name: prometheus2
     properties:

@@ -25,7 +25,7 @@ instance_groups:
   azs:       (( grab params.availability_zones || meta.default.azs ))
   stemcell:  default
   persistent_disk_type: (( grab params.persistent_disk_type || "prometheus" ))
-  networks:   
+  networks:
     - name:       (( grab params.network || "default" ))
       static_ips: (( grab params.static_ip ))
   vm_type:        (( grab params.vm_type || "default" ))
@@ -93,7 +93,7 @@ instance_groups:
             replacement: ${1}:8080
             source_labels: [ __address__ ]
             target_label: __address__
-       
+
         - job_name: cf
           file_sd_configs:
           - files: [ /var/vcap/store/bosh_exporter/bosh_target_groups.json ]
@@ -107,8 +107,7 @@ instance_groups:
             target_label: __address__
           scrape_interval: 4m
           scrape_timeout: 2m
-       
-       
+
         - job_name: collectd
           file_sd_configs:
           - files: [ /var/vcap/store/bosh_exporter/bosh_target_groups.json ]
