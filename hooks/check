@@ -14,13 +14,13 @@ vault="secret/$GENESIS_VAULT_PREFIX"
 domain="$(lookup params.static_ip)"
 for cert in nginx/ssl_certificate; do
   if ! safe exists "$vault/$cert"; then
-    describe "  ❌  $vault/$cert [#Y{MISSING}]"
+    describe "  #R{✘}  $vault/$cert [#Y{MISSING}]"
     ok=no
   else
-    if safe --quiet x509 validate "$vault/$cert" --for "$(lookup params.static_ip)" --for "$(lookup params.external_domain)" >/dev/null 2>&1; then
+    if safe --quiet x509 validate "$vault/$cert" --for "$(lookup params.static_ip)" >/dev/null 2>&1; then
       describe "  #G{✔}  $vault/$cert [#G{OK}]"
     else
-      describe "  ❌  $vault/$cert [#R{INVALID}]"
+      describe "  #R{✘}  $vault/$cert [#R{INVALID}]"
       safe x509 validate "$vault/$cert" --for "*.$domain" 2>&1 | sed -e 's/^/      /';
       ok=no
       echo

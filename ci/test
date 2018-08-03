@@ -47,7 +47,7 @@ if [[ $response == "Prometheus is Healthy." ]]; then
   cleanup ci-baseline-prometheus
   exit 0
 fi
-echo "Expected https://10.200.190.135:8080/-/healthy to return 'Prometheus is Health.' but instead" \
+echo "Expected https://10.200.190.135:8080/-/healthy to return 'Prometheus is Healthy.' but instead" \
      "got $response"
 cleanup ci-baseline-prometheus
 exit 1

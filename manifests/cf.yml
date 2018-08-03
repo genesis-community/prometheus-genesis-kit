@@ -13,13 +13,13 @@ instance_groups:
     properties:
       cf_exporter:
         cf:
-          api_url: (( vault "secret/exodus/" meta.passthru "/cf:api_url" ))
-          client_id: (( vault meta.vault "/cf_uaa_logins:cf_exporter_client_id" ))
-          client_secret: (( vault meta.vault "/cf_uaa_logins:cf_exporter_client_secret" ))
+          api_url:         (( vault "secret/exodus/" meta.passthru "/cf:api_url" ))
+          client_id:       (( vault meta.vault "/cf_uaa_login:client_id" ))
+          client_secret:   (( vault meta.vault "/cf_uaa_login:client_secret" ))
           deployment_name: (( grab params.env ))
         metrics:
-          environment: (( grab params.env ))
-        skip_ssl_verify: (( grab params.skip_ssl_validation || false ))
+          environment:     (( grab params.env ))
+        skip_ssl_verify:   (( grab params.skip_ssl_validation || false ))
 
   - name: firehose_exporter
     release: prometheus
@@ -30,12 +30,12 @@ instance_groups:
           subscription_id: (( grab params.env ))
           max_retry_count: 300
         uaa:
-          url: ((concat "https://uaa." meta.cf_system_domain ))
-          client_id: (( vault meta.vault "/cf_uaa_logins:firehose_exporter_client_id" ))
-          client_secret: (( vault meta.vault "/cf_uaa_logins:firehose_exporter_client_secret" ))
+          url:             ((concat "https://uaa." meta.cf_system_domain ))
+          client_id:       (( vault meta.vault "/cf_uaa_login:client_id" ))
+          client_secret:   (( vault meta.vault "/cf_uaa_login:client_secret" ))
         metrics:
-          environment: (( grab params.env ))
-        skip_ssl_verify: (( grab params.skip_ssl_validation || false ))
+          environment:     (( grab params.env ))
+        skip_ssl_verify:   (( grab params.skip_ssl_validation || false ))
 
 
   - name: cloudfoundry_dashboards
@@ -48,12 +48,13 @@ instance_groups:
       grafana:
         prometheus:
           dashboard_folders:
-          - files:
+          - name: Cloudfoundry
+            files:
             - /var/vcap/jobs/cloudfoundry_dashboards/cf*.json
-            name: Cloudfoundry
-          - files:
+          - name: Prometheus
+            files:
             - /var/vcap/jobs/cloudfoundry_dashboards/prometheus*.json
-            name: Prometheus
+            
 
   - name: prometheus2
     properties:

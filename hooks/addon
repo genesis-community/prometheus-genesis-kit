@@ -22,7 +22,7 @@ list)
 
 visit-prom*)
   if ! command -v open >/dev/null 2>&1; then
-    echo "The 'visit' addon script only works on macOS, currently."
+    echo "The 'visit-prom' addon script only works on macOS, currently."
     exit 1
   fi
   url=$(exodus prometheus_url)
@@ -36,7 +36,7 @@ visit-prom*)
 
 visit-alert*)
   if ! command -v open >/dev/null 2>&1; then
-    echo "The 'visit' addon script only works on macOS, currently."
+    echo "The 'visit-alert' addon script only works on macOS, currently."
     exit 1
   fi
   url=$(exodus alertmanager_url)
@@ -50,7 +50,7 @@ visit-alert*)
 
 visit-graf*)
   if ! command -v open >/dev/null 2>&1; then
-    echo "The 'visit' addon script only works on macOS, currently."
+    echo "The 'visit-grafana' addon script only works on macOS, currently."
     exit 1
   fi
   url=$(exodus grafana_url)

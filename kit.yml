@@ -11,17 +11,9 @@ credentials:
   base:
     grafanadb:
       password: random 64
-    grafana:
+    admin:
       password:   random 64
       secret_key: random 64
-    alertmanager:
-      password: random 64
-
-  http-auth:
-    nginx/alert_manager:
-      password: random 64
-    nginx/prometheus:
-      password: random 64
 
 certificates:
   self-signed-cert:
@@ -31,4 +23,3 @@ certificates:
         valid_for: 1y
         names:
         - ${params.static_ip}
-        - ${params.external_domain}

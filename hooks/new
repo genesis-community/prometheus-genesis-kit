@@ -10,6 +10,7 @@ prompt_for ip line \
 	'What static IP do you want to deploy this Prometheus server on?' \
 	--validation ip
 
+# Self-signed certs & provided certs feature
 describe "" \
   "Prometheus will be running on HTTPS, and as such, needs an SSL cert/key."
 prompt_for ssl_cert_feature "select" \
@@ -26,46 +27,31 @@ case "$ssl_cert_feature" in
     prompt_for "$GENESIS_VAULT_PREFIX/nginx/ssl_certificate:key" secret-block \
       "What is the SSL key for Prometheus?"
     ;;
-  "self-signed-cert")
-    describe "" \
-      "If you'd like to access Prometheus via a domain name, please enter it now so that" \
-      "Genesis can create a self-signed certificate valid for the domain. If you do not have" \
-      "one, or would prefer to access Prometheus via the static IP, leave this field empty."
-    prompt_for external_domain line --default "$ip" \
-      'What is the domain you want to use to access Prometheus?' \
-    ;;
 esac
 
+describe "" \
+  "If you'd like to access Prometheus via a domain name, please enter it now. If you" \
+  "do not have one, and would prefer to access Prometheus via the static IP, leave " \
+  "this field empty."
+prompt_for external_domain line --default "$ip" \
+  'What is the domain you want to use to access Prometheus?' \
 
-prompt_for http_auth boolean \
-	'Would you like to require HTTP authentication for Prometheus and AlertManager?'
 
-if [ $http_auth == "true" ] ; then
-  features+=("http-auth")
-fi
-
+# Monitoring CF Feature
 prompt_for monitor_cf boolean \
 	'Would you like to monitor a CF installation?'
 
 if [ $monitor_cf == "true" ] ; then
-
   describe "" \
   "In order to monitor CF, two UAA accounts are necessary. One with the 'cloud_controller.admin_read_only'" \
   "permission, and another with the 'doppler.firehose' permission. For information on how to create these" \
   "accounts, please see the MANUAL.md for this kit."
 
-  prompt_for "$GENESIS_VAULT_PREFIX/cf_uaa_logins:cf_exporter_client_id" secret-line \
-  "What is the UAA client ID with the 'cloud_controller.admin_read_only' permission?"
-  prompt_for "$GENESIS_VAULT_PREFIX/cf_uaa_logins:cf_exporter_client_secret" secret-line \
-  "What is the UAA secret with the 'cloud_controller.admin_read_only' permission?"
-
-  prompt_for "$GENESIS_VAULT_PREFIX/cf_uaa_logins:firehose_exporter_client_id" secret-line \
-  "What is the UAA client ID with the 'doppler.firehose' permission?"
-  prompt_for "$GENESIS_VAULT_PREFIX/cf_uaa_logins:firehose_exporter_client_secret" secret-line \
-  "What is the UAA secret with the 'doppler.firehose' permission?"
+  prompt_for "$GENESIS_VAULT_PREFIX/cf_uaa_login:client_id" secret-line \
+  "What is the UAA client ID?"
+  prompt_for "$GENESIS_VAULT_PREFIX/cf_uaa_login:client_secret" secret-line \
+  "What is the UAA client secret?"
   features+=("monitor-cf")
-
-
 fi
 
 
@@ -85,5 +71,10 @@ params:
   env:   $GENESIS_ENVIRONMENT
   vault: $GENESIS_VAULT_PREFIX
   static_ip: $ip
-  external_domain: $external_domain
 EOF
+
+# If the $external_domain was different from the default (which is $ip), then add
+# it to the env file. Otherwise, don't include it.
+if [ $ip != $external_domain ] ; then
+  printf >>"$GENESIS_ROOT/$GENESIS_ENVIRONMENT.yml" -- '  external_domain: %s\n' "$f"
+fi

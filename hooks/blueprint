@@ -13,22 +13,13 @@ set -eu
 # zero exit code otherwise).
 
 
-validate_features self-signed-cert provided-cert monitor-cf http-auth
+validate_features self-signed-cert provided-cert monitor-cf
 
 declare -a manifests
 manifests+=( manifests/prometheus.yml )
-
-if want_feature http-auth ; then
-  manifests+=( manifests/http_auth.yml )
-fi
 
 if want_feature monitor-cf ; then
   manifests+=( manifests/cf.yml )
 fi
 
-# for dir in features/*; do
-# 	if want_feature $basename($dir); then
-# 		manifests+=( $dir/*.yml )
-# 	fi
-# done
 echo ${manifests[@]}

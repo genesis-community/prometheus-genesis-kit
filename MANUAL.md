@@ -5,9 +5,9 @@ and Cloudfoundry.
 
 ## Requirements
 
-[Node Exporter][1] must be installed on all BOSH VMs you would like
-to monitor. Please consult the README of that repository on how to
-setup the BOSH addon.
+[Node Exporter][1] must be installed on all BOSH VMs you would like to
+monitor. Please consult the README of that repository on how to setup
+the BOSH addon.
 
 
 ## Features
@@ -21,47 +21,28 @@ setup the BOSH addon.
   `$GENESIS_VAULT_PATH/nginx/ssl_certificate:certificate` and
   `$GENESIS_VAULT_PATH/nginx/ssl_certificate:key`
 
-## Authentication
-
-* `http-auth` - By default, only Grafana supports authentication via
-  the web UI. This feature adds HTTP Basic Authentication to
-  AlertManager and Prometheus with automatically generated
-  credentials.
-
 ## Monitoring
 
 * `monitor-cf` - Have Prometheus connect to the CF Firehose to track
-  CF app status + more. Requires two UAA accounts, one with the
-  `cloud_controller.admin_read_only` scope, and the `doppler.firehose`
-  scope. To create these accounts, here's an example:
+  CF app status + more. Requires a UAA account,  with the
+  `cloud_controller.admin_read_only` and `doppler.firehose` scopes. To
+  create this account, here's an example:
 ```
 uaac client add prometheus-cf \
   --name prometheus-cf \
   --secret <64 char secret> \
   --authorized_grant_types client_credentials,refresh_token \
-  --authorities cloud_controller.admin_read_only
-
-uaac client add prometheus-firehose \
-  --name prometheus-firehose \
-  --secret <64 char secret> \
-  --authorized_grant_types client_credentials,refresh_token \
-  --authorities doppler.firehose
+  --authorities cloud_controller.admin_read_only doppler.firehose
 ```
 
-  This will add the user `prometheus-cf` and `prometheus-firehose`,
-  with the secrets of your choice. `prometheus-cf` will have the
-  `cloud_controller.admin_read_only` scope, and the
-  `prometheus-firehose` will have the `doppler.firehose` scope.
+  This will add the client `prometheus-cf` with the secrets of your
+  choice. `prometheus-cf` will have the
+  `cloud_controller.admin_read_only` and `doppler.firehose` scopes.
 
-  These credentials are stored in `$GENESIS_VAULT_PATH/cf_uaa_logins`:
-
-  *cloud_controller.admin_read_only* scope:
-  * `cf_uaa_logins:cf_exporter_client_id`
-  * `cf_uaa_logins:cf_exporter_client_secret`
-
-  *doppler.firehose* scope:
-  * `cf_uaa_logins:firehose_exporter_client_id`
-  * `cf_uaa_logins:firehose_exporter_client_secret`
+  These credentials are stored in `$GENESIS_VAULT_PATH/cf_uaa_logins`
+  as:
+  * `cf_uaa_login:client_id`
+  * `cf_uaa_login:client_secret`
 
 
 ## Params
