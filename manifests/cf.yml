@@ -30,7 +30,7 @@ instance_groups:
           subscription_id: (( grab params.env ))
           max_retry_count: 300
         uaa:
-          url:             ((concat "https://uaa." meta.cf_system_domain ))
+          url:             (( concat "https://uaa." meta.cf_system_domain ))
           client_id:       (( vault meta.vault "/cf_uaa_login:client_id" ))
           client_secret:   (( vault meta.vault "/cf_uaa_login:client_secret" ))
         metrics:

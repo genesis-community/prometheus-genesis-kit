@@ -1,6 +1,6 @@
 ---
 meta:
-  bosh_exodus_path: ((grab params.bosh_exodus_path || params.bosh || params.env))
+  bosh_exodus_path: (( grab params.bosh_exodus_path || params.bosh || params.env ))
   default:
     azs: [z1]
   prometheus_port:   (( grab params.prometheus_port   || 8080 ))
@@ -381,10 +381,10 @@ instance_groups:
     properties:
       bosh_exporter:
         bosh:
-          ca_cert:  (( vault "secret/exodus/" meta.bosh_exodus_path "/bosh:ca_cert"))
-          password: (( vault "secret/exodus/" meta.bosh_exodus_path "/bosh:admin_password"))
-          url:      ((vault "secret/exodus/" meta.bosh_exodus_path "/bosh:url"))
-          username: (( vault "secret/exodus/" meta.bosh_exodus_path "/bosh:admin_username"))
+          ca_cert:  (( vault "secret/exodus/" meta.bosh_exodus_path "/bosh:ca_cert" ))
+          password: (( vault "secret/exodus/" meta.bosh_exodus_path "/bosh:admin_password" ))
+          url:      (( vault "secret/exodus/" meta.bosh_exodus_path "/bosh:url" ))
+          username: (( vault "secret/exodus/" meta.bosh_exodus_path "/bosh:admin_username" ))
         metrics:
           environment: (( grab params.env ))
     release: prometheus
