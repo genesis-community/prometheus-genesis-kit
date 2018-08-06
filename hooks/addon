@@ -65,15 +65,12 @@ visit-graf*)
   ;;
 
   runtime*|rc)
-  echo "You'll want to target the BOSH deployment you want to monitor, and then run:"
-  echo -e "\033[1;36mbosh upload-release https://github.com/bosh-prometheus/node-exporter-boshrelease/releases/download/v4.0.1/node-exporter-4.0.1.tgz \033[0m "
-  echo
-  echo "Below is your runtime-config:"
-  echo
   cat <<EOF
 releases:
   - name: node-exporter
     version: 4.0.1
+    url: https://github.com/bosh-prometheus/node-exporter-boshrelease/releases/download/v4.0.1/node-exporter-4.0.1.tgz
+    sha1: 8f00d257838f33d5022d6c356c35d2922e75c9b4
 
 addons:
   - name: node_exporter
