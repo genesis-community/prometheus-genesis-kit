@@ -26,7 +26,7 @@ instance_groups:
   stemcell:  default
   persistent_disk_type: (( grab params.persistent_disk_type || "prometheus" ))
   networks:
-    - name:       (( grab params.network || "default" ))
+    - name:       (( grab params.network || "prometheus" ))
       static_ips: (( grab params.static_ip ))
   vm_type:        (( grab params.vm_type || "default" ))
   jobs:
