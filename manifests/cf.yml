@@ -3,7 +3,10 @@ exodus:
   monitor-cf: true
 
 meta:
-  cf_system_domain: (( vault "secret/exodus/" meta.bosh_exodus_path "/cf:system_domain" ))
+  cf_system_domain:      (( vault "secret/exodus/" meta.bosh_exodus_path "/cf:system_domain" ))
+  cf_firehose_uaa_vault: (( vault "secret/exodus/" meta.bosh_exodus_path "/cf:vaulted_uaa_clients" ))
+  uaa_client_id:         firehose
+  uaa_client_secret:     (( vault meta.cf_firehose_uaa_vault ))
 
 instance_groups:
 - name:      prometheus
@@ -14,8 +17,8 @@ instance_groups:
       cf_exporter:
         cf:
           api_url:         (( vault "secret/exodus/" meta.bosh_exodus_path "/cf:api_url" ))
-          client_id:       (( vault meta.vault "/cf_uaa_login:client_id" ))
-          client_secret:   (( vault meta.vault "/cf_uaa_login:client_secret" ))
+          client_id:       (( grab meta.uaa_client_id ))
+          client_secret:   (( grab meta.uaa_client_secret ))
           deployment_name: (( grab params.env ))
         metrics:
           environment:     (( grab params.env ))
@@ -31,8 +34,8 @@ instance_groups:
           max_retry_count: 300
         uaa:
           url:             (( concat "https://uaa." meta.cf_system_domain ))
-          client_id:       (( vault meta.vault "/cf_uaa_login:client_id" ))
-          client_secret:   (( vault meta.vault "/cf_uaa_login:client_secret" ))
+          client_id:       (( grab meta.uaa_client_id ))
+          client_secret:   (( grab meta.uaa_client_secret ))
         metrics:
           environment:     (( grab params.env ))
         skip_ssl_verify:   (( grab params.skip_ssl_validation || false ))

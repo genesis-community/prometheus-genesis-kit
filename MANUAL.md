@@ -24,26 +24,8 @@ the BOSH addon.
 ## Monitoring
 
 * `monitor-cf` - Have Prometheus connect to the CF Firehose to track
-  CF app status + more. Requires a UAA account,  with the
-  `cloud_controller.admin_read_only` and `doppler.firehose` scopes. To
-  create this account, here's an example:
-```
-uaac client add prometheus-cf \
-  --name prometheus-cf \
-  --secret <64 char secret> \
-  --authorized_grant_types client_credentials,refresh_token \
-  --authorities cloud_controller.admin_read_only doppler.firehose
-```
-
-  This will add the client `prometheus-cf` with the secrets of your
-  choice. `prometheus-cf` will have the
-  `cloud_controller.admin_read_only` and `doppler.firehose` scopes.
-
-  These credentials are stored in `$GENESIS_VAULT_PATH/cf_uaa_logins`
-  as:
-  * `cf_uaa_login:client_id`
-  * `cf_uaa_login:client_secret`
-
+  CF app status + more. Requires that the CF installation was deployed
+  with Genesis v2.6 or newer.
 
 ## Params
 

@@ -42,15 +42,6 @@ prompt_for monitor_cf boolean \
 	'Would you like to monitor a CF installation?'
 
 if [ $monitor_cf == "true" ] ; then
-  describe "" \
-  "In order to monitor CF, two UAA accounts are necessary. One with the 'cloud_controller.admin_read_only'" \
-  "permission, and another with the 'doppler.firehose' permission. For information on how to create these" \
-  "accounts, please see the MANUAL.md for this kit."
-
-  prompt_for "$GENESIS_VAULT_PREFIX/cf_uaa_login:client_id" secret-line \
-  "What is the UAA client ID?"
-  prompt_for "$GENESIS_VAULT_PREFIX/cf_uaa_login:client_secret" secret-line \
-  "What is the UAA client secret?"
   features+=("monitor-cf")
 fi
 
