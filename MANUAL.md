@@ -25,7 +25,7 @@ the BOSH addon.
 
 * `monitor-cf` - Have Prometheus connect to the CF Firehose to track
   CF app status + more. Requires that the CF installation was deployed
-  with Genesis v2.6 or newer.
+  with `cf-genesis-kit` version `1.1.0`.
 
 ## Params
 
