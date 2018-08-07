@@ -11,7 +11,7 @@ if [[ $GENESIS_DEPLOY_RC == 0 ]]; then
       echo
       echo "To visit the Prometheus page:"
       echo
-  describe "  #G{genesis do $GENESIS_ENVIRONMENT -- visit-prom}"
+  describe "  #G{genesis do $GENESIS_ENVIRONMENT -- visit-prometheus}"
       echo
       echo "To visit the Grafana page:"
       echo
@@ -19,7 +19,7 @@ if [[ $GENESIS_DEPLOY_RC == 0 ]]; then
       echo
       echo "To visit the AlertManager page:"
       echo
-  describe "  #G{genesis do $GENESIS_ENVIRONMENT -- visit-alert}"
+  describe "  #G{genesis do $GENESIS_ENVIRONMENT -- visit-alertmanager}"
       echo
       echo "To generate a node exporter runtime config:"
       echo

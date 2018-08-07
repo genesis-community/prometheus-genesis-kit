@@ -50,7 +50,8 @@ the BOSH addon.
 * `alertmanager_port` - The port for the Nginx to use to reverse proxy
   to AlertManager. (default: `8082`)
 * `external_domain` - The domain used to access this Prometheus
-  deployment. Can be either a FQDN or IP address. (default: `static_ip`)
+  deployment. Can be either a FQDN or IP address. (default: value of
+  `static_ip`)
 
 ## Cloud Config
 
