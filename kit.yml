@@ -22,4 +22,4 @@ certificates:
       ssl_certificate:
         valid_for: 1y
         names:
-        - ${params.external_domain}
+        - ${params.static_ip}
