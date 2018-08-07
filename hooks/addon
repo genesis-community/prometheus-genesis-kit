@@ -1,0 +1,92 @@
+#!/bin/bash
+set -eu
+vault="secret/$GENESIS_VAULT_PREFIX"
+target=$GENESIS_ENVIRONMENT
+
+
+list() {
+  echo "The following addons are defined:"
+  echo
+  echo "  list                List out all supported addons."
+  echo "  visit-prometheus    [shortcut: vp] Visit the Prometheus Web UI (macOS only)"
+  echo "  visit-grafana       [shortcut: vg] Visit the Grafana dashboard (macOS only)"
+  echo "  visit-alertmanager  [shortcut: va] Visit the AlertManager dashboard (macOS only)"
+  echo "  runtime-config      [shortcut: rc] Generate a runtime configuration for node-exporter"
+  echo
+}
+
+case $GENESIS_ADDON_SCRIPT in
+list)
+  list
+  exit 0
+  ;;
+
+visit-prometheus|vp)
+  if ! command -v open >/dev/null 2>&1; then
+    echo "The 'visit-prometheus' addon script only works on macOS, currently."
+    exit 1
+  fi
+  url=$(exodus prometheus_url)
+  if [[ $(exodus http_auth) == "1" ]]; then
+    password=$(safe get $vault/admin:password)
+    open "https://admin:$password@$url"
+  else
+    open "https://$url"
+  fi
+  ;;
+
+visit-alertmanager|am)
+  if ! command -v open >/dev/null 2>&1; then
+    echo "The 'visit-alertmanager' addon script only works on macOS, currently."
+    exit 1
+  fi
+  url=$(exodus alertmanager_url)
+  if [[ $(exodus http_auth) == "1" ]]; then
+    password=$(safe get $vault/admin:password)
+    open "https://admin:$password@$url"
+  else
+    open "https://$url"
+  fi
+  ;;
+
+visit-grafana|vc)
+  if ! command -v open >/dev/null 2>&1; then
+    echo "The 'visit-grafana' addon script only works on macOS, currently."
+    exit 1
+  fi
+  url=$(exodus grafana_url)
+  password=$(safe get $vault/admin:password)
+  echo "Here's the credentials you'll need to sign in: "
+  echo
+  echo -e "  \033[1m\033[1;36m username: \033[0m admin"
+  echo -e "  \033[1m\033[1;36m password: \033[0m $password"
+  echo
+  open "https://$url"
+  ;;
+
+  runtime-config|rc)
+  cat <<EOF
+releases:
+  - name: node-exporter
+    version: 4.0.1
+    url: https://github.com/bosh-prometheus/node-exporter-boshrelease/releases/download/v4.0.1/node-exporter-4.0.1.tgz
+    sha1: 8f00d257838f33d5022d6c356c35d2922e75c9b4
+
+addons:
+  - name: node_exporter
+    jobs:
+      - name: node_exporter
+        release: node-exporter
+    include:
+      stemcell:
+        - os: ubuntu-trusty
+    properties: {}
+EOF
+  ;;
+
+*)
+  echo "Unrecognized Prometheus Genesis Kit addon."
+  list
+  exit 1
+  ;;
+esac

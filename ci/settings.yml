@@ -1,6 +1,6 @@
 ---
 meta:
-  kit:     prometheus 
+  kit:     prometheus
   release: Prometheus Genesis Kit
   target:  buf
   url:     https://10.200.131.2.netip.cc
@@ -25,8 +25,8 @@ meta:
     owner:  genesis-community
     repo:   prometheus-genesis-kit
     branch: master
-    private_key:  (( vault "secret/pipelines/shared/github:private" ))
-    access_token: (( vault "secret/pipelines/shared/github:access_token" ))
+    private_key:  (( vault "secret/pipelines/shared/github/genesis-bot:private" ))
+    access_token: (( vault "secret/pipelines/shared/github/genesis-bot:access_token" ))
 
   slack:
     webhook:  (( vault "secret/slack/botspam:webhook" ))

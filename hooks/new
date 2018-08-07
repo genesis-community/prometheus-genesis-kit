@@ -1,0 +1,71 @@
+#!/bin/bash
+shopt -s nullglob
+set -eu
+
+#
+# Genesis Kit `new' Hook
+#
+
+prompt_for ip line \
+	'What static IP do you want to deploy this Prometheus server on?' \
+	--validation ip
+
+# Self-signed certs & provided certs feature
+describe "" \
+  "Prometheus will be running on HTTPS, and as such, needs an SSL cert/key."
+prompt_for ssl_cert_feature "select" \
+  "Do you have an SSL certificate for Prometheus, or do you need a self-signed cert?" \
+  -o "[provided-cert] I have my own certificate for Prometheus" \
+  -o "[self-signed-cert] Please have Genesis create a self-signed certificate for Prometheus"
+features+=("$ssl_cert_feature")
+
+case "$ssl_cert_feature" in
+  "provided-cert")
+    prompt_for "$GENESIS_VAULT_PREFIX/nginx/ssl_certificate:certificate" secret-block \
+      "What is the SSL certificate for Prometheus?"
+
+    prompt_for "$GENESIS_VAULT_PREFIX/nginx/ssl_certificate:key" secret-block \
+      "What is the SSL key for Prometheus?"
+    ;;
+esac
+
+describe "" \
+  "If you'd like to access Prometheus via a domain name, please enter it now. If you" \
+  "do not have one, and would prefer to access Prometheus via the static IP, leave " \
+  "this field empty."
+prompt_for external_domain line --default "$ip" \
+  'What is the domain you want to use to access Prometheus?' \
+
+
+# Monitoring CF Feature
+prompt_for monitor_cf boolean \
+	'Would you like to monitor a CF installation?'
+
+if [ $monitor_cf == "true" ] ; then
+  features+=("monitor-cf")
+fi
+
+
+cat <<EOF >$GENESIS_ROOT/$GENESIS_ENVIRONMENT.yml
+kit:
+  name:    $GENESIS_KIT_NAME
+  version: $GENESIS_KIT_VERSION
+  features:
+EOF
+
+for f in "${features[@]}" ; do
+  printf >>"$GENESIS_ROOT/$GENESIS_ENVIRONMENT.yml" -- '    - %s\n' "$f"
+done
+
+cat <<EOF >>$GENESIS_ROOT/$GENESIS_ENVIRONMENT.yml
+params:
+  env:   $GENESIS_ENVIRONMENT
+  vault: $GENESIS_VAULT_PREFIX
+  static_ip: $ip
+EOF
+
+# If the $external_domain was different from the default (which is $ip), then add
+# it to the env file. Otherwise, don't include it.
+if [ $ip != $external_domain ] ; then
+  printf >>"$GENESIS_ROOT/$GENESIS_ENVIRONMENT.yml" -- '  external_domain: %s\n' "$f"
+fi

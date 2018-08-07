@@ -1,3 +1,0 @@
----
-params:
-  elasticsearch_uri: (( param "Specify the URL for your ElasticSearch master node" ))

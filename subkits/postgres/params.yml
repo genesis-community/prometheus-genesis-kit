@@ -1,9 +1,0 @@
----
-meta:
-  pg_password: (( vault params.pg_password ))
-params:
-  pg_user: shield
-  pg_password: (( param "Specify the Vault path to the password for the monitored PG instance" ))
-  pg_host: (( param "Specify the IP/Hostname of the monitored PG instance" ))
-  pg_port: 5432
-  pg_sslmode: disabled

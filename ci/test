@@ -30,11 +30,30 @@ $BOSH deployments
 header "Cleaning up from any previous deployments (if necessary)..."
 cleanup ci-baseline-prometheus
 safe rm -rf secret/genesis-ci/prometheus
-# ci-baseline doesn't rely on external secrets
-# safe cp -rf secret/genesis-ci/static/prometheus secret/genesis-ci/prometheus/ci/baseline
 
 header "Deploying BASELINE environment to verify functionality..."
-genesis secrets --vault da-vault add ci-baseline
-genesis deploy -n ci-baseline
+cd dev
+genesis compile-kit --name prometheus -v 9.9.9 --force # make sure hooks are executable before screaming at shipit for failing.
+cd ..
+genesis add-secrets ci-baseline --vault da-vault
+cat ci-baseline.yml
+pwd
+ls
+cat dev/kit.yml
+genesis -v
+genesis deploy -y ci-baseline
 $BOSH -d ci-baseline-prometheus instances --ps
+header "Validating BASELINE prometheus..."
+bosh -d ci-baseline-prometheus vms
+password=$(safe get secret/genesis-ci/prometheus/ci/baseline/admin:password)
+response=$(curl -k https://admin:$password@10.200.190.135:8080/-/healthy)
+if [[ $response == "Prometheus is Healthy." ]]; then
+  cleanup ci-baseline-prometheus
+  exit 0
+fi
+echo "Expected https://10.200.190.135:8080/-/healthy to return 'Prometheus is Healthy.' but instead" \
+     "got $response"
 cleanup ci-baseline-prometheus
+exit 1
+
+
