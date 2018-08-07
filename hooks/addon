@@ -8,10 +8,10 @@ list() {
   echo "The following addons are defined:"
   echo
   echo "  list                List out all supported addons."
-  echo "  visit-prometheus    Visit the Prometheus Web UI (macOS only)"
-  echo "  visit-grafana       Visit the Grafana dashboard (macOS only)"
-  echo "  visit-alertmanager  Visit the AlertManager dashboard (macOS only)"
-  echo "  runtime-config      Generate a runtime configuration for node-exporter"
+  echo "  visit-prometheus    [shortcut: vp] Visit the Prometheus Web UI (macOS only)"
+  echo "  visit-grafana       [shortcut: vg] Visit the Grafana dashboard (macOS only)"
+  echo "  visit-alertmanager  [shortcut: va] Visit the AlertManager dashboard (macOS only)"
+  echo "  runtime-config      [shortcut: rc] Generate a runtime configuration for node-exporter"
   echo
 }
 
