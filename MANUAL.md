@@ -9,6 +9,10 @@ and Cloudfoundry.
 monitor. Please consult the README of that repository on how to setup
 the BOSH addon.
 
+[Bosh Exporter][2] requires a UAA account to access BOSH director
+information. This requires that the BOSH director was deployed with
+`bosh-genesis-kit` version `1.1.2`
+
 
 ## Features
 
@@ -61,3 +65,4 @@ also requires a `persistent_disk_type` (of about `51200MB`) to store
 graph history and Grafana DB.
 
 [1]: https://github.com/bosh-prometheus/node-exporter-boshrelease
+[2]: https://github.com/bosh-prometheus/prometheus-boshrelease
