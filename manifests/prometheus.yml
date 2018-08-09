@@ -60,7 +60,7 @@ instance_groups:
             regex: prometheus\d?
             source_labels: [ __meta_bosh_job_process_name ]
           - regex: (.*)
-            replacement: ${1}:9001
+            replacement: ${1}:9000
             source_labels: [ __address__ ]
             target_label: __address__
 
@@ -180,7 +180,7 @@ instance_groups:
             regex: grafana
             source_labels: [ __meta_bosh_job_process_name ]
           - regex: (.*)
-            replacement: ${1}:3001
+            replacement: ${1}:3000
             source_labels: [ __address__ ]
             target_label: __address__
 
