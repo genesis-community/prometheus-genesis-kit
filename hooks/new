@@ -67,5 +67,5 @@ EOF
 # If the $external_domain was different from the default (which is $ip), then add
 # it to the env file. Otherwise, don't include it.
 if [ $ip != $external_domain ] ; then
-  printf >>"$GENESIS_ROOT/$GENESIS_ENVIRONMENT.yml" -- '  external_domain: %s\n' "$f"
+  printf >>"$GENESIS_ROOT/$GENESIS_ENVIRONMENT.yml" -- '  external_domain: %s\n' "$external_domain"
 fi

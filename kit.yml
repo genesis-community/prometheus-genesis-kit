@@ -23,3 +23,4 @@ certificates:
         valid_for: 1y
         names:
         - ${params.static_ip}
+        - ${params.external_domain}
