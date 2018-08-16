@@ -11,19 +11,34 @@ fi
 
 ok=yes
 vault="secret/$GENESIS_VAULT_PREFIX"
-domain="$(lookup params.static_ip)"
+static_ip="$(lookup params.static_ip)"
+domain="$(lookup params.external_domain "$static_ip")"
 for cert in nginx/ssl_certificate; do
   if ! safe exists "$vault/$cert"; then
     describe "  #R{✘}  $vault/$cert [#Y{MISSING}]"
     ok=no
   else
-    if safe --quiet x509 validate "$vault/$cert" --for "$(lookup params.static_ip)" >/dev/null 2>&1; then
-      describe "  #G{✔}  $vault/$cert [#G{OK}]"
+    if [[ "$domain" == "$static_ip" ]]; then
+      if safe --quiet x509 validate "$vault/$cert" --for "$static_ip" >/dev/null 2>&1; then
+        describe "  #G{✔}  $vault/$cert [#G{OK}]"
+      else
+        describe "  #R{✘}  $vault/$cert [#R{INVALID}]"
+        safe x509 validate "$vault/$cert" --for "$static_ip" 2>&1 | sed -e 's/^/      /';
+        ok=no
+        echo
+      fi
     else
-      describe "  #R{✘}  $vault/$cert [#R{INVALID}]"
-      safe x509 validate "$vault/$cert" --for "*.$domain" 2>&1 | sed -e 's/^/      /';
-      ok=no
-      echo
+      if safe --quiet x509 validate "$vault/$cert" --for "$domain" >/dev/null 2>&1; then
+        describe "  #G{✔}  $vault/$cert [#G{OK}]"
+      else
+        describe "  #R{✘}  $vault/$cert [#R{INVALID}]"
+        safe x509 validate "$vault/$cert" --for "$domain" 2>&1 | sed -e 's/^/      /';
+        ok=no
+        echo
+      fi
+      if ! safe --quiet x509 validate "$vault/$cert" --for "$static_ip" >/dev/null 2>&1; then
+        describe "  #Y{Cert not valid for given ip.}  $vault/$cert [#Y{Warning}]"
+      fi
     fi
   fi
 done;
