@@ -5,13 +5,15 @@ and Cloudfoundry.
 
 ## Requirements
 
+Genesis version 2.6.8 or higher.
+
 [Node Exporter][1] must be installed on all BOSH VMs you would like to
 monitor. Please consult the README of that repository on how to setup
 the BOSH addon.
 
 [Bosh Exporter][2] requires a UAA account to access BOSH director
 information. This requires that the BOSH director was deployed with
-`bosh-genesis-kit` version `1.1.2`
+`bosh-genesis-kit` version `1.1.2` or higher.
 
 
 ## Features
@@ -29,7 +31,7 @@ information. This requires that the BOSH director was deployed with
 
 * `monitor-cf` - Have Prometheus connect to the CF Firehose to track
   CF app status + more. Requires that the CF installation was deployed
-  with `cf-genesis-kit` version `1.1.0`.
+  with `cf-genesis-kit` version `1.1.0` or higher.
 
 ## Params
 

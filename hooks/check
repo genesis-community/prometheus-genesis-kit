@@ -18,27 +18,13 @@ for cert in nginx/ssl_certificate; do
     describe "  #R{✘}  $vault/$cert [#Y{MISSING}]"
     ok=no
   else
-    if [[ "$domain" == "$static_ip" ]]; then
-      if safe --quiet x509 validate "$vault/$cert" --for "$static_ip" >/dev/null 2>&1; then
-        describe "  #G{✔}  $vault/$cert [#G{OK}]"
-      else
-        describe "  #R{✘}  $vault/$cert [#R{INVALID}]"
-        safe x509 validate "$vault/$cert" --for "$static_ip" 2>&1 | sed -e 's/^/      /';
-        ok=no
-        echo
-      fi
+    if safe --quiet x509 validate "$vault/$cert" --for "$static_ip" --for "$domain" >/dev/null 2>&1; then
+      describe "  #G{✔}  $vault/$cert [#G{OK}]"
     else
-      if safe --quiet x509 validate "$vault/$cert" --for "$domain" >/dev/null 2>&1; then
-        describe "  #G{✔}  $vault/$cert [#G{OK}]"
-      else
-        describe "  #R{✘}  $vault/$cert [#R{INVALID}]"
-        safe x509 validate "$vault/$cert" --for "$domain" 2>&1 | sed -e 's/^/      /';
-        ok=no
-        echo
-      fi
-      if ! safe --quiet x509 validate "$vault/$cert" --for "$static_ip" >/dev/null 2>&1; then
-        describe "  #Y{Cert not valid for given ip.}  $vault/$cert [#Y{Warning}]"
-      fi
+      describe "  #R{✘}  $vault/$cert [#R{INVALID}]"
+      safe x509 validate "$vault/$cert" --for "$static_ip" --for "$domain" 2>&1 | sed -e 's/^/      /';
+      ok=no
+      echo
     fi
   fi
 done;
