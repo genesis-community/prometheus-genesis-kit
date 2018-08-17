@@ -36,15 +36,15 @@ describe "" \
 prompt_for external_domain line --default "$ip" \
   'What is the domain you want to use to access Prometheus?' \
 
+# Additional monitoring. In the future we plan to have many additional monitoring
+# features, so we use a list rather than 10+ "Do you want to monitor X?" prompts.
+describe "" \
+  "By default, Prometheus will monitor VM metrics and your BOSH environment. If you want more" \
+  "detail, you can select from the following list of supported exporters to gain insight into" \
+  "software-specific metrics. Some exporters may require additional configuration."
 
-# Monitoring CF Feature
-prompt_for monitor_cf boolean \
-	'Would you like to monitor a CF installation?'
-
-if [ $monitor_cf == "true" ] ; then
-  features+=("monitor-cf")
-fi
-
+prompt_for monitor_features multi-line \
+  "What would you like to monitor? You can choose from: #G{cf}"
 
 cat <<EOF >$GENESIS_ROOT/$GENESIS_ENVIRONMENT.yml
 kit:
@@ -57,6 +57,19 @@ for f in "${features[@]}" ; do
   printf >>"$GENESIS_ROOT/$GENESIS_ENVIRONMENT.yml" -- '    - %s\n' "$f"
 done
 
+# We prompt for additional configuration values here, rather than before the
+# first `cat` for code cleanup (we're checking if monitor_features exist once
+# rather than twice) reasons.
+
+if [[ ! -z "${monitor_features:-}" ]] ; then
+  # In the future, if we have exporters that need additional configuration,
+  # those prompts would go here.
+  for monitor in "${monitor_features[@]}"; do
+    # Append feature flags to manifest
+    printf >>"$GENESIS_ROOT/$GENESIS_ENVIRONMENT.yml" -- '    - %s\n' "monitor-$monitor"
+  done
+fi
+
 cat <<EOF >>$GENESIS_ROOT/$GENESIS_ENVIRONMENT.yml
 params:
   env:   $GENESIS_ENVIRONMENT
@@ -66,6 +79,6 @@ EOF
 
 # If the $external_domain was different from the default (which is $ip), then add
 # it to the env file. Otherwise, don't include it.
-if [ $ip != $external_domain ] ; then
-  printf >>"$GENESIS_ROOT/$GENESIS_ENVIRONMENT.yml" -- '  external_domain: %s\n' "$f"
+if [[ $ip != $external_domain ]] ; then
+  printf >>"$GENESIS_ROOT/$GENESIS_ENVIRONMENT.yml" -- '  external_domain: %s\n' "$external_domain"
 fi

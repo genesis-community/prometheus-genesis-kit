@@ -27,29 +27,21 @@ visit-prometheus|vp)
     exit 1
   fi
   url=$(exodus prometheus_url)
-  if [[ $(exodus http_auth) == "1" ]]; then
-    password=$(safe get $vault/admin:password)
-    open "https://admin:$password@$url"
-  else
-    open "https://$url"
-  fi
+  password=$(safe get $vault/admin:password)
+  open "https://admin:$password@$url"
   ;;
 
-visit-alertmanager|am)
+visit-alertmanager|va)
   if ! command -v open >/dev/null 2>&1; then
     echo "The 'visit-alertmanager' addon script only works on macOS, currently."
     exit 1
   fi
   url=$(exodus alertmanager_url)
-  if [[ $(exodus http_auth) == "1" ]]; then
-    password=$(safe get $vault/admin:password)
-    open "https://admin:$password@$url"
-  else
-    open "https://$url"
-  fi
+  password=$(safe get $vault/admin:password)
+  open "https://admin:$password@$url"
   ;;
 
-visit-grafana|vc)
+visit-grafana|vg)
   if ! command -v open >/dev/null 2>&1; then
     echo "The 'visit-grafana' addon script only works on macOS, currently."
     exit 1
@@ -64,7 +56,7 @@ visit-grafana|vc)
   open "https://$url"
   ;;
 
-  runtime-config|rc)
+runtime-config|rc)
   cat <<EOF
 releases:
   - name: node-exporter

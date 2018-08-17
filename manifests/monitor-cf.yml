@@ -9,7 +9,7 @@ meta:
   uaa_client_secret:     (( vault meta.cf_firehose_uaa_vault ))
 
 instance_groups:
-- name:      prometheus
+- name: prometheus
   jobs:
   - name: cf_exporter
     release: prometheus

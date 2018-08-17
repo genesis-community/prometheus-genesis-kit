@@ -5,7 +5,7 @@ docs:    https://github.com/cloudfoundry-community/prometheus-boshrelease
 code:    https://github.com/genesis-community/prometheus-genesis-kit
 
 # 2.6.0 was our last big feature bump
-genesis_min_version: 2.6.0
+genesis_min_version: 2.6.8
 
 credentials:
   base:
@@ -23,3 +23,4 @@ certificates:
         valid_for: 1y
         names:
         - ${params.static_ip}
+        - ${maybe:params.external_domain}
