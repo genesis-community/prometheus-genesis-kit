@@ -5,7 +5,7 @@ meta:
   default:
     azs: [z1]
   prometheus_port:   (( grab params.prometheus_port   || 8080 ))
-  grafana_port:      (( grab param.grafana_port       || 443 ))
+  grafana_port:      (( grab params.grafana_port       || 443 ))
   alertmanager_port: (( grab params.alertmanager_port || 8082 ))
   base_domain:       (( grab params.external_domain   || params.static_ip ))
 
