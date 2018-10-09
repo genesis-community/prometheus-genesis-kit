@@ -59,6 +59,12 @@ information. This requires that the BOSH director was deployed with
   deployment. Can be either a FQDN or IP address. (default: value of
   `static_ip`)
 
+### `monitor-cf` Feature Configuration
+
+* `doppler_port` - The port that CF Doppler listens on. (defaut: `4443`)
+* `doppler_url` - The URL to use to connect to CF Doppler (default is extracted
+  from Genesis Exodus data, which is `doppler.` + your CF system domain)
+
 ## Cloud Config
 
 The Prometheus Genesis Kit requires a static IP address to be defined
