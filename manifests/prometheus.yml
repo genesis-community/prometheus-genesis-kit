@@ -481,17 +481,6 @@ instance_groups:
   - name: system_dashboards
     release: prometheus
 
-
-releases:
-- name: postgres
-  version: "39"
-  url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=39
-  sha1: 8ff395540e77a461322a01c41aa68973c10f1ffb
-- name: prometheus
-  version: 26.0.1
-  url: https://github.com/bosh-prometheus/prometheus-boshrelease/releases/download/v26.0.1/prometheus-26.0.1.tgz
-  sha1: 0e44b41eb8e2669b2fdeca0112a2a023221a7f54
-
 stemcells:
 - alias: default
   os: ubuntu-xenial
