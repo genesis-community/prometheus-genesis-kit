@@ -17,7 +17,7 @@ validate_features self-signed-cert provided-cert \
                   monitor-cf
 
 declare -a manifests
-manifests+=( manifests/prometheus.yml )
+manifests+=( manifests/releases.yml manifests/prometheus.yml )
 
 
 for want in ${GENESIS_REQUESTED_FEATURES}; do
