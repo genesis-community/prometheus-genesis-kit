@@ -64,6 +64,8 @@ information. This requires that the BOSH director was deployed with
 * `doppler_port` - The port that CF Doppler listens on. (defaut: `4443`)
 * `doppler_url` - The URL to use to connect to CF Doppler (default is extracted
   from Genesis Exodus data, which is `doppler.` + your CF system domain)
+* `skip_ssl_validation` - Verify the HTTPS certificates served by the CF. 
+  (default: `false`)
 
 ## Cloud Config
 
