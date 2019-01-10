@@ -43,7 +43,7 @@ information. This requires that the BOSH director was deployed with
 * `network` - The `network` that Prometheus should be deployed on.
   (default: `prometheus`)
 * `stemcell_os` - The operating system stemcell you want to deploy on.
-  (default: `ubuntu-trusty`)
+  (default: `ubuntu-xenial`)
 * `stemcell_version` - The specific version of the stemcell you want
   to deploy on. (default: `latest`)
 * `static_ip` - The static IP to assign to the VM. (no default)

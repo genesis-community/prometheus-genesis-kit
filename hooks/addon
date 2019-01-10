@@ -60,9 +60,9 @@ runtime-config|rc)
   cat <<EOF
 releases:
   - name: node-exporter
-    version: 4.0.1
-    url: https://github.com/bosh-prometheus/node-exporter-boshrelease/releases/download/v4.0.1/node-exporter-4.0.1.tgz
-    sha1: 8f00d257838f33d5022d6c356c35d2922e75c9b4
+    version: 4.1.0
+    url: https://github.com/bosh-prometheus/node-exporter-boshrelease/releases/download/v4.1.0/node-exporter-4.1.0.tgz
+    sha1: bc4f6e77b5b81b46de42119ff1a9b1cf5b159547
 
 addons:
   - name: node_exporter
@@ -72,6 +72,7 @@ addons:
     include:
       stemcell:
         - os: ubuntu-trusty
+        - os: ubuntu-xenial
     properties: {}
 EOF
   ;;
