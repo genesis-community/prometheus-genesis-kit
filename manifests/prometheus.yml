@@ -487,13 +487,13 @@ instance_groups:
 
 releases:
 - name: postgres
-  sha1: c1fcec62cb9d2e95e3b191e3c91d238e2b9d23fa
-  url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=28
-  version: "28"
+  sha1: d4e8993d5052c425692a71ea4ad43e7d9a113a4b
+  url:  https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=34
+  version: "34"
 - name: prometheus
-  sha1: 23e5f469c2e290efefde1166107f874c32374ff7
-  url: https://github.com/bosh-prometheus/prometheus-boshrelease/releases/download/v23.1.0/prometheus-23.1.0.tgz
-  version: 23.1.0
+  sha1: a42a81616affe07b1088f5546c2e150765348105
+  url:  https://github.com/bosh-prometheus/prometheus-boshrelease/releases/download/v24.0.0/prometheus-24.0.0.tgz
+  version: 24.0.0
 
 stemcells:
 - alias: default
