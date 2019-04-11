@@ -13,21 +13,21 @@ ok=yes
 vault="secret/$GENESIS_VAULT_PREFIX"
 static_ip="$(lookup params.static_ip)"
 domain="$(lookup params.external_domain "$static_ip")"
-for cert in nginx/ssl_certificate; do
-  if ! safe exists "$vault/$cert"; then
-    describe "  #R{✘}  $vault/$cert [#Y{MISSING}]"
-    ok=no
+cert="${vault}/nginx/ssl_certificate"
+
+if ! safe exists "$cert"; then
+  describe "  #R{✘} $cert [#Y{MISSING}]"
+  ok=no
+else
+  if safe --quiet x509 validate "$cert" --for "$domain" >/dev/null 2>&1; then
+    describe "  #G{✔} $cert [#G{OK}]"
   else
-    if safe --quiet x509 validate "$vault/$cert" --for "$static_ip" --for "$domain" >/dev/null 2>&1; then
-      describe "  #G{✔}  $vault/$cert [#G{OK}]"
-    else
-      describe "  #R{✘}  $vault/$cert [#R{INVALID}]"
-      safe x509 validate "$vault/$cert" --for "$static_ip" --for "$domain" 2>&1 | sed -e 's/^/      /';
-      ok=no
-      echo
-    fi
+    describe "  #R{✘} $cert [#R{INVALID}]"
+    safe x509 validate "$cert" --for "$domain" 2>&1 | sed -e 's/^/      /';
+    ok=no
+    echo
   fi
-done;
+fi
 
 if [[ "$ok" = "yes" ]]; then
   describe "  environment files [#G{OK}]"
