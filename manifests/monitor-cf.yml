@@ -32,8 +32,10 @@ instance_groups:
     release: prometheus
     properties:
       firehose_exporter:
-        doppler:
+        logging:
           url: (( grab meta.doppler_full_url ))
+          use_legacy_firehose: (( grab params.use_legacy_firehose || true ))
+        doppler:
           subscription_id: (( grab params.env ))
           max_retry_count: 300
         uaa:

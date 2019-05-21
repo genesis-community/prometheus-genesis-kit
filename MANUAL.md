@@ -66,6 +66,8 @@ information. This requires that the BOSH director was deployed with
   from Genesis Exodus data, which is `doppler.` + your CF system domain)
 * `skip_ssl_validation` - Verify the HTTPS certificates served by the CF. 
   (default: `false`)
+* `use_legacy_firehose` - If set to false, the firehose exporter will use
+  the v2 loggregator API found in new Cloud Foundry deployments.
 
 ## Cloud Config
 
