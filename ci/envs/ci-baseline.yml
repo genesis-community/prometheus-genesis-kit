@@ -7,10 +7,8 @@ kit:
 
 params:
   env:   ci-baseline
-  vault: genesis-ci/prometheus/ci/baseline
   bosh:  genesis-ci
-  network: genesis-ci
-  external_domain: 10.200.190.135
+
+  external_domain:      10.128.8.132
+  static_ip:            10.128.8.132
   persistent_disk_type: default
-  static_ip: 10.200.190.135
-  bosh_exodus_path: buffalo-lab

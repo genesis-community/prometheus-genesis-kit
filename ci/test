@@ -1,5 +1,6 @@
 #!/bin/bash
 set -eu
+KIT=prometheus
 
 header() {
 	echo
@@ -21,39 +22,29 @@ cleanup() {
 	done
 }
 
-header "Validating BOSH_* environment variables..."
-set | grep BOSH_ || true
-
 header "Checking previous deployments on ${BOSH_ENVIRONMENT}..."
 $BOSH deployments
 
 header "Cleaning up from any previous deployments (if necessary)..."
-cleanup ci-baseline-prometheus
-safe rm -rf secret/genesis-ci/prometheus
+cleanup ci-baseline-${KIT}
+safe rm -rf secret/ci/baseline/${KIT}
 
 header "Deploying BASELINE environment to verify functionality..."
 cd dev
-genesis compile-kit --name prometheus -v 9.9.9 --force # make sure hooks are executable before screaming at shipit for failing.
+# make sure hooks are executable before screaming at shipit for failing.
+genesis compile-kit --name $KIT -v 9.9.9 --force
 cd ..
-genesis add-secrets ci-baseline 
-cat ci-baseline.yml
-pwd
-ls
-cat dev/kit.yml
-genesis -v
+genesis add-secrets ci-baseline
 genesis deploy -y ci-baseline
-$BOSH -d ci-baseline-prometheus instances --ps
-header "Validating BASELINE prometheus..."
-bosh -d ci-baseline-prometheus vms
-password=$(safe get secret/genesis-ci/prometheus/ci/baseline/admin:password)
-response=$(curl -k https://admin:$password@10.200.190.135:8080/-/healthy)
-if [[ $response == "Prometheus is Healthy." ]]; then
-  cleanup ci-baseline-prometheus
-  exit 0
+$BOSH -d ci-baseline-${KIT} instances --ps
+
+header "Validating BASELINE environment..."
+password=$(safe get secret/ci/baseline/prometheus/admin:password)
+response=$(curl -k https://admin:$password@10.128.8.132:8080/-/healthy)
+if [[ $response != "Prometheus is Healthy." ]]; then
+	echo "https://<prometheus-ip>:8080/-/healthy:"
+	echo "expected 'Prometheus is Healthy.'"
+	echo "     got '$response'"
+	exit 1
 fi
-echo "Expected https://10.200.190.135:8080/-/healthy to return 'Prometheus is Healthy.' but instead" \
-     "got $response"
-cleanup ci-baseline-prometheus
-exit 1
-
-
+cleanup ci-baseline-${KIT}
