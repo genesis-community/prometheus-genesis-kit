@@ -11,5 +11,5 @@ params:
   static_ip:            10.128.8.132
   persistent_disk_type: default
   bosh:  snw-genesis-ci
-  network: genesis-ci
+  network: prometheus
   bosh_exodus_path: snw-genesis-ci
