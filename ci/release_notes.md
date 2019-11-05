@@ -15,7 +15,7 @@
 
 # Upgrading
 
-This release bumps the version of Postgres from 11.3 to 11.4. To facilitate a
+This release bumps the version of Postgres from 11.3 to 11.5. To facilitate a
 clean upgrade, please upgrade to kit version 1.4.0 before upgrading to
 this version.
 
@@ -24,6 +24,6 @@ this version.
 | Release                | Version | Release Date |
 | ---------------------- | ------- |----------|
 | prometheus-boshrelease | [26.0.1](https://github.com/bosh-prometheus/prometheus-boshrelease/releases/tag/v26.0.1) | Oct 30, 2019 |
-| postgres-release       | [38](https://github.com/cloudfoundry/postgres-release/releases/tag/v38) | Jun 21, 2019 |
+| postgres-release       | [39](https://github.com/cloudfoundry/postgres-release/releases/tag/v39) | Aug 13, 2019 |
 | node-exporter          | [4.2.0](https://github.com/bosh-prometheus/node-exporter-boshrelease/releases/tag/v4.2.0) | Aug 29, 2019 |
 
