@@ -148,6 +148,7 @@ instance_groups:
         - job_name: concourse
           file_sd_configs:
           - files: [ /var/vcap/store/bosh_exporter/bosh_target_groups.json ]
+          metrics_path: "/"
           relabel_configs:
           - action: keep
             regex: web
