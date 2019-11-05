@@ -23,7 +23,7 @@ instance_groups:
           api_url:         (( vault "secret/exodus/" meta.bosh_exodus_path "/cf:api_url" ))
           client_id:       (( grab meta.uaa_client_id ))
           client_secret:   (( grab meta.uaa_client_secret ))
-          deployment_name: (( grab params.env ))
+          deployment_name: (( concat params.env "-cf" ))
         metrics:
           environment:     (( grab params.env ))
         skip_ssl_verify:   (( grab params.skip_ssl_validation || false ))
