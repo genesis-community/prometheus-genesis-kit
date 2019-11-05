@@ -427,12 +427,8 @@ instance_groups:
           admin_user: admin
           admin_password: (( vault meta.vault "/admin:password" ))
           secret_key: (( vault meta.vault "/admin:secret_key" ))
-        session:
-          provider: postgres
-          provider_name: grafana
-          provider_password: (( vault meta.vault "/grafanadb:password" ))
-          provider_port: 5432
-          provider_user: grafana
+        remote_cache:
+          type: database
 
   - name: postgres
     release: postgres
