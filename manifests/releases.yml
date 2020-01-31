@@ -1,10 +1,10 @@
 releases:
 - name:    postgres
-  version: "39"
+  version: "40"
   url:     (( concat "https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=" releases.postgres.version ))
-  sha1:    8ff395540e77a461322a01c41aa68973c10f1ffb
+  sha1:    343f04f1594c57ecea65638802e94e311cd72688
 
 - name:    prometheus
-  version: 26.1.0
-  url:     (( concat "https://github.com/bosh-prometheus/prometheus-boshrelease/releases/download/v" releases.prometheus.version "/prometheus-" releases.prometheus.version ".tgz" ))
-  sha1:    cc4087422e1f9c3c2e8fd553a1f9f81d9fcb380d
+  version: 26.2.0
+  url:     (( concat "https://bosh.io/d/github.com/cloudfoundry-community/prometheus-boshrelease?v=" releases.prometheus.version ))
+  sha1:    9a57a9c74ebcb53baaa9cf8eb22f8ef353460169
