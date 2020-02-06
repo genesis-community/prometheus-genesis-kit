@@ -7,10 +7,7 @@ meta:
   cf_firehose_uaa_vault: (( vault "secret/exodus/" meta.bosh_exodus_path "/cf:vaulted_uaa_clients" ))
   uaa_client_id:         firehose
   uaa_client_secret:     (( vault meta.cf_firehose_uaa_vault ))
-  doppler_default_url:   (( concat "doppler." meta.cf_system_domain ))
-  doppler_url:           (( grab params.doppler_url  || meta.doppler_default_url ))
-  doppler_port:          (( grab params.doppler_port || 4443 ))
-  doppler_full_url:      (( concat "wss://" meta.doppler_url ":" meta.doppler_port ))
+  default_rlp_gateway_url: (( concat "https://log-stream." meta.cf_system_domain ))
 
 instance_groups:
 - name: prometheus
@@ -20,7 +17,7 @@ instance_groups:
     properties:
       cf_exporter:
         cf:
-          api_url:         (( vault "secret/exodus/" meta.bosh_exodus_path "/cf:api_url" ))
+          api_url:         (( grab params.rlp_gateway_url || meta.default_rlp_gateway_url ))
           client_id:       (( grab meta.uaa_client_id ))
           client_secret:   (( grab meta.uaa_client_secret ))
           deployment_name: (( concat params.env "-cf" ))
@@ -34,7 +31,7 @@ instance_groups:
       firehose_exporter:
         logging:
           url: (( grab meta.doppler_full_url ))
-          use_legacy_firehose: (( grab params.use_legacy_firehose || true ))
+          use_legacy_firehose: false
         doppler:
           subscription_id: (( grab params.env ))
           max_retry_count: 300

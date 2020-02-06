@@ -1,0 +1,13 @@
+meta:
+  doppler_default_url:   (( concat "doppler." meta.cf_system_domain ))
+  doppler_url:           (( grab params.doppler_url  || meta.doppler_default_url ))
+  doppler_port:          (( grab params.doppler_port || 4443 ))
+  doppler_full_url:      (( concat "wss://" meta.doppler_url ":" meta.doppler_port ))
+
+instance_groups:
+- name: firehose_exporter
+  properties:
+    firehose_exporter:
+      logging:
+        url: (( grab meta.doppler_full_url ))
+        use_legacy_firehose: true
