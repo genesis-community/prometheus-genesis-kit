@@ -14,7 +14,7 @@ set -eu
 
 
 validate_features self-signed-cert provided-cert \
-                  monitor-cf
+                  monitor-cf legacy-firehose
 
 declare -a manifests
 manifests+=( manifests/releases.yml manifests/prometheus.yml )
@@ -24,6 +24,15 @@ for want in ${GENESIS_REQUESTED_FEATURES}; do
   case "$want" in
     monitor-*)
       manifests+=( manifests/${want}.yml )
+      ;;
+
+    legacy-firehose)
+      if want_feature monitor-cf; then
+        manifests+=( manifests/legacy-firehose.yml )
+      else
+        printf >&2 "legacy-firehose feature only applicable if monitor-cf feature is active"
+        exit 2
+      fi
       ;;
     esac
 done
