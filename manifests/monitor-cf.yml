@@ -17,7 +17,7 @@ instance_groups:
     properties:
       cf_exporter:
         cf:
-          api_url:         (( grab params.rlp_gateway_url || meta.default_rlp_gateway_url ))
+          api_url:         (( vault "secret/exodus/" meta.bosh_exodus_path "/cf:api_url" ))
           client_id:       (( grab meta.uaa_client_id ))
           client_secret:   (( grab meta.uaa_client_secret ))
           deployment_name: (( concat params.env "-cf" ))
@@ -30,7 +30,7 @@ instance_groups:
     properties:
       firehose_exporter:
         logging:
-          url: (( grab meta.doppler_full_url ))
+          url: (( grab params.rlp_gateway_url || meta.default_rlp_gateway_url ))
           use_legacy_firehose: false
         doppler:
           subscription_id: (( grab params.env ))
