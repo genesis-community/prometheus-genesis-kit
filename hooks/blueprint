@@ -22,7 +22,8 @@ manifests+=( manifests/releases.yml manifests/prometheus.yml )
 for want in ${GENESIS_REQUESTED_FEATURES}; do
   case "$want" in
     monitor-cf)
-      cf_version="$(safe get secret/exodus/snw-dbell-lab2/cf2:kit_version)"
+      cf_exodus_path="$(lookup params.cf_exodus_path "$GENESIS_ENVIRONMENT/cf")"
+      cf_version="$(safe get "${GENESIS_EXODUS_MOUNT}${cf_exodus_path}:kit_version")"
       if [[ "$cf_version" =~ ^2. ]] ; then
         manifests+=( manifests/monitor-cf-v2.yml )
         want_feature legacy-firehose && bail "legacy-firehose is not available for cf v2.x deployments"
