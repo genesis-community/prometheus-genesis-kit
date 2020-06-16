@@ -1,0 +1,77 @@
+---
+exodus:
+  monitor-cf: true
+
+meta:
+  default_cf_exodus_path:     (( concat $GENESIS_ENVIRONMENT "/cf" ))
+  default_cf_deployment_name: (( concat $GENESIS_ENVIRONMENT "-cf" ))
+  cf_exodus_path:             (( grab params.cf_exodus_path || meta.default_cf_exodus_path ))
+  cf_exodus_src:              (( concat $GENESIS_EXODUS_MOUNT meta.cf_exodus_path ":" ))
+  cf_system_domain:           (( vault meta.cf_exodus_src "system_domain" ))
+  cf_exporter_username:       cf_exporter
+  cf_exporter_secret:         (( vault meta.cf_exodus_src "cf_exporter_secret" ))
+  firehose_exporter_username: firehose_exporter
+  firehose_exporter_secret:   (( vault meta.cf_exodus_src "firehose_exporter_secret" ))
+  default_urls:
+    rlp_gateway: (( concat "https://log-stream." meta.cf_system_domain ))
+    api:         (( concat "https://api." meta.cf_system_domain ))
+    uaa:         (( concat "https://uaa." meta.cf_system_domain ))
+
+instance_groups:
+- name: prometheus
+  jobs:
+  - name: cf_exporter
+    release: prometheus
+    properties:
+      cf_exporter:
+        cf:
+          api_url:         (( grab params.cf_api_url || meta.default_urls.api ))
+          client_id:       (( grab params.cf_exporter_client_id || meta.cf_exporter_username ))
+          client_secret:   (( grab meta.cf_exporter_secret ))
+          deployment_name: (( grab params.cf_deployment_name || meta.default_cf_deployment_name ))
+        metrics:
+          environment:     (( grab genesis.env ))
+        skip_ssl_verify:   (( grab params.skip_ssl_validation || false ))
+
+  - name: firehose_exporter
+    release: prometheus
+    properties:
+      firehose_exporter:
+        logging:
+          url: (( grab params.rlp_gateway_url || meta.default_urls.rlp_gateway ))
+          use_legacy_firehose: false
+        doppler:
+          subscription_id: (( grab genesis.env ))
+          max_retry_count: 300
+        uaa:
+          url:             (( grab params.uaa_url || meta.default_urls.uaa ))
+          client_id:       (( grab meta.firehose_exporter_username ))
+          client_secret:   (( grab meta.firehose_exporter_secret ))
+        metrics:
+          environment:     (( grab genesis.env ))
+        skip_ssl_verify:   (( grab params.skip_ssl_validation || false ))
+
+
+  - name: cloudfoundry_dashboards
+    release: prometheus
+  - name: cloudfoundry_alerts
+    release: prometheus
+
+  - name: grafana
+    properties:
+      grafana:
+        prometheus:
+          dashboard_folders:
+          - name: Cloudfoundry
+            files:
+            - /var/vcap/jobs/cloudfoundry_dashboards/cf*.json
+          - name: Prometheus
+            files:
+            - /var/vcap/jobs/cloudfoundry_dashboards/prometheus*.json
+
+
+  - name: prometheus2
+    properties:
+      prometheus:
+        rule_files:
+        - /var/vcap/jobs/cloudfoundry_alerts/*.alerts.yml

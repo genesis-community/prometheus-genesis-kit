@@ -1,0 +1,57 @@
+exodus:
+  monitor-credhub: true
+
+meta:
+  default_credhub_exodus_path:     (( concat $GENESIS_ENVIRONMENT "/bosh" ))
+  default_credhub_deployment_name: (( concat $GENESIS_ENVIRONMENT "-bosh" ))
+  credhub_exodus_path:             (( grab params.credhub_exodus_path || meta.default_credhub_exodus_path ))
+  credhub_exodus_src:              (( concat $GENESIS_EXODUS_MOUNT meta.credhub_exodus_path ":" ))
+  credhub_exporter_api_url:        (( vault meta.credhub_exodus_src "credhub_url" ))
+  credhub_exporter_username:       (( vault meta.credhub_exodus_src "credhub_username" ))
+  credhub_exporter_password:       (( vault meta.credhub_exodus_src "credhub_password" ))
+  credhub_exporter_ca_cert:        (( vault meta.credhub_exodus_src "credhub_ca_cert" ))
+# Exporter jobs
+instance_groups:
+- name: prometheus
+  jobs:
+  - name: credhub_exporter
+    release: prometheus
+    properties:
+      credhub_exporter:
+        credhub:
+          api_url:       (( grab params.credhub_exporter_api_url  || meta.credhub_exporter_api_url ))
+          client_id:     (( grab params.credhub_exporter_username || meta.credhub_exporter_username ))
+          client_secret: (( grab params.credhub_exporter_password || meta.credhub_exporter_password ))
+          ca_certs:      (( grab params.credhub_exporter_ca_cert  || meta.credhub_exporter_ca_cert ))
+        metrics:
+          deployment:    (( grab params.credhub_exporter_deployment_name || meta.default_credhub_deployment_name ))
+          environment:   genesis.env
+        skip_ssl_verify: (( grab params.skip_ssl_validation || false ))
+        filters:
+          generic-certificates:
+            - "/static/.*"
+
+  - name: credhub_alerts
+    release: prometheus
+
+  - name: credhub_dashboards
+    release: prometheus
+
+  - name: prometheus2
+    properties:
+      prometheus:
+        rule_files:
+        - (( append ))
+        - /var/vcap/jobs/credhub_alerts/*.alerts.yml
+
+  - name: grafana
+    jobs:
+    - name: grafana
+      properties:
+        graphana:
+          prometheus:
+            dashboard_folders:
+            - name: BOSH
+              files:
+              - (( append ))
+              - /var/vcap/jobs/credhub_dashboards/*.json

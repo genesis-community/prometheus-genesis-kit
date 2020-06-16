@@ -4,12 +4,15 @@ kit:
   version: latest
   features:
     - self-signed-cert
+    - monitor-cf
 
 genesis:
-  env: base
+  env: monitorcf-v2
 
 params:
   external_domain:      test.domain
   static_ip:            10.1.1.1
   persistent_disk_type: default
   network: prometheus
+
+  cf_system_domain: cf.test.domain

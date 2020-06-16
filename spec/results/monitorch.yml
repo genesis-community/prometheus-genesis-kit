@@ -1,7 +1,8 @@
 exodus:
   alertmanager_url: test.domain:8082
-  features: ""
+  features: self-signed-cert,monitor-credhub
   grafana_url: test.domain:443
+  monitor-credhub: true
   prometheus_url: test.domain:8080
 instance_groups:
 - azs:
@@ -25,6 +26,7 @@ instance_groups:
         - /var/vcap/jobs/postgres_alerts/*.alerts.yml
         - /var/vcap/jobs/prometheus_alerts/*.alerts.yml
         - /var/vcap/jobs/bosh_alerts/*.alerts.yml
+        - /var/vcap/jobs/credhub_alerts/*.alerts.yml
         scrape_configs:
         - file_sd_configs:
           - files:
@@ -415,9 +417,18 @@ instance_groups:
             client_secret: barfoo
           url: https://mybosh.com
         metrics:
-          environment: basecert
+          environment: monitorch
     release: prometheus
-  - name: grafana
+  - jobs:
+    - name: grafana
+      properties:
+        graphana:
+          prometheus:
+            dashboard_folders:
+            - files:
+              - /var/vcap/jobs/credhub_dashboards/*.json
+              name: BOSH
+    name: grafana
     properties:
       grafana:
         dashboards: null
@@ -502,6 +513,26 @@ instance_groups:
     release: prometheus
   - name: system_dashboards
     release: prometheus
+  - name: credhub_exporter
+    properties:
+      credhub_exporter:
+        credhub:
+          api_url: https://10.0.0.1:8844
+          ca_certs: credhub_tls.certificate
+          client_id: credhub_cli_user
+          client_secret: credhub_cli_user_password
+        filters:
+          generic-certificates:
+          - /static/.*
+        metrics:
+          deployment: monitorch-bosh
+          environment: genesis.env
+        skip_ssl_verify: false
+    release: prometheus
+  - name: credhub_alerts
+    release: prometheus
+  - name: credhub_dashboards
+    release: prometheus
   name: prometheus
   networks:
   - name: prometheus
@@ -509,7 +540,7 @@ instance_groups:
   persistent_disk_type: default
   stemcell: default
   vm_type: default
-name: basecert-prometheus
+name: monitorch-prometheus
 releases:
 - name: postgres
   sha1: 0a9e4ad424f2ad9611dd1d3f387cc12ed7b71ee4

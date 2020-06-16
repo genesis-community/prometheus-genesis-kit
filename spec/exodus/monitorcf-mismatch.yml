@@ -1,0 +1,31 @@
+secret/exodus/monitorcf-mismatch/bosh:
+  ca_cert: "mycert"
+  url: "https://mybosh.com"
+  vault_base: /secret/monitorcf-mismatch/bosh
+
+secret/exodus/monitorcf-mismatch/cf:
+  api_url:         "https://api.test.cf.domain"
+  admin_username:  admin
+  admin_password:  admin_password
+  system_domain:   sys.test.cf.domain
+  app_domain:      run.sys.test.cf.domain
+  app_domains[0]:  run.sys.test.cf.domain
+  base_domain:     test.cf.domain
+  core_network:    cf_core
+  edge_network:    cf_edge
+  runtime_network: cf_runtime
+  self-signed:     true
+
+  cf_exporter_secret: "cf_exporter.secret"
+  firehose_exporter_secret: "firehose_exporter.secret"
+
+  kit_version: 2.0.0
+
+  system_org:   system
+  system_space: system
+
+secret/monitorcf-mismatch/bosh/uaa/clients/prometheus:
+  secret: barfoo
+
+secret/monitorcf-mismatch/cf/uaa/client_secrets:
+  firehose: firehose-ep-pw

@@ -1,14 +1,14 @@
-bosh:
+secret/exodus/basecert/bosh:
   ca_cert: "mycert"
   url: "https://mybosh.com"
-  vault_base: /secret/base/bosh
+  vault_base: /secret/basecert/bosh
 
-cf:
+secret/exodus/basecert/cf:
   system_domain: sys.test.cf.domain
   api_url: api.test.cf.domain
-  vaulted_uaa_clients: secret/base/bosh/uaa/clients/prometheus:secret
+  vaulted_uaa_clients: secret/basecert/bosh/uaa/clients/prometheus:secret
 
-secret/base/bosh/uaa/clients/prometheus:
+secret/basecert/bosh/uaa/clients/prometheus:
   secret: barfoo
 
 secret/basecert/prometheus/nginx/ssl_certificate:

@@ -8,13 +8,12 @@ kit:
     - legacy-firehose
 
 genesis:
-  env: monitorcf    
+  env: monitorcf
 
 params:
   external_domain:      test.domain
   static_ip:            10.1.1.1
   persistent_disk_type: default
   network: prometheus
-  bosh_exodus_path: monitorcf/prometheus
 
   cf_system_domain: cf.test.domain

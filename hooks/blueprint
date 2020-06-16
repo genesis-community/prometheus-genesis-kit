@@ -13,30 +13,40 @@ set -eu
 # zero exit code otherwise).
 
 
-validate_features self-signed-cert provided-cert \
-                  monitor-cf legacy-firehose
+validate_features self-signed-cert +provided-cert \
+                  monitor-cf monitor-credhub legacy-firehose
 
 declare -a manifests
 manifests+=( manifests/prometheus.yml
              manifests/releases/postgres.yml
              manifests/releases/prometheus.yml )
 
-
 for want in ${GENESIS_REQUESTED_FEATURES}; do
   case "$want" in
+    monitor-cf)
+      cf_exodus_path="$(lookup params.cf_exodus_path "$GENESIS_ENVIRONMENT/cf")"
+      cf_version='1.0.0'
+      if safe exists --quiet "${GENESIS_EXODUS_MOUNT}${cf_exodus_path}:kit_version" ; then
+        cf_version="$(safe get --quiet "${GENESIS_EXODUS_MOUNT}${cf_exodus_path}:kit_version")"
+      fi
+      if [[ "$cf_version" =~ ^2. ]] ; then
+        manifests+=( manifests/monitor-cf-v2.yml )
+        want_feature legacy-firehose && bail "legacy-firehose is not available for cf v2.x deployments"
+      else
+        manifests+=( manifests/monitor-cf.yml )
+        want_feature legacy-firehose && manifests+=( manifests/legacy-firehose.yml )
+      fi
+      ;;
+
     monitor-*)
-      manifests+=( manifests/${want}.yml )
+      manifests+=( "manifests/${want}.yml" )
       ;;
 
     legacy-firehose)
-      if want_feature monitor-cf; then
-        manifests+=( manifests/legacy-firehose.yml )
-      else
-        printf >&2 "legacy-firehose feature only applicable if monitor-cf feature is active"
-        exit 2
-      fi
+      want_feature monitor-cf || bail "legacy-firehose feature only applicable if monitor-cf feature is active"
       ;;
+
     esac
 done
 
-echo ${manifests[@]}
+echo "${manifests[@]}"

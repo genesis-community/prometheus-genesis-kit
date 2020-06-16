@@ -510,9 +510,9 @@ instance_groups:
     properties:
       cf_exporter:
         cf:
-          api_url: api.test.cf.domain
+          api_url: https://api.test.cf.domain
           client_id: firehose
-          client_secret: barfoo
+          client_secret: firehose-ep-pw
           deployment_name: monitorcf-cf
         metrics:
           environment: monitorcf
@@ -532,7 +532,7 @@ instance_groups:
         skip_ssl_verify: false
         uaa:
           client_id: firehose
-          client_secret: barfoo
+          client_secret: firehose-ep-pw
           url: https://uaa.sys.test.cf.domain
     release: prometheus
   - name: cloudfoundry_dashboards

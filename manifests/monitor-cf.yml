@@ -3,10 +3,15 @@ exodus:
   monitor-cf: true
 
 meta:
-  cf_system_domain:      (( vault "secret/exodus/" meta.bosh_exodus_path "/cf:system_domain" ))
-  cf_firehose_uaa_vault: (( vault "secret/exodus/" meta.bosh_exodus_path "/cf:vaulted_uaa_clients" ))
-  uaa_client_id:         firehose
-  uaa_client_secret:     (( vault meta.cf_firehose_uaa_vault ))
+  base_cf_env:             (( grab params.cf_env || genesis.env || params.env ))
+  default_cf_exodus_path:  (( concat meta.base_cf_env "/cf" ))
+  cf_exodus_path:          (( grab params.cf_exodus_path || meta.default_cf_exodus_path ))
+  cf_exodus_src:           (( concat  $GENESIS_EXODUS_MOUNT meta.cf_exodus_path ":" ))
+
+  cf_system_domain:        (( vault meta.cf_exodus_src "system_domain" ))
+  cf_firehose_uaa_vault:   (( vault meta.cf_exodus_src "vaulted_uaa_clients" ))
+  uaa_client_id:           firehose
+  uaa_client_secret:       (( vault meta.cf_firehose_uaa_vault ))
   default_rlp_gateway_url: (( concat "https://log-stream." meta.cf_system_domain ))
 
 instance_groups:
@@ -17,12 +22,12 @@ instance_groups:
     properties:
       cf_exporter:
         cf:
-          api_url:         (( vault "secret/exodus/" meta.bosh_exodus_path "/cf:api_url" ))
+          api_url:         (( vault meta.cf_exodus_src "api_url" ))
           client_id:       (( grab meta.uaa_client_id ))
           client_secret:   (( grab meta.uaa_client_secret ))
-          deployment_name: (( concat params.env "-cf" ))
+          deployment_name: (( concat meta.base_cf_env "-cf" ))
         metrics:
-          environment:     (( grab params.env ))
+          environment:     (( grab genesis.env ))
         skip_ssl_verify:   (( grab params.skip_ssl_validation || false ))
 
   - name: firehose_exporter
@@ -33,14 +38,14 @@ instance_groups:
           url: (( grab params.rlp_gateway_url || meta.default_rlp_gateway_url ))
           use_legacy_firehose: false
         doppler:
-          subscription_id: (( grab params.env ))
+          subscription_id: (( grab genesis.env ))
           max_retry_count: 300
         uaa:
           url:             (( concat "https://uaa." meta.cf_system_domain ))
           client_id:       (( grab meta.uaa_client_id ))
           client_secret:   (( grab meta.uaa_client_secret ))
         metrics:
-          environment:     (( grab params.env ))
+          environment:     (( grab genesis.env ))
         skip_ssl_verify:   (( grab params.skip_ssl_validation || false ))
 
 

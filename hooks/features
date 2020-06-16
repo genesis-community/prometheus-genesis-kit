@@ -1,0 +1,3 @@
+#!/bin/bash
+echo "$GENESIS_REQUESTED_FEATURES"
+want_feature "self-signed-cert" || echo "+provided-cert"

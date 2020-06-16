@@ -1,7 +1,10 @@
 ---
 meta:
-  bosh_exodus_path: (( grab params.bosh_exodus_path || params.bosh || params.env ))
-  bosh_uaa_clients: (( vault "secret/exodus/" meta.bosh_exodus_path "/bosh:vault_base" ))
+  base_bosh_env:            (( grab genesis.bosh_env || params.bosh || genesis.env || params.env ))
+  default_bosh_exodus_path: (( concat meta.base_bosh_env "/bosh" ))
+  bosh_exodus_path:         (( grab params.bosh_exodus_path || meta.default_bosh_exodus_path ))
+  bosh_exodus_src:          (( concat  $GENESIS_EXODUS_MOUNT  meta.bosh_exodus_path ":" ))
+  bosh_uaa_clients:         (( vault meta.bosh_exodus_src "vault_base" ))
   default:
     azs: [z1]
   prometheus_port:   (( grab params.prometheus_port   || 8080 ))
@@ -383,13 +386,13 @@ instance_groups:
     properties:
       bosh_exporter:
         bosh:
-          ca_cert: (( vault "secret/exodus/" meta.bosh_exodus_path "/bosh:ca_cert" ))
-          url:     (( vault "secret/exodus/" meta.bosh_exodus_path "/bosh:url" ))
+          ca_cert: (( vault meta.bosh_exodus_src "ca_cert" ))
+          url:     (( vault meta.bosh_exodus_src "url" ))
           uaa:
             client_id:     prometheus
             client_secret: (( vault meta.bosh_uaa_clients "/uaa/clients/prometheus:secret" ))
         metrics:
-          environment:     (( grab params.env ))
+          environment:     (( grab genesis.env ))
     release: prometheus
 
   - name: grafana

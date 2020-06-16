@@ -1,7 +1,8 @@
 exodus:
   alertmanager_url: test.domain:8082
-  features: ""
+  features: self-signed-cert,monitor-cf
   grafana_url: test.domain:443
+  monitor-cf: true
   prometheus_url: test.domain:8080
 instance_groups:
 - azs:
@@ -22,7 +23,7 @@ instance_groups:
     properties:
       prometheus:
         rule_files:
-        - /var/vcap/jobs/postgres_alerts/*.alerts.yml
+        - /var/vcap/jobs/cloudfoundry_alerts/*.alerts.yml
         - /var/vcap/jobs/prometheus_alerts/*.alerts.yml
         - /var/vcap/jobs/bosh_alerts/*.alerts.yml
         scrape_configs:
@@ -415,7 +416,7 @@ instance_groups:
             client_secret: barfoo
           url: https://mybosh.com
         metrics:
-          environment: basecert
+          environment: monitorcf-v2
     release: prometheus
   - name: grafana
     properties:
@@ -437,7 +438,7 @@ instance_groups:
             - /var/vcap/jobs/postgres_dashboards/*.json
             name: PostgreSQL
           - files:
-            - /var/vcap/jobs/prometheus_dashboards/*.json
+            - /var/vcap/jobs/cloudfoundry_dashboards/prometheus*.json
             - /var/vcap/jobs/bosh_dashboards/prometheus*.json
             name: Prometheus
           - files:
@@ -447,6 +448,9 @@ instance_groups:
           - files:
             - /var/vcap/jobs/system_dashboards/system*.json
             name: System
+          - files:
+            - /var/vcap/jobs/cloudfoundry_dashboards/cf*.json
+            name: Cloudfoundry
         remote_cache:
           type: database
         security:
@@ -502,6 +506,39 @@ instance_groups:
     release: prometheus
   - name: system_dashboards
     release: prometheus
+  - name: cf_exporter
+    properties:
+      cf_exporter:
+        cf:
+          api_url: https://api.sys.test.cf.domain
+          client_id: cf_exporter
+          client_secret: cf_exporter.secret
+          deployment_name: monitorcf-v2-cf
+        metrics:
+          environment: monitorcf-v2
+        skip_ssl_verify: false
+    release: prometheus
+  - name: firehose_exporter
+    properties:
+      firehose_exporter:
+        doppler:
+          max_retry_count: 300
+          subscription_id: monitorcf-v2
+        logging:
+          url: https://log-stream.sys.test.cf.domain
+          use_legacy_firehose: false
+        metrics:
+          environment: monitorcf-v2
+        skip_ssl_verify: false
+        uaa:
+          client_id: firehose_exporter
+          client_secret: firehose_exporter.secret
+          url: https://uaa.sys.test.cf.domain
+    release: prometheus
+  - name: cloudfoundry_dashboards
+    release: prometheus
+  - name: cloudfoundry_alerts
+    release: prometheus
   name: prometheus
   networks:
   - name: prometheus
@@ -509,7 +546,7 @@ instance_groups:
   persistent_disk_type: default
   stemcell: default
   vm_type: default
-name: basecert-prometheus
+name: monitorcf-v2-prometheus
 releases:
 - name: postgres
   sha1: 0a9e4ad424f2ad9611dd1d3f387cc12ed7b71ee4

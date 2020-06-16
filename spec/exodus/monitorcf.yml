@@ -1,0 +1,26 @@
+secret/exodus/monitorcf/bosh:
+  ca_cert: "mycert"
+  url: "https://mybosh.com"
+  vault_base: /secret/monitorcf/bosh
+
+secret/exodus/monitorcf/cf:
+  api_url:        "https://api.test.cf.domain"
+  admin_username: admin
+  admin_password: admin_password
+  system_domain:  sys.test.cf.domain
+  app_domain:     run.sys.test.cf.domain
+  app_domains[0]: run.sys.test.cf.domain
+
+  vaulted_uaa_clients: "secret/monitorcf/cf/uaa/client_secrets:firehose"
+
+  system_org:   system
+  system_space: system
+
+  autoscaler_enabled: false
+  self-signed:        true
+
+secret/monitorcf/bosh/uaa/clients/prometheus:
+  secret: barfoo
+
+secret/monitorcf/cf/uaa/client_secrets:
+  firehose: firehose-ep-pw

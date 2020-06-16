@@ -1,0 +1,11 @@
+secret/exodus/monitorch/bosh:
+  ca_cert: "mycert"
+  url: "https://mybosh.com"
+  vault_base: /secret/monitorch/bosh
+  credhub_ca_cert: credhub_tls.certificate
+  credhub_password: credhub_cli_user_password
+  credhub_url: "https://10.0.0.1:8844"
+  credhub_username: credhub_cli_user
+
+secret/monitorch/bosh/uaa/clients/prometheus:
+  secret: barfoo

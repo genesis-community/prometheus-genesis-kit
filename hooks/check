@@ -8,26 +8,7 @@ if [[ -n "$GENESIS_CLOUD_CONFIG" ]] ; then
     check_cloud_config && describe "  cloud-config [#G{OK}]"
 fi
 
-
 ok=yes
-vault="secret/$GENESIS_VAULT_PREFIX"
-static_ip="$(lookup params.static_ip)"
-domain="$(lookup params.external_domain "$static_ip")"
-cert="${vault}/nginx/ssl_certificate"
-
-if ! safe exists "$cert"; then
-  describe "  #R{✘} $cert [#Y{MISSING}]"
-  ok=no
-else
-  if safe --quiet x509 validate "$cert" --for "$domain" >/dev/null 2>&1; then
-    describe "  #G{✔} $cert [#G{OK}]"
-  else
-    describe "  #R{✘} $cert [#R{INVALID}]"
-    safe x509 validate "$cert" --for "$domain" 2>&1 | sed -e 's/^/      /';
-    ok=no
-    echo
-  fi
-fi
 
 if [[ "$ok" = "yes" ]]; then
   describe "  environment files [#G{OK}]"

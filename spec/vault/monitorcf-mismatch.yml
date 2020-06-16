@@ -1,0 +1,15 @@
+secret/monitorcf/mismatch/prometheus/admin:
+  password: <!{meta.vault}/admin:password!>
+  secret_key: <!{meta.vault}/admin:secret_key!>
+secret/monitorcf/mismatch/prometheus/grafanadb:
+  password: <!{meta.vault}/grafanadb:password!>
+secret/monitorcf/mismatch/prometheus/nginx/ca:
+  certificate: <!{meta.vault}/nginx/ca:certificate!>
+  combined: <!{meta.vault}/nginx/ca:combined!>
+  crl: <!{meta.vault}/nginx/ca:crl!>
+  key: <!{meta.vault}/nginx/ca:key!>
+  serial: <!{meta.vault}/nginx/ca:serial!>
+secret/monitorcf/mismatch/prometheus/nginx/ssl_certificate:
+  certificate: <!{meta.vault}/nginx/ssl_certificate:certificate!>
+  combined: <!{meta.vault}/nginx/ssl_certificate:combined!>
+  key: <!{meta.vault}/nginx/ssl_certificate:key!>

@@ -6,6 +6,7 @@ import (
 
 	. "github.com/genesis-community/testkit/testing"
 	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("Prometheus Kit", func() {
@@ -19,19 +20,42 @@ var _ = Describe("Prometheus Kit", func() {
 			Name:        "base",
 			CloudConfig: "aws",
 			CPI:         "aws",
-			Exodus:      "bosh",
+			Exodus:      "base",
 		})
 		Test(Environment{
 			Name:        "basecert",
 			CloudConfig: "aws",
 			CPI:         "aws",
-			Exodus:      "bosh",
+			Exodus:      "basecert",
 		})
 		Test(Environment{
 			Name:        "monitorcf",
 			CloudConfig: "aws",
 			CPI:         "aws",
-			Exodus:      "bosh",
+			Exodus:      "monitorcf",
+		})
+		Test(Environment{
+			Name:        "monitorcf-mismatch",
+			CloudConfig: "aws",
+			CPI:         "aws",
+			Exodus:      "monitorcf-mismatch",
+			OutputMatchers: OutputMatchers{
+				GenesisAddSecrets: ContainSubstring("legacy-firehose is not available for cf v2.x deployments"),
+				GenesisCheck:      ContainSubstring("legacy-firehose is not available for cf v2.x deployments"),
+				GenesisManifest:   ContainSubstring("legacy-firehose is not available for cf v2.x deployments"),
+			},
+		})
+		Test(Environment{
+			Name:        "monitorcf-v2",
+			CloudConfig: "aws",
+			CPI:         "aws",
+			Exodus:      "monitorcf-v2",
+		})
+		Test(Environment{
+			Name:        "monitorch",
+			CloudConfig: "aws",
+			CPI:         "aws",
+			Exodus:      "monitorch",
 		})
 	})
 
