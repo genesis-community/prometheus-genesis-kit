@@ -1,0 +1,16 @@
+---
+kit:
+  name: dev
+  version: latest
+  features:
+    - provided-cert
+
+genesis:
+  env: basecert
+
+params:
+  external_domain:      test.domain
+  static_ip:            10.1.1.1
+  persistent_disk_type: default
+  network: prometheus
+  bosh_exodus_path: basecert/prometheus

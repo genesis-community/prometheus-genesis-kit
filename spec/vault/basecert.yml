@@ -1,0 +1,8 @@
+secret/basecert/prometheus/admin:
+  password: <!{meta.vault}/admin:password!>
+  secret_key: <!{meta.vault}/admin:secret_key!>
+secret/basecert/prometheus/grafanadb:
+  password: <!{meta.vault}/grafanadb:password!>
+secret/basecert/prometheus/nginx/ssl_certificate:
+  certificate: <!{meta.vault}/nginx/ssl_certificate:certificate!>
+  key: <!{meta.vault}/nginx/ssl_certificate:key!>
