@@ -1,7 +1,7 @@
 - type: replace
   path: /releases?/name=postgres?
   value:
-    name:    postgres
-    version: "40"
-    url:    "https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=40"
-    sha1:    343f04f1594c57ecea65638802e94e311cd72688
+    name: postgres
+    version: 42
+    url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=42
+    sha1: 0a9e4ad424f2ad9611dd1d3f387cc12ed7b71ee4

@@ -512,9 +512,9 @@ instance_groups:
 name: base-prometheus
 releases:
 - name: postgres
-  sha1: 343f04f1594c57ecea65638802e94e311cd72688
-  url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=40
-  version: "40"
+  sha1: 0a9e4ad424f2ad9611dd1d3f387cc12ed7b71ee4
+  url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=42
+  version: 42
 - name: prometheus
   sha1: 9a57a9c74ebcb53baaa9cf8eb22f8ef353460169
   url: https://bosh.io/d/github.com/cloudfoundry-community/prometheus-boshrelease?v=26.2.0
