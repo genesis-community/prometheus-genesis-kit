@@ -559,9 +559,9 @@ releases:
   url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=43
   version: 43
 - name: prometheus
-  sha1: d945d88b23dbfea03959d5404450567a90a7d833
-  url: https://bosh.io/d/github.com/cloudfoundry-community/prometheus-boshrelease?v=26.3.0
-  version: 26.3.0
+  sha1: 973ff5d23d10627b822520c728c10775d10e760d
+  url: https://bosh.io/d/github.com/cloudfoundry-community/prometheus-boshrelease?v=26.4.0
+  version: 26.4.0
 stemcells:
 - alias: default
   os: ubuntu-xenial
