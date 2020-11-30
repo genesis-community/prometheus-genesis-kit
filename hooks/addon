@@ -15,6 +15,16 @@ list() {
   echo
 }
 
+ostype() {
+  UNAME=$(uname)
+
+  if [ "$UNAME" == "Linux" ] ; then
+    export cmd="xdg-open"
+  elif [ "$UNAME" == "Darwin" ] ; then
+    export cmd="open"
+  fi
+}
+
 case $GENESIS_ADDON_SCRIPT in
 list)
   list
@@ -22,28 +32,31 @@ list)
   ;;
 
 visit-prometheus|vp)
-  if ! command -v open >/dev/null 2>&1; then
-    echo "The 'visit-prometheus' addon script only works on macOS, currently."
+  ostype
+  if ! command -v ${cmd} >/dev/null 2>&1; then
+    echo "The 'visit-prometheus' addon script only works on macOS and Linux, currently."
     exit 1
   fi
   url=$(exodus prometheus_url)
   password=$(safe get $vault/admin:password)
-  open "https://admin:$password@$url"
+  ${cmd} "https://admin:$password@$url"
   ;;
 
 visit-alertmanager|va)
-  if ! command -v open >/dev/null 2>&1; then
-    echo "The 'visit-alertmanager' addon script only works on macOS, currently."
+  ostype
+  if ! command -v ${cmd} >/dev/null 2>&1; then
+    echo "The 'visit-alertmanager' addon script only works on macOS and Linux, currently."
     exit 1
   fi
   url=$(exodus alertmanager_url)
   password=$(safe get $vault/admin:password)
-  open "https://admin:$password@$url"
+  ${cmd} "https://admin:$password@$url"
   ;;
 
 visit-grafana|vg)
-  if ! command -v open >/dev/null 2>&1; then
-    echo "The 'visit-grafana' addon script only works on macOS, currently."
+  ostype
+  if ! command -v ${cmd} >/dev/null 2>&1; then
+    echo "The 'visit-grafana' addon script only works on macOS and Linux, currently."
     exit 1
   fi
   url=$(exodus grafana_url)
@@ -53,7 +66,7 @@ visit-grafana|vg)
   echo -e "  \033[1m\033[1;36m username: \033[0m admin"
   echo -e "  \033[1m\033[1;36m password: \033[0m $password"
   echo
-  open "https://$url"
+  ${cmd} "https://$url"
   ;;
 
 runtime-config|rc)
