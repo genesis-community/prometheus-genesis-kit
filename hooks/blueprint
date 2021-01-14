@@ -12,10 +12,6 @@ set -eu
 # function (takes a feature as a string, returns exit code 0 if present, non-
 # zero exit code otherwise).
 
-
-validate_features self-signed-cert +provided-cert \
-                  monitor-cf monitor-credhub legacy-firehose
-
 declare -a manifests
 manifests+=( manifests/prometheus.yml
              manifests/releases/postgres.yml
@@ -46,6 +42,18 @@ for want in ${GENESIS_REQUESTED_FEATURES}; do
       want_feature monitor-cf || bail "legacy-firehose feature only applicable if monitor-cf feature is active"
       ;;
 
+    self-signed-cert)
+      ;;
+
+    *)
+      if [[ -f "$GENESIS_ROOT/ops/$want.yml" ]] ; then
+        manifests+=( "$GENESIS_ROOT/ops/$want.yml" )
+      else
+        abort=1
+        describe >&2 \
+          "#R{[ERROR]} The #c{$want} feature is invalid. See the manual for list of valid features."
+      fi
+      ;;
     esac
 done
 
