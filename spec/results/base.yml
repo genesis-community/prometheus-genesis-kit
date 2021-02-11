@@ -474,15 +474,18 @@ instance_groups:
             password: <!{meta.vault}/admin:password!>
           http_port: 8083
           https_port: 8082
+          server_name: test.domain
         grafana:
           http_port: 80
           https_port: 443
+          server_name: test.domain
         prometheus:
           auth_users:
           - name: admin
             password: <!{meta.vault}/admin:password!>
           http_port: 8081
           https_port: 8080
+          server_name: test.domain
         ssl_cert: <!{meta.vault}/nginx/ssl_certificate:certificate!>
         ssl_key: <!{meta.vault}/nginx/ssl_certificate:key!>
     release: prometheus
