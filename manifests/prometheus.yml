@@ -19,9 +19,9 @@ exodus:
   # basic auth, we'd need to insert the user/password between `https` and the
   # meta.base_domain. It turns out that dropping `https` and adding it on when
   # needed is easier.
-  prometheus_url:   (( concat meta.base_domain ":" meta.prometheus_port    ))
-  grafana_url:      (( concat meta.base_domain ":" meta.grafana_port       ))
-  alertmanager_url: (( concat meta.base_domain ":" meta.alertmanager_port  ))
+  prometheus_url:   (( concat instance_groups.prometheus.jobs.nginx.properties.nginx.prometheus.server_name ":" instance_groups.prometheus.jobs.nginx.properties.nginx.prometheus.https_port ))
+  grafana_url:      (( concat instance_groups.prometheus.jobs.nginx.properties.nginx.grafana.server_name ":" instance_groups.prometheus.jobs.nginx.properties.nginx.grafana.https_port ))
+  alertmanager_url: (( concat instance_groups.prometheus.jobs.nginx.properties.nginx.alertmanager.server_name ":" instance_groups.prometheus.jobs.nginx.properties.nginx.alertmanager.https_port ))
 
 instance_groups:
 - name:      prometheus
@@ -452,18 +452,21 @@ instance_groups:
         ssl_cert:       (( vault meta.vault "/nginx/ssl_certificate:certificate" ))
         ssl_key:        (( vault meta.vault "/nginx/ssl_certificate:key" ))
         prometheus:
+          server_name:  (( grab meta.base_domain ))
           https_port:   (( grab meta.prometheus_port ))
           http_port:    (( calc "meta.prometheus_port + 1" ))
           auth_users:
             - name:      admin
               password: (( vault meta.vault "/admin:password" ))
         alertmanager:
+          server_name:  (( grab meta.base_domain ))
           https_port:   (( grab meta.alertmanager_port ))
           http_port:    (( calc "meta.alertmanager_port + 1" ))
           auth_users:
             - name:      admin
               password: (( vault meta.vault "/admin:password" ))
         grafana:
+          server_name:  (( grab meta.base_domain ))
           https_port:   (( grab meta.grafana_port ))
           http_port:     80
 
