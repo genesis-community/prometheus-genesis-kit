@@ -12,7 +12,7 @@ resources:
       uri:         (( grab meta.github.uri ))
       branch:      (( grab meta.github.branch ))
       private_key: (( grab meta.github.private_key ))
-      ignore_paths: [ci/*]
+      ignore_paths: ["ci/*[^md]"]
 
   - name: git-ci
     type: git
@@ -64,7 +64,7 @@ resources:
     type: bosh-io-release
     check_every: 24h
     source:
-      repository: cloudfoundry/postgres-release 
+      repository: cloudfoundry/postgres-release
 
   - name: bosh-release-prometheus
     type: bosh-io-release
