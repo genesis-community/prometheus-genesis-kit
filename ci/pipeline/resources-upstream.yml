@@ -1,0 +1,12 @@
+resources:
+  - name: bosh-release-postgres
+    type: bosh-io-release
+    check_every: 24h
+    source:
+      repository: cloudfoundry/postgres-release
+
+  - name: bosh-release-prometheus
+    type: bosh-io-release
+    check_every: 24h
+    source:
+      repository: cloudfoundry-community/prometheus-boshrelease

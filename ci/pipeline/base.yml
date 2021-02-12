@@ -75,9 +75,12 @@ groups:
     - pre
     - rc
     - shipit
-    - major
-    - minor
   - name: upstream
     jobs:
     - postgres-release
-    - prometheus-release    
+    - prometheus-release
+  - name: version
+    jobs:
+    - major
+    - minor
+    - patch

@@ -1,6 +1,5 @@
 #!/bin/bash
 set -eu
-KIT=prometheus
 
 header() {
 	echo
@@ -16,8 +15,8 @@ cleanup() {
 		$BOSH -n -d "${deployment}" delete-deployment
 
 		for disk in $($BOSH disks --orphaned | grep "${deployment}" | awk '{print $1}'); do
-			echo "  - removing disk $disk"
-			$BOSH -n delete-disk "$disk"
+			echo "  - removing disk ${disk}"
+			$BOSH -n delete-disk "${disk}"
 		done
 	done
 }
@@ -26,18 +25,17 @@ header "Checking previous deployments on ${BOSH_ENVIRONMENT}..."
 $BOSH deployments
 
 header "Cleaning up from any previous deployments (if necessary)..."
-cleanup ci-baseline-${KIT}
-safe rm -rf secret/ci/baseline/${KIT}
+cleanup ci-baseline-${KIT_SHORTNAME}
+safe rm -rf secret/ci/baseline/${KIT_SHORTNAME}
 
 header "Deploying BASELINE environment to verify functionality..."
 cd dev
 # make sure hooks are executable before screaming at shipit for failing.
-genesis compile-kit --name $KIT -v 9.9.9 --force
+genesis compile-kit --name ${KIT_SHORTNAME} -v 9.9.9 --force
 cd ..
 genesis add-secrets ci-baseline
 genesis deploy -y ci-baseline
-$BOSH -d ci-baseline-${KIT} instances --ps
-
+$BOSH -d ci-baseline-${KIT_SHORTNAME} instances --ps
 header "Validating BASELINE environment..."
 password=$(safe get secret/ci/baseline/prometheus/admin:password)
 response=$(curl -k https://admin:$password@10.128.8.132:8080/-/healthy)
@@ -47,4 +45,4 @@ if [[ $response != "Prometheus is Healthy." ]]; then
 	echo "     got '$response'"
 	exit 1
 fi
-cleanup ci-baseline-${KIT}
+cleanup ci-baseline-${KIT_SHORTNAME}
