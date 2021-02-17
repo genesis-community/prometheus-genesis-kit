@@ -7,12 +7,3 @@ if [[ -n "$GENESIS_CLOUD_CONFIG" ]] ; then
     cloud_config_needs disk_type  $(lookup params.disk_type  prometheus)
     check_cloud_config && describe "  cloud-config [#G{OK}]"
 fi
-
-ok=yes
-
-if [[ "$ok" = "yes" ]]; then
-  describe "  environment files [#G{OK}]"
-else
-  describe "  environment files [#R{FAILED}]"
-  exit 1
-fi
