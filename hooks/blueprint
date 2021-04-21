@@ -17,6 +17,9 @@ manifests+=( manifests/prometheus.yml
              manifests/releases/postgres.yml
              manifests/releases/prometheus.yml )
 
+opsdir="ops"
+[[ -n "${PREVIOUS_ENV:-}" ]] && opsdir=".genesis/cached/${PREVIOUS_ENV}/$opsdir"
+
 for want in ${GENESIS_REQUESTED_FEATURES}; do
   case "$want" in
     monitor-cf)
@@ -46,8 +49,8 @@ for want in ${GENESIS_REQUESTED_FEATURES}; do
       ;;
 
     *)
-      if [[ -f "$GENESIS_ROOT/ops/$want.yml" ]] ; then
-        manifests+=( "$GENESIS_ROOT/ops/$want.yml" )
+      if [[ -f "$GENESIS_ROOT/${opsdir}/$want.yml" || -f "$GENESIS_ROOT/ops/$want.yml" ]] ; then
+        manifests+=( "$want" )
       else
         abort=1
         describe >&2 \
