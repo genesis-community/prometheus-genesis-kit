@@ -1,10 +1,53 @@
----
-# This file contains patterns for generating links to upstream release notes,
-# for constituent releases.
+sections:
+  - name:  core
+    label: Cloud Foundry Components
+  - name:  buildpacks
+    label: Buildpacks 
 
 core:
-  - name:  postgres
-    notes: https://github.com/cloudfoundry/postgres-release/releases/tag/v${version}
+  app-autoscaler: {}
+  bpm: {}
+  bosh-dns-aliases: {}
+  capi: {}
+  cf-cli: {}
+  cf-networking: {}
+  cf-smoke-tests: {}
+  cf-syslog-drain: {}
+  cflinuxfs2: {}
+  cflinuxfs3: {}
+  credhub: {}
+  diego: {}
+  garden-runc: {}
+  haproxy: {}
+  loggregator: {}
+  loggregator-agent: {}
+  log-cache: {}
+  mapfs: {}
+  metrics-discovery: {}
+  nats: {}
+  nfs-volume: {}
+  postgres: {}
+  pxc: {}
+  routing: {}
+  statsd-injector: {}
+  uaa: {}
+  silk: {}
+  smb-volume: {}
+  winc: {}
+  windows-resize-root-disk: {}
+  windows-utilities: {}
+  windowsfs: {}
 
-  - name:  prometheus
-    notes: https://github.com/bosh-prometheus/prometheus-boshrelease/releases/tag/v${version}
+buildpacks:
+  binary-buildpack: {}
+  dotnet-core-buildpack: {}
+  go-buildpack: {}
+  hwc-buildpack: {}
+  java-buildpack: {}
+  nginx-buildpack: {}
+  nodejs-buildpack: {}
+  php-buildpack: {}
+  python-buildpack: {}
+  r-buildpack: {}
+  ruby-buildpack: {}
+  staticfile-buildpack: {}

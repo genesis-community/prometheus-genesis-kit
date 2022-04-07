@@ -1,0 +1,10 @@
+---
+# This file contains patterns for generating links to upstream release notes,
+# for constituent releases.
+
+core:
+  - name:  postgres
+    notes: https://github.com/cloudfoundry/postgres-release/releases/tag/v${version}
+
+  - name:  prometheus
+    notes: https://github.com/bosh-prometheus/prometheus-boshrelease/releases/tag/v${version}
