@@ -30,7 +30,7 @@ meta:
 
   github:
     owner:        genesis-community
-    repo:         cf-genesis-kit
+    repo:         prometheus-genesis-kit
     branch:       develop
     main-branch:  main
     private_key:  ((github.private_key))
