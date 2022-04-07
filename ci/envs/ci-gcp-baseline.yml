@@ -3,13 +3,14 @@ kit:
   features:
     - ((append))
     - small-footprint
+    - self-signed-cert
 
 genesis:
   env:   ci-gcp-baseline
 
 params:
-  disk_type:          default
-  base_domain:        (( concat meta._ip_prefix "8.49.netip.cc" ))
-  postgres_vip:       (( concat meta._ip_prefix "8.48" ))
-  availability_zones: [z1, z2, z3]
-  haproxy_ips:        [ (( concat meta._ip_prefix "8.49" )) ]
+  external_domain:      10.4.8.20
+  static_ip:            10.4.8.20
+  persistent_disk_type: default
+  network: prometheus
+#  bosh_exodus_path: snw-genesis-ci/bosh
