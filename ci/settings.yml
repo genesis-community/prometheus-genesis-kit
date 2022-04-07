@@ -1,16 +1,13 @@
 ---
 meta:
-  kit:             cf
-  release:         CF Genesis Kit
+  kit:             prometheus
+  release:         Prometheus Genesis Kit
   target:          cloudpipes/genesis
   url:             https://cloudpipes.starkandwayne.com
   iaas:            gcp
   exposed:         yes
   version_file:    version
-  initial_version: 2.1.0
-
-  upstream:
-    package:  cf-deployment
+  initial_version: 1.9.1
 
   bosh:
     uri:      ((bosh.uri))

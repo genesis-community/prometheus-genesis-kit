@@ -11,8 +11,8 @@ genesis:
 
 
 params:
-  external_domain:      10.128.8.132
-  static_ip:            10.128.8.132
+  external_domain:      10.4.8.20
+  static_ip:            10.4.8.20
   persistent_disk_type: default
   network: prometheus
   bosh_exodus_path: snw-genesis-ci/bosh

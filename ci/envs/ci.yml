@@ -2,8 +2,3 @@
 kit:
   name: dev
   version: latest
-  features:
-    - haproxy
-    - tls
-    - self-signed
-    - cf-deployment/operations/enable-service-discovery

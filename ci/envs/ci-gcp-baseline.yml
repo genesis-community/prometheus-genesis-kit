@@ -1,9 +1,6 @@
----
 kit:
   features:
     - ((append))
-    - small-footprint
-    - self-signed-cert
 
 genesis:
   env:   ci-gcp-baseline
