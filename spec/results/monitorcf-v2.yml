@@ -4,6 +4,9 @@ exodus:
   grafana_url: test.domain:443
   monitor-cf: true
   prometheus_url: test.domain:8080
+  bosh: monitorcf-v2
+  is_director: false
+  use_create_env: false
 instance_groups:
 - azs:
   - z1

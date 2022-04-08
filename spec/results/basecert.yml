@@ -3,6 +3,9 @@ exodus:
   features: ""
   grafana_url: test.domain:443
   prometheus_url: test.domain:8080
+  bosh: basecert
+  is_director: false
+  use_create_env: false
 instance_groups:
 - azs:
   - z1
