@@ -10,5 +10,3 @@ params:
   static_ip:            10.4.8.20
   persistent_disk_type: default
   network: prometheus
-
-  availability_zones: [z1]
