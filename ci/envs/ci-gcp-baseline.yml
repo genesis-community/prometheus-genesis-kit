@@ -1,7 +1,6 @@
 ---
 kit:
-  features:
-    - ((append))
+  features: []
 
 genesis:
   env:   ci-gcp-baseline
