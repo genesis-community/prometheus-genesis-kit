@@ -2,15 +2,15 @@
 kit:
   features:
     - ((append))
-    - small-footprint
+    - full
+    - self-signed-cert
 
 genesis:
   env:   ci-vsphere-baseline
 
 params:
-  disk_type:          default
-  base_domain:        (( concat meta._ip_prefix "9.10.netip.cc" ))
-  postgres_vip:       (( concat meta._ip_prefix "9.9" ))
+  concourse_vm_type: large
+  external_domain:   concourse.example.com
+  num_web_nodes:     1
+
   availability_zones: [z1]
-  haproxy_ips:        [ (( concat meta._ip_prefix "9.10" )) ]
-  haproxy_ips:        [10.128.9.10]

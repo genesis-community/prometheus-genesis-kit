@@ -88,9 +88,19 @@ groups:
     - spec-check
     - ship-prerelease
     - deploy
-    - upgrade
+    # - upgrade
     - prepare
     - ship-release
+
+  # - name: upstream
+  #   jobs:
+  #   - upstream-sync
+  
+    # - bpm-release
+    # - concourse-release
+    # - haproxy-release
+    # - postgres-release
+    # - slack-notifications-release
 
   - name: versions
     jobs:

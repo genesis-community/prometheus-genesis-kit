@@ -1,3 +1,4 @@
+---
 kit:
   features:
     - ((append))
@@ -10,4 +11,5 @@ params:
   static_ip:            10.4.8.20
   persistent_disk_type: default
   network: prometheus
-#  bosh_exodus_path: snw-genesis-ci/bosh
+
+  availability_zones: [z1]
