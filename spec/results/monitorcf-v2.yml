@@ -552,13 +552,13 @@ instance_groups:
 name: monitorcf-v2-prometheus
 releases:
 - name: postgres
-  sha1: e44bbe8f8a7cdde1cda67b202e399a239d104db6
-  url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=43
-  version: 43
+  sha1: 582b1de9522077102dfa44ff7164cd8f499dbfc8
+  url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=44
+  version: 44
 - name: prometheus
-  sha1: 33b4a873648e268b7a24d64e787f08816f85a3c0
-  url: https://bosh.io/d/github.com/cloudfoundry-community/prometheus-boshrelease?v=26.6.0
-  version: 26.6.0
+  sha1: 2fc175187a4d1ea0e6e28f91020535260c45626d
+  url: https://bosh.io/d/github.com/cloudfoundry-community/prometheus-boshrelease?v=27.1.0
+  version: 27.1.0
 stemcells:
 - alias: default
   os: ubuntu-bionic
