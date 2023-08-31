@@ -1,0 +1,5 @@
+---
+params:
+  ca_validity_period: 10y;
+  cert_validity_period: 5y;
+  webssl_validity_period: 1y;

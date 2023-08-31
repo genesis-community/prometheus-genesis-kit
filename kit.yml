@@ -20,9 +20,10 @@ credentials:
 certificates:
   self-signed-cert:
     nginx:
-      ca: { valid_for: 1y }
+      ca:
+        valid_for: ${params.ca_validity_period}
       ssl_certificate:
-        valid_for: 1y
+        valid_for: ${params.webssl_validity_period}
         names:
         - ${params.static_ip}
         - ${maybe:params.external_domain}
