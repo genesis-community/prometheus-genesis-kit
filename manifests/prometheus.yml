@@ -23,6 +23,11 @@ exodus:
   grafana_url:      (( concat instance_groups.prometheus.jobs.nginx.properties.nginx.grafana.server_name ":" instance_groups.prometheus.jobs.nginx.properties.nginx.grafana.https_port ))
   alertmanager_url: (( concat instance_groups.prometheus.jobs.nginx.properties.nginx.alertmanager.server_name ":" instance_groups.prometheus.jobs.nginx.properties.nginx.alertmanager.https_port ))
 
+params:
+  ca_validity_period: 10y;
+  cert_validity_period: 5y;
+  webssl_validity_period: 1y;
+
 instance_groups:
 - name:      prometheus
   instances: 1
