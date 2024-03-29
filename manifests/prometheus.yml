@@ -489,8 +489,8 @@ instance_groups:
 
 stemcells:
 - alias: default
-  os: ubuntu-bionic
-  version: latest
+  os:      (( grab params.stemcell_os      || "ubuntu-jammy" ))
+  version: (( grab params.stemcell_version || "latest" ))
 
 update:
   canaries: 1
