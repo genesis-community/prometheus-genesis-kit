@@ -5,15 +5,16 @@ import (
 	"runtime"
 
 	. "github.com/genesis-community/testkit/testing"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
+var _ = BeforeSuite(func() {
+	_, filename, _, _ := runtime.Caller(0)
+	KitDir, _ = filepath.Abs(filepath.Join(filepath.Dir(filename), "../"))
+})
+
 var _ = Describe("Prometheus Kit", func() {
-	BeforeSuite(func() {
-		_, filename, _, _ := runtime.Caller(0)
-		KitDir, _ = filepath.Abs(filepath.Join(filepath.Dir(filename), "../"))
-	})
 
 	Describe("prometheus", func() {
 		Test(Environment{
