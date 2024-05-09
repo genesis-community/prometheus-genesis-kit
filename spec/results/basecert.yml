@@ -1,10 +1,10 @@
 exodus:
   alertmanager_url: test.domain:8082
+  bosh: basecert
   features: ""
   grafana_url: test.domain:443
-  prometheus_url: test.domain:8080
-  bosh: basecert
   is_director: false
+  prometheus_url: test.domain:8080
   use_create_env: false
 instance_groups:
 - azs:
@@ -522,12 +522,12 @@ releases:
   url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=43
   version: 43
 - name: prometheus
-  sha1: 33b4a873648e268b7a24d64e787f08816f85a3c0
-  url: https://bosh.io/d/github.com/cloudfoundry-community/prometheus-boshrelease?v=26.6.0
-  version: 26.6.0
+  sha1: 8e5a6efcab2bb0323c111ce469a0219dfb3204e4
+  url: https://github.com/bosh-prometheus/prometheus-boshrelease/releases/download/v27.2.0/prometheus-27.2.0.tgz
+  version: 27.2.0
 stemcells:
 - alias: default
-  os: ubuntu-bionic
+  os: ubuntu-jammy
   version: latest
 update:
   canaries: 1
