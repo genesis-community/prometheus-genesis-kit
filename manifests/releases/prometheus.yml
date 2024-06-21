@@ -2,7 +2,7 @@
   path: /releases?/name=prometheus?
   value:
     name: prometheus
-    version: 27.2.0
-    url: https://github.com/bosh-prometheus/prometheus-boshrelease/releases/download/v27.2.0/prometheus-27.2.0.tgz
-    sha1: 8e5a6efcab2bb0323c111ce469a0219dfb3204e4
+    version: 30.2.0
+    url: https://github.com/bosh-prometheus/prometheus-boshrelease/releases/download/v30.2.0/prometheus-30.2.0.tgz
+    sha1: 1c9e1a66fcf26f2891f20351c9c3796336a05873
 
