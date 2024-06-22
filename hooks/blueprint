@@ -19,7 +19,8 @@ validate_features self-signed-cert +provided-cert \
 declare -a manifests
 manifests+=( manifests/prometheus.yml
              manifests/releases/postgres.yml
-             manifests/releases/prometheus.yml )
+             manifests/releases/prometheus.yml
+             manifests/releases/bpm.yml )
 
 for want in ${GENESIS_REQUESTED_FEATURES}; do
   case "$want" in
