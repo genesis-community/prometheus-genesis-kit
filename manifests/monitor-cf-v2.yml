@@ -16,6 +16,10 @@ meta:
     rlp_gateway: (( concat "https://log-stream." meta.cf_system_domain ))
     api:         (( concat "https://api." meta.cf_system_domain ))
     uaa:         (( concat "https://uaa." meta.cf_system_domain ))
+  loggregator_tls_rlp:
+    ca:   (( vault meta.cf_exodus_src "loggregator_ca" ))
+    cert: (( vault meta.cf_exodus_src "loggregator_tls_rlp_cert" ))
+    key:  (( vault meta.cf_exodus_src "loggregator_tls_rlp_key" ))
 
 instance_groups:
 - name: prometheus
@@ -40,6 +44,10 @@ instance_groups:
         logging:
           url: (( grab params.rlp_gateway_url || meta.default_urls.rlp_gateway ))
           use_legacy_firehose: false
+          tls:
+            ca:   (( grab meta.loggregator_tls_rlp.ca ))
+            cert: (( grab meta.loggregator_tls_rlp.cert ))
+            key:  (( grab meta.loggregator_tls_rlp.key ))
         doppler:
           subscription_id: (( grab genesis.env ))
           max_retry_count: 300
@@ -50,7 +58,9 @@ instance_groups:
         metrics:
           environment:     (( grab genesis.env ))
         skip_ssl_verify:   (( grab params.skip_ssl_validation || false ))
-
+        web:
+          tls_cert: (( vault meta.vault "/nginx/ssl_certificate:certificate" ))
+          tls_key:  (( vault meta.vault "/nginx/ssl_certificate:key" ))
 
   - name: cloudfoundry_dashboards
     release: prometheus

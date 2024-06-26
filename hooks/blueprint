@@ -30,7 +30,7 @@ for want in ${GENESIS_REQUESTED_FEATURES}; do
       if safe exists --quiet "${GENESIS_EXODUS_MOUNT}${cf_exodus_path}:kit_version" ; then
         cf_version="$(safe get --quiet "${GENESIS_EXODUS_MOUNT}${cf_exodus_path}:kit_version")"
       fi
-      if [[ "$cf_version" =~ ^2. ]] ; then
+      if [[ "$cf_version" =~ ^2\. ]] ; then # cf-kit 2.0 to <3.0
         manifests+=( manifests/monitor-cf-v2.yml )
         want_feature legacy-firehose && bail "legacy-firehose is not available for cf v2.x deployments"
       else
