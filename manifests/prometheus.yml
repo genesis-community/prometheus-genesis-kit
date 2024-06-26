@@ -39,6 +39,9 @@ instance_groups:
       static_ips: (( grab params.static_ip ))
   vm_type:        (( grab params.vm_type || "default" ))
   jobs:
+  - name: bpm
+    release: bpm
+
   - name: alertmanager
     release: prometheus
     properties:
