@@ -38,11 +38,13 @@ instance_groups:
 
   - name: firehose_exporter
     release: prometheus
+    consumes:
+      reverse_log_proxy:
+        deployment:       (( grab params.cf_deployment_name || meta.default_cf_deployment_name ))
+        from: reverse_log_proxy
     properties:
       firehose_exporter:
         logging:
-          url: (( grab params.rlp_gateway_url || meta.default_urls.rlp_gateway ))
-          use_legacy_firehose: false
           tls:
             ca:   (( grab meta.loggregator_tls_rlp.ca ))
             cert: (( grab meta.loggregator_tls_rlp.cert ))
