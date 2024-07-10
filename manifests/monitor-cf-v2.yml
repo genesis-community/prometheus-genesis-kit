@@ -11,7 +11,6 @@ meta:
   cf_exporter_username:       cf_exporter
   cf_exporter_secret:         (( vault meta.cf_exodus_src "cf_exporter_secret" ))
   firehose_exporter_username: firehose_exporter
-  firehose_exporter_secret:   (( vault meta.cf_exodus_src "firehose_exporter_secret" ))
   default_urls:
     rlp_gateway: (( concat "https://log-stream." meta.cf_system_domain ))
     api:         (( concat "https://api." meta.cf_system_domain ))
@@ -39,22 +38,19 @@ instance_groups:
 
   - name: firehose_exporter
     release: prometheus
+    consumes:
+      reverse_log_proxy:
+        deployment:       (( grab params.cf_deployment_name || meta.default_cf_deployment_name ))
+        from: reverse_log_proxy
     properties:
       firehose_exporter:
         logging:
-          url: (( grab params.rlp_gateway_url || meta.default_urls.rlp_gateway ))
-          use_legacy_firehose: false
           tls:
             ca:   (( grab meta.loggregator_tls_rlp.ca ))
             cert: (( grab meta.loggregator_tls_rlp.cert ))
             key:  (( grab meta.loggregator_tls_rlp.key ))
         doppler:
           subscription_id: (( grab genesis.env ))
-          max_retry_count: 300
-        uaa:
-          url:             (( grab params.uaa_url || meta.default_urls.uaa ))
-          client_id:       (( grab meta.firehose_exporter_username ))
-          client_secret:   (( grab meta.firehose_exporter_secret ))
         metrics:
           environment:     (( grab genesis.env ))
         skip_ssl_verify:   (( grab params.skip_ssl_validation || false ))
