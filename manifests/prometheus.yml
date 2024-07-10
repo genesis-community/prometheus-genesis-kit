@@ -183,7 +183,9 @@ instance_groups:
             replacement: ${1}:9186
             source_labels: [ __address__ ]
             target_label: __address__
-
+          scheme: https
+          tls_config:
+            insecure_skip_verify: true
         - job_name: grafana
           file_sd_configs:
           - files: [ /var/vcap/store/bosh_exporter/bosh_target_groups.json ]
