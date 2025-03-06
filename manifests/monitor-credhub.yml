@@ -10,6 +10,8 @@ meta:
   credhub_exporter_username:       (( vault meta.credhub_exodus_src "credhub_username" ))
   credhub_exporter_password:       (( vault meta.credhub_exodus_src "credhub_password" ))
   credhub_exporter_ca_cert:        (( vault meta.credhub_exodus_src "credhub_ca_cert" ))
+  environment:                     (( grab genesis.env ))
+  skip_ssl_validation:             (( grab params.skip_ssl_validation || false ))
 # Exporter jobs
 instance_groups:
 - name: prometheus
@@ -25,8 +27,8 @@ instance_groups:
           ca_certs:      (( grab params.credhub_exporter_ca_cert  || meta.credhub_exporter_ca_cert ))
         metrics:
           deployment:    (( grab params.credhub_exporter_deployment_name || meta.default_credhub_deployment_name ))
-          environment:   genesis.env
-        skip_ssl_verify: (( grab params.skip_ssl_validation || false ))
+          environment:   (( grab meta.environment ))
+        skip_ssl_verify: (( grab meta.skip_ssl_validation ))
         filters:
           generic-certificates:
             - "/static/.*"

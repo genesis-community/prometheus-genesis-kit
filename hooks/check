@@ -2,8 +2,18 @@
 
 # Cloud Config checks
 if [[ -n "$GENESIS_CLOUD_CONFIG" ]] ; then
-    cloud_config_needs vm_type    $(lookup params.vm_type    default)
-    cloud_config_needs network    $(lookup params.network    prometheus)
-    cloud_config_needs disk_type  $(lookup params.disk_type  prometheus)
-    check_cloud_config && describe "  cloud-config [#G{OK}]"
+  if want_feature ocfp ; then
+    _env_scale="$(lookup --merged meta.ocfp.env.scale)"
+    _vm_type="prometheus-${_env_scale}"
+    _network="${GENESIS_ENVIRONMENT}-prometheus"
+    _disk_type="prometheus-${_env_scale}"
+  else # Legacy was hard coded
+    _vm_type="default"
+    _network="prometheus"
+    _disk_type="prometheus"
+  fi
+  cloud_config_needs vm_type   "$(lookup params.prometheus_vm_type   ${_vm_type})"
+  cloud_config_needs network   "$(lookup params.prometheus_network   ${_network})"
+  cloud_config_needs disk_type "$(lookup params.prometheus_disk_pool ${_disk_type})"
+  check_cloud_config && describe "  cloud-config [#G{OK}]"
 fi

@@ -14,6 +14,9 @@ meta:
   uaa_client_secret:       (( vault meta.cf_firehose_uaa_vault ))
   default_rlp_gateway_url: (( concat "https://log-stream." meta.cf_system_domain ))
 
+  environment:             (( grab genesis.env ))
+  skip_ssl_verify:         (( grab params.skip_ssl_validation || false ))
+
 instance_groups:
 - name: prometheus
   jobs:
@@ -27,8 +30,8 @@ instance_groups:
           client_secret:   (( grab meta.uaa_client_secret ))
           deployment_name: (( concat meta.base_cf_env "-cf" ))
         metrics:
-          environment:     (( grab genesis.env ))
-        skip_ssl_verify:   (( grab params.skip_ssl_validation || false ))
+          environment:     (( grab meta.environment ))
+        skip_ssl_verify:   (( grab meta.skip_ssl_verify ))
 
   - name: firehose_exporter
     release: prometheus
@@ -38,15 +41,15 @@ instance_groups:
           url: (( grab params.rlp_gateway_url || meta.default_rlp_gateway_url ))
           use_legacy_firehose: false
         doppler:
-          subscription_id: (( grab genesis.env ))
+          subscription_id: (( grab meta.environment ))
           max_retry_count: 300
         uaa:
           url:             (( concat "https://uaa." meta.cf_system_domain ))
           client_id:       (( grab meta.uaa_client_id ))
           client_secret:   (( grab meta.uaa_client_secret ))
         metrics:
-          environment:     (( grab genesis.env ))
-        skip_ssl_verify:   (( grab params.skip_ssl_validation || false ))
+          environment:     (( grab meta.environment ))
+        skip_ssl_verify:   (( grab meta.skip_ssl_verify ))
 
 
   - name: cloudfoundry_dashboards

@@ -8,7 +8,7 @@ meta:
   cf_exodus_path:             (( grab params.cf_exodus_path || meta.default_cf_exodus_path ))
   cf_exodus_src:              (( concat $GENESIS_EXODUS_MOUNT meta.cf_exodus_path ":" ))
   cf_system_domain:           (( vault meta.cf_exodus_src "system_domain" ))
-  cf_exporter_username:       cf_exporter
+  cf_exporter_username:       (( grab params.cf_exporter_client_id || "cf_exporter" ))
   cf_exporter_secret:         (( vault meta.cf_exodus_src "cf_exporter_secret" ))
   firehose_exporter_username: firehose_exporter
   default_urls:
@@ -20,6 +20,9 @@ meta:
     cert: (( vault meta.cf_exodus_src "loggregator_tls_rlp_cert" ))
     key:  (( vault meta.cf_exodus_src "loggregator_tls_rlp_key" ))
 
+  environment:                (( grab genesis.env ))
+  skip_ssl_validation:        (( grab params.skip_ssl_validation || false ))
+
 instance_groups:
 - name: prometheus
   jobs:
@@ -29,12 +32,12 @@ instance_groups:
       cf_exporter:
         cf:
           api_url:         (( grab params.cf_api_url || meta.default_urls.api ))
-          client_id:       (( grab params.cf_exporter_client_id || meta.cf_exporter_username ))
+          client_id:       (( grab meta.cf_exporter_username ))
           client_secret:   (( grab meta.cf_exporter_secret ))
           deployment_name: (( grab params.cf_deployment_name || meta.default_cf_deployment_name ))
         metrics:
-          environment:     (( grab genesis.env ))
-        skip_ssl_verify:   (( grab params.skip_ssl_validation || false ))
+          environment:     (( grab meta.environment ))
+        skip_ssl_verify:   (( grab meta.skip_ssl_validation ))
 
   - name: firehose_exporter
     release: prometheus
@@ -50,10 +53,10 @@ instance_groups:
             cert: (( grab meta.loggregator_tls_rlp.cert ))
             key:  (( grab meta.loggregator_tls_rlp.key ))
         doppler:
-          subscription_id: (( grab genesis.env ))
+          subscription_id: (( grab meta.environment ))
         metrics:
-          environment:     (( grab genesis.env ))
-        skip_ssl_verify:   (( grab params.skip_ssl_validation || false ))
+          environment:     (( grab meta.environment ))
+        skip_ssl_verify:   (( grab meta.skip_ssl_validation ))
         web:
           tls_cert: (( vault meta.vault "/nginx/ssl_certificate:certificate" ))
           tls_key:  (( vault meta.vault "/nginx/ssl_certificate:key" ))

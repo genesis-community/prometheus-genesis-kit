@@ -3,17 +3,19 @@ set -eu
 
 vault="secret/$GENESIS_VAULT_PREFIX"
 
-describe "#B{Prometheus Information}"
-    echo
-describe "Prometheus endpoint information"
-describe "  #C{https://$(exodus prometheus_url)}"
-    echo
-describe "Grafana endpoint information"
-describe "  #C{https://$(exodus grafana_url)}"
-    echo
-describe "AlertManager endpoint information"
-describe "  #C{https://$(exodus alertmanager_url)}"
-    echo
-describe "HTTP auth credentials"
-describe "  username: #M{admin}"
-describe "  password: #G{$(safe get $vault/admin:password)}"
+describe \
+  "" \
+  "#B{Prometheus Information}" \
+  "" \
+  "Prometheus endpoint information" \
+  "  #C{https://$(exodus prometheus_url)}" \
+  "" \
+  "Grafana endpoint information" \
+  "  #C{https://$(exodus grafana_url)}" \
+  "" \
+  "AlertManager endpoint information" \
+  "  #C{https://$(exodus alertmanager_url)}" \
+  "" \
+  "HTTP auth credentials" \
+  "  username: #M{admin}" \
+  "  password: #G{$(safe get $vault/admin:password)}"
