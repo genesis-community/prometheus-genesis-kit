@@ -20,9 +20,6 @@ meta:
     cert: (( vault meta.cf_exodus_src "loggregator_tls_rlp_cert" ))
     key:  (( vault meta.cf_exodus_src "loggregator_tls_rlp_key" ))
 
-  environment:                (( grab genesis.env ))
-  skip_ssl_validation:        (( grab params.skip_ssl_validation || false ))
-
 instance_groups:
 - name: prometheus
   jobs:

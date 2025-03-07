@@ -8,6 +8,8 @@ exodus:
   prometheus_url:   (( grab meta.prometheus.prometheus_url ))
   grafana_url:      (( grab meta.prometheus.grafana_url ))
   alertmanager_url: (( grab meta.prometheus.alertmanager_url ))
+params:
+  static_ip: (( grab meta.prometheus.ip ))
 
 instance_groups:
 - name:      prometheus
@@ -53,7 +55,6 @@ instance_groups:
           server_name:  (( grab meta.domains.grafana ))
           https_port:   (( grab meta.ports.grafana_port ))
           http_port:    80
-
 
 stemcells:
 - alias:   (( grab meta.stemcell.name ))

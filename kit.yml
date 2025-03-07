@@ -25,7 +25,7 @@ certificates:
       ssl_certificate:
         valid_for: ${params.webssl_validity_period}
         names:
-#        - ${params.static_ip}
+        - ${params.static_ip}
         - ${maybe:params.external_domain}
 
 provided:

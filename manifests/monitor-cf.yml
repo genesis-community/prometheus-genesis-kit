@@ -14,9 +14,6 @@ meta:
   uaa_client_secret:       (( vault meta.cf_firehose_uaa_vault ))
   default_rlp_gateway_url: (( concat "https://log-stream." meta.cf_system_domain ))
 
-  environment:             (( grab genesis.env ))
-  skip_ssl_verify:         (( grab params.skip_ssl_validation || false ))
-
 instance_groups:
 - name: prometheus
   jobs:

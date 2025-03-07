@@ -1,6 +1,6 @@
 #!/bin/bash
 shopt -s nullglob
-set -exu
+set -eu
 
 #
 # Genesis Kit `new' Hook
