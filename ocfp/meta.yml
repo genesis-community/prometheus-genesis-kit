@@ -1,0 +1,51 @@
+---
+meta:
+  ocfp:
+    env:
+      scale: (( grab params.ocfp_env_scale || "dev" ))
+
+    vault:
+      tf: (( concat genesis.secrets_mount "tf/" genesis.vault_env ))
+
+    certs:
+      trusted:
+        - (( vault genesis.secrets_mount "certs/org:ca" )) # Organization CA, if exists
+        - (( vault genesis.secrets_mount "certs/dbs:ca" )) # External Databases CA
+
+  ports:
+    prometheus_port:   (( grab params.prometheus_port   || 443 ))
+    grafana_port:      (( grab params.grafana_port      || 443 ))
+    alertmanager_port: (( grab params.alertmanager_port || 443 ))
+
+  base_domain: (( grab params.external_domain ))
+
+  domains:
+    prometheus:   (( concat "prometheus"   meta.base_domain ))
+    grafana:      (( concat "grafana"      meta.base_domain ))
+    alertmanager: (( concat "alertmanager" meta.base_domain ))
+
+  bosh:
+    base_env:            (( grab genesis.bosh_env || params.bosh || genesis.env || params.env ))
+    default_exodus_path: (( concat meta.bosh.base_env "/bosh" ))
+    exodus_path:         (( grab params.bosh_exodus_path || meta.bosh.default_exodus_path ))
+    exodus_src:          (( concat $GENESIS_EXODUS_MOUNT meta.bosh.exodus_path ":" ))
+    uaa_clients:         (( vault meta.bosh.exodus_src "vault_base" ))
+
+
+
+
+  prometheus:
+    disk_type:  (( concat "prometheus-" meta.ocfp.env.scale ))
+    vm_type:    (( concat "prometheus-" meta.ocfp.env.scale ))
+    network:    (( concat genesis.env "-prometheus"  ))
+    ip:         (( vault meta.ocfp.vault.tf "/bosh/iaas/subnets/ocfp/0/ips/ocf/reserved:prometheus_ip" ))
+    azs:        (( concat genesis.env "-z1"  ))
+
+    prometheus_url:   (( concat meta.domains.prometheus ":" meta.ports.prometheus_port ))
+    grafana_url:      (( concat meta.domains.grafana ":" meta.ports.grafana_port ))
+    alertmanager_url: (( concat meta.domains.alertmanager ":" meta.ports.alertmanager_port ))
+
+  stemcell:
+    name:    (( grab params.stemcell_name    || "default" ))
+    os:      (( grab params.stemcell_os      || "ubuntu-jammy" ))
+    version: (( grab params.stemcell_version || "latest" ))

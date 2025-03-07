@@ -25,8 +25,8 @@ instance_groups:
           ca_certs:      (( grab params.credhub_exporter_ca_cert  || meta.credhub_exporter_ca_cert ))
         metrics:
           deployment:    (( grab params.credhub_exporter_deployment_name || meta.default_credhub_deployment_name ))
-          environment:   genesis.env
-        skip_ssl_verify: (( grab params.skip_ssl_validation || false ))
+          environment:   (( grab meta.environment ))
+        skip_ssl_verify: (( grab meta.skip_ssl_validation ))
         filters:
           generic-certificates:
             - "/static/.*"

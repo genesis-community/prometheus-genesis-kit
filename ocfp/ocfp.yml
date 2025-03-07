@@ -1,0 +1,63 @@
+---
+exodus:
+  # It would be nice to include `https` in front of all these URLs to make
+  # other code that relies on these values easier. However, because of HTTP
+  # basic auth, we'd need to insert the user/password between `https` and the
+  # meta.base_domain. It turns out that dropping `https` and adding it on when
+  # needed is easier.
+  prometheus_url:   (( grab meta.prometheus.prometheus_url ))
+  grafana_url:      (( grab meta.prometheus.grafana_url ))
+  alertmanager_url: (( grab meta.prometheus.alertmanager_url ))
+params:
+  static_ip: (( grab meta.prometheus.ip ))
+
+instance_groups:
+- name:      prometheus
+  instances: 1
+  azs:
+    - (( grab meta.prometheus.azs ))
+  stemcell:  default
+  persistent_disk_type: (( grab meta.prometheus.disk_type ))
+  networks:
+    - (( replace ))
+    - name:       (( grab meta.prometheus.network ))
+      static_ips: (( grab meta.prometheus.ip ))
+  vm_type:   (( grab meta.prometheus.vm_type ))
+  vm_extensions:
+    - ((replace))
+    - prometheus-lb
+
+  jobs:
+  - name: bosh_exporter
+    properties:
+      bosh_exporter:
+        bosh:
+          ca_cert: (( vault meta.bosh.exodus_src "ca_cert" ))
+          url:     (( vault meta.bosh.exodus_src "url" ))
+          uaa:
+            client_id:     prometheus
+            client_secret: (( vault meta.bosh.uaa_clients "/uaa/clients/prometheus:secret" ))
+
+
+  - name: nginx
+    release: prometheus
+    properties:
+      nginx:
+        prometheus:
+          server_name:  (( grab meta.domains.prometheus ))
+          https_port:   (( grab meta.ports.prometheus_port ))
+          http_port:    80
+        alertmanager:
+          server_name:  (( grab meta.domains.alertmanager ))
+          https_port:   (( grab meta.ports.alertmanager_port ))
+          http_port:    80
+        grafana:
+          server_name:  (( grab meta.domains.grafana ))
+          https_port:   (( grab meta.ports.grafana_port ))
+          http_port:    80
+
+stemcells:
+- alias:   (( grab meta.stemcell.name ))
+  os:      (( grab meta.stemcell.os ))
+  version: (( grab meta.stemcell.version ))
+

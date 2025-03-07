@@ -11,7 +11,8 @@ meta:
   grafana_port:      (( grab params.grafana_port       || 443 ))
   alertmanager_port: (( grab params.alertmanager_port || 8082 ))
   base_domain:       (( grab params.external_domain   || params.static_ip ))
-
+  environment:                (( grab genesis.env ))
+  skip_ssl_validation:        (( grab params.skip_ssl_validation || false ))
 
 exodus:
   # It would be nice to include `https` in front of all these URLs to make
@@ -24,9 +25,9 @@ exodus:
   alertmanager_url: (( concat instance_groups.prometheus.jobs.nginx.properties.nginx.alertmanager.server_name ":" instance_groups.prometheus.jobs.nginx.properties.nginx.alertmanager.https_port ))
 
 params:
-  ca_validity_period: 10y;
-  cert_validity_period: 5y;
-  webssl_validity_period: 1y;
+  ca_validity_period: 10y
+  cert_validity_period: 5y
+  webssl_validity_period: 1y
 
 instance_groups:
 - name:      prometheus

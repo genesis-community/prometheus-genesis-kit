@@ -13,14 +13,33 @@ set -eu
 # zero exit code otherwise).
 
 
-validate_features self-signed-cert +provided-cert \
-                  monitor-cf monitor-credhub legacy-firehose
+#validate_features self-signed-cert +provided-cert \
+#                  monitor-cf monitor-credhub legacy-firehose
+declare -a merge opsfiles
+opsfiles=()
+ops_var='merge'
+want_feature "ocfp" && ops_var="opsfiles"
 
-declare -a manifests
-manifests+=( manifests/prometheus.yml
-             manifests/releases/postgres.yml
-             manifests/releases/prometheus.yml
-             manifests/releases/bpm.yml )
+for want in ${GENESIS_REQUESTED_FEATURES}
+do
+  case ${want} in
+    (ocfp|self-signed-cert|+provided-cert|monitor-cf|monitor-credhub|legacy-firehose)
+      true
+      ;;
+    (*)
+      if [[ -f "$GENESIS_ROOT/ops/$want.yml" ]]
+      then eval "$ops_var+=( \"$GENESIS_ROOT/ops/$want.yml\" )"
+      else echo "ERROR: Unsupported feature: ${want}" ; exit 1
+      fi
+      ;;
+  esac
+done
+
+#declare -a manifests
+merge+=( "manifests/prometheus.yml"
+         "manifests/releases/postgres.yml"
+         "manifests/releases/prometheus.yml"
+         "manifests/releases/bpm.yml" )
 
 for want in ${GENESIS_REQUESTED_FEATURES}; do
   case "$want" in
@@ -31,16 +50,16 @@ for want in ${GENESIS_REQUESTED_FEATURES}; do
         cf_version="$(safe get --quiet "${GENESIS_EXODUS_MOUNT}${cf_exodus_path}:kit_version")"
       fi
       if [[ "$cf_version" =~ ^2\. ]] ; then # cf-kit 2.0 to <3.0
-        manifests+=( manifests/monitor-cf-v2.yml )
+        merge+=( "manifests/monitor-cf-v2.yml" )
         want_feature legacy-firehose && bail "legacy-firehose is not available for cf v2.x deployments"
       else
-        manifests+=( manifests/monitor-cf.yml )
-        want_feature legacy-firehose && manifests+=( manifests/legacy-firehose.yml )
+        merge+=( "manifests/monitor-cf.yml" )
+        want_feature legacy-firehose && merge+=( "manifests/legacy-firehose.yml" )
       fi
       ;;
 
     monitor-*)
-      manifests+=( "manifests/${want}.yml" )
+      merge+=( "manifests/${want}.yml" )
       ;;
 
     legacy-firehose)
@@ -50,4 +69,12 @@ for want in ${GENESIS_REQUESTED_FEATURES}; do
     esac
 done
 
-echo "${manifests[@]}"
+want_feature ocfp && merge+=(
+  "ocfp/meta.yml"
+  "ocfp/ocfp.yml"
+)
+
+echo "${merge[@]}"
+if (( ${#opsfiles[@]} > 0 ))
+then echo "${opsfiles[@]}"
+fi
