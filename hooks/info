@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eu
 
-vault="secret/$GENESIS_VAULT_PREFIX"
+vault="$GENESIS_SECRETS_MOUNT/$GENESIS_VAULT_PREFIX"
 
 describe \
   "" \
