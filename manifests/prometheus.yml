@@ -400,8 +400,8 @@ instance_groups:
           ca_cert: (( vault meta.bosh_exodus_src "ca_cert" ))
           url:     (( vault meta.bosh_exodus_src "url" ))
           uaa:
-            client_id:     prometheus
-            client_secret: (( vault meta.bosh_uaa_clients "/uaa/clients/prometheus:secret" ))
+            client_id:     (( vault meta.bosh_exodus_src "prometheus_user" ))
+            client_secret: (( vault meta.bosh_exodus_src "prometheus_password" ))
         metrics:
           environment:     (( grab genesis.env ))
     release: prometheus

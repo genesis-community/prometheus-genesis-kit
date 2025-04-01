@@ -32,11 +32,11 @@ instance_groups:
     properties:
       bosh_exporter:
         bosh:
-          ca_cert: (( vault meta.bosh.exodus_src "ca_cert" ))
-          url:     (( vault meta.bosh.exodus_src "url" ))
+          ca_cert: (( vault meta.bosh.exodus_path ":ca_cert" ))
+          url:     (( vault meta.bosh.exodus_path ":url" ))
           uaa:
-            client_id:     prometheus
-            client_secret: (( vault meta.bosh.uaa_clients "/uaa/clients/prometheus:secret" ))
+            client_id:     (( vault meta.bosh.exodus_path ":prometheus_user" ))
+            client_secret: (( vault meta.bosh.exodus_path ":prometheus_password" ))
 
 
   - name: nginx

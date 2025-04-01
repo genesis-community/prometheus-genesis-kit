@@ -1,5 +1,26 @@
 #!/bin/bash
 
+set +ue
+
+ok=yes
+# BOSH Exodus check
+# FIXME: This should allow for params-based overrides, but hardcoding for POC
+bosh_exodus_path="$GENESIS_EXODUS_MOUNT/$GENESIS_ENVIRONMENT/bosh"
+bosh_vault_path="$(safe get "$bosh_exodus_path:vault_base")";
+if ! safe exists "$bosh_exodus_path:prometheus_user" ; then
+  describe "" \
+    "#R{ERROR} Prometheus UAA user not exported by BOSH deployment" \
+    "" \
+    "This is probably due to using an older version of the bosh-genesis-kit" \
+    "and can be manualy remedied without and upgrade or redeployment with the"\
+    "following commands:"\
+    "" \
+    "#g{safe set '$bosh_exodus_path:prometheus_user' 'prometheus'}" \
+    "#g{safe cp  '$bosh_vault_path/users/prometheus:password' '$bosh_exodus_path:prometheus_password'}" \
+    ""
+  ok=no
+fi
+
 # Cloud Config checks
 if [[ -n "$GENESIS_CLOUD_CONFIG" ]] ; then
   if want_feature ocfp ; then
@@ -15,5 +36,11 @@ if [[ -n "$GENESIS_CLOUD_CONFIG" ]] ; then
   cloud_config_needs vm_type   "$(lookup params.prometheus_vm_type   ${_vm_type})"
   cloud_config_needs network   "$(lookup params.prometheus_network   ${_network})"
   cloud_config_needs disk_type "$(lookup params.prometheus_disk_pool ${_disk_type})"
-  check_cloud_config && describe "  cloud-config [#G{OK}]"
+  if check_cloud_config ; then
+    describe "  cloud-config [#G{OK}]" 
+  else
+    ok=no
+  fi
 fi
+
+[[ $ok == "yes" ]]

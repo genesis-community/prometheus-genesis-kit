@@ -26,10 +26,7 @@ meta:
 
   bosh:
     base_env:            (( grab genesis.bosh_env || params.bosh || genesis.env || params.env ))
-    default_exodus_path: (( concat meta.bosh.base_env "/bosh" ))
-    exodus_path:         (( grab params.bosh_exodus_path || meta.bosh.default_exodus_path ))
-    exodus_src:          (( concat $GENESIS_EXODUS_MOUNT meta.bosh.exodus_path ":" ))
-    uaa_clients:         (( vault meta.bosh.exodus_src "vault_base" ))
+    exodus_path:         (( concat $GENESIS_EXODUS_MOUNT meta.bosh.base_env "/bosh" ))
 
 
 
