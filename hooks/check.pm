@@ -13,7 +13,7 @@ BEGIN {push @INC, $ENV{GENESIS_LIB} ? $ENV{GENESIS_LIB} : $ENV{HOME}.'/.genesis/
 use parent qw(Genesis::Hook);
 
 # Import required functions
-use Genesis qw/bail info warning error in_array new_enough/;
+use Genesis;
 
 sub init {
   my ($class, %ops) = @_;
@@ -26,9 +26,9 @@ sub init {
 
 sub perform {
   my ($self) = @_;
-  my $exodus_path = $env->lookup("genesis.exodus_base");
-  my $cf_exodus_path =~ s/prometheus/bosh/;
-  my $prometheus_user = $self->vault->get($cf_exodus_path.":prometheus_user");
+  my $exodus_base = $self->env->exodus_base();
+  my $exodus_base =~ s/prometheus/bosh/;
+  my $prometheus_user = $self->vault->get($exodus_base.":prometheus_user");
   # Check bosh exodus exports prometheus uaa user.
   if ($prometheus_user) {
     $self->env->notify(success => "prometheus bosh uaa user exists. [#G{OK}]");

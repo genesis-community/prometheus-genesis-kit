@@ -1,4 +1,5 @@
 #!/usr/bin/env perl
+# vim: set ts=2 sw=2 sts=2 et:
 package Genesis::Hook::Blueprint::Prometheus v1.13.0;
 
 use strict;
@@ -9,7 +10,7 @@ use v5.20;
 BEGIN {push @INC, $ENV{GENESIS_LIB} ? $ENV{GENESIS_LIB} : $ENV{HOME}.'/.genesis/lib'}
 use parent qw(Genesis::Hook::Blueprint);
 
-use Genesis qw/bail info warning error in_array new_enough/;
+use Genesis qw/bail new_enough/;
 
 sub init {
 	my $class = shift;
@@ -29,9 +30,9 @@ sub perform {
     "manifests/releases/bpm.yml"
 	));
 
-my $exodus_path = $env->lookup("genesis.exodus_base");
-my $cf_exodus_path =~ s/prometheus/cf/;
-my $cf_version = $self->vault->get($cf_exodus_path.":kit_version");
+my $exodus_path = $self->env->exodus_base();
+my $exodus_path =~ s/prometheus/cf/;
+my $cf_version = $self->vault->get($exodus_path.":kit_version");
 
 # Features pre-check: Check for ops features
 my (@features,$iaas,$db,$abort,$warn) = ();
