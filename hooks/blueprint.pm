@@ -56,6 +56,11 @@ for my $feature ($blueprint->features) {
     ) unless $blueprint->want_feature('monitor-cf');
   } elsif ( -f $blueprint->env->path("ops/${feature}.yml")) {
     $blueprint->add_files("ops/${feature}.yml");
+  } elsif ($feature =~ /^(ocfp)$/) {
+    $blueprint->add_files(
+      "ocfp/meta.yml"
+      "ocfp/ocfp.yml"
+    );
   } else {
     bail(
       "The #c{%s} feature is invalid. See MANUAL.md for list of valid features.",
@@ -63,11 +68,6 @@ for my $feature ($blueprint->features) {
     )
   }
 }
-
-$blueprint->add_files(
-  "ocfp/meta.yml"
-  "ocfp/ocfp.yml"
-) if $self->want_feature('ocfp');
 
 1;
 

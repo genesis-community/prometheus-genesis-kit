@@ -36,6 +36,8 @@ sub perform {
       }
     } elsif (! $feature =~ /(self-signed-cert)/) {
       $self->add_feature('+provided-cert');
+    } elsif ($feature =~ /(ocfp)/) {
+      $self->add_feature($feature);
     } else {
       bail(
         "Feature [$feature] not supported in this context.".

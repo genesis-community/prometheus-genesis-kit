@@ -4,6 +4,7 @@ package Genesis::Hook::CloudConfig::Prometheus v1.13.0;
 
 use strict;
 use warnings;
+use v5.20;
 
 # Only needed for development
 BEGIN {push @INC, $ENV{GENESIS_LIB} ? $ENV{GENESIS_LIB} : $ENV{HOME}.'/.genesis/lib'}
