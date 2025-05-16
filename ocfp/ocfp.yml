@@ -25,7 +25,7 @@ instance_groups:
   vm_type:   (( grab meta.prometheus.vm_type ))
   vm_extensions:
     - ((replace))
-    - prometheus-lb
+  #  - prometheus-lb
 
   jobs:
   - name: bosh_exporter

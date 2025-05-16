@@ -1,4 +1,4 @@
-package Genesis::Hook::CloudConfig::Bosh v3.2.0;
+package Genesis::Hook::CloudConfig::Prometheus v1.13.0;
 
 use strict;
 use warnings;
@@ -26,7 +26,7 @@ sub perform {
 
 	my $config = $self->build_cloud_config({
 		'networks' => [
-			$self->network_definition('vault', strategy => 'ocfp',
+			$self->network_definition('prometheus', strategy => 'ocfp',
 				dynamic_subnets => {
 					allocation => {
 						size => 0,
@@ -42,7 +42,7 @@ sub perform {
 			)
 		],
 		'vm_types' => [
-			$self->vm_type_definition('vault',
+			$self->vm_type_definition('prometheus',
 				cloud_properties_for_iaas => {
 					openstack => {
 						'instance_type' => $self->for_scale({
@@ -58,12 +58,12 @@ sub perform {
 			),
 		],
 		'disk_types' => [
-			$self->disk_type_definition('vault',
+			$self->disk_type_definition('prometheus',
 				common => {
 					disk_size => $self->for_scale({ # add $self->for_feature('internal-blobstore')
-						dev => gigabytes(64),
-						prod => gigabytes(128)
-					}, gigabytes(96)),
+						dev => gigabytes(128),
+						prod => gigabytes(256)
+					}, gigabytes(128)),
 				},
 				cloud_properties_for_iaas => {
 					openstack => {
