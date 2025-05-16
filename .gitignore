@@ -1,2 +1,4 @@
 *.tar.gz
 ci.old/
+.DS_Store
+*.log
