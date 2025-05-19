@@ -1,0 +1,12 @@
+---
+# Stackit-specific overrides for OCFP
+# This file handles any specific differences between Stackit and OpenStack IaaS
+#
+# Note: The main difference for Stackit IaaS is the 1:1 correspondence of networks
+# to subnets rather than a single overarching network. This file will be used
+# to implement any specific overrides if needed in the future.
+#
+# Currently, the standard OpenStack handling in the ocfp.yml file works for Stackit
+# since the cloud config layer abstracts most of the IaaS-specific details.
+
+# No overrides needed at this time

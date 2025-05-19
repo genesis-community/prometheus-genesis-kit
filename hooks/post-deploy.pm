@@ -26,34 +26,20 @@ sub init {
 sub perform {
   my ($self) = @_;
 
-  $self->create_cf_vpcs();
-
   # Base class has deploy_successful method to check if GENESIS_DEPLOY_RC == 0
   if ($self->deploy_successful) {
     info(
-      "\n".
-      "#M{$ENV{GENESIS_ENVIRONMENT}} Prometheus deployed!\n".
-      "\n".
-      "For details about the deployment, run\n".
-      "\n".
-      "  #G{$ENV{GENESIS_CALL_ENV} info}\n".
-      "\n".
-      "To open the Prometheus page:]\n".
-      "\n".
-      "  #G{$ENV{GENESIS_CALL_ENV} do -- open prometheus}\n".
-      "\n".
-      "To open the Grafana page:\n".
-      "\n".
-      "  #G{$ENV{GENESIS_CALL_ENV} do -- open graphana}\n".
-      "\n".
-      "To visit the AlertManager page:\n".
-      "\n".
-      "  #G{$ENV{GENESIS_CALL_ENV} do -- open alertmanager}\n".
-      "\n".
-      "To generate a node exporter runtime config:\n".
-      "\n".
-      "  #G{$ENV{GENESIS_CALL_ENV} do -- runtime-config}\n".
-      "\n"
+      "\n#M{$ENV{GENESIS_ENVIRONMENT}} Prometheus deployed!\n".
+      "\nFor details about the deployment, run\n".
+      "\t#G{$ENV{GENESIS_CALL_ENV} info}\n".
+      "\nTo open the Prometheus page:]\n".
+      "\t#G{$ENV{GENESIS_CALL_ENV} do -- open prometheus}\n".
+      "\nTo open the Grafana page:\n".
+      "\t#G{$ENV{GENESIS_CALL_ENV} do -- open graphana}\n".
+      "\nTo visit the AlertManager page:\n".
+      "\t#G{$ENV{GENESIS_CALL_ENV} do -- open alertmanager}\n".
+      "\nTo generate a node exporter runtime config:\n".
+      "\t#G{$ENV{GENESIS_CALL_ENV} do -- runtime-config}\n".
     );
   }
 
@@ -90,4 +76,3 @@ Executes the post-deploy hook, displaying helpful information if the deployment 
 Genesis Framework
 
 =cut
-

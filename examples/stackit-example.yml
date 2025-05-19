@@ -1,0 +1,30 @@
+---
+# Example environment file for Prometheus Genesis Kit on Stackit IaaS
+
+kit:
+  name:    prometheus
+  version: latest
+  features:
+    - self-signed-cert
+
+params:
+  # Infrastructure parameters
+  static_ip: 10.0.0.10  # Replace with your actual static IP
+  external_domain: prometheus.example.com  # Replace with your actual domain
+
+  # Cloud configuration
+  stemcell_os: ubuntu-jammy
+  stemcell_version: latest
+
+  # Prometheus configuration
+  prometheus_port: 443
+  grafana_port: 8080
+  alertmanager_port: 8082
+
+  # Certificate validity periods
+  ca_validity_period: 3650
+  webssl_validity_period: 1095
+
+  # OCFP-specific parameters
+  ocfp_env_scale: dev
+  ocfp_vault_config_slug: my-env
