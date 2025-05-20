@@ -1,0 +1,35 @@
+# CredHub Monitoring Example
+#
+# This example configures Prometheus to monitor a CredHub deployment.
+
+---
+kit:
+  name:    prometheus
+  version: latest
+  features:
+    - self-signed-cert
+    - monitor-credhub
+
+params:
+  # Infrastructure configuration
+  network: prometheus
+  static_ip: 10.0.0.20
+  vm_type: default
+  disk_type: prometheus
+  
+  # Component access configuration
+  external_domain: prometheus.example.com
+  prometheus_port: 443
+  grafana_port: 8080
+  alertmanager_port: 8082
+  
+  # CredHub integration
+  # credhub_exodus_path: my-env/bosh         # Optional: customize exodus path for CredHub data
+  # credhub_exporter_api_url: https://credhub.example.com:8844  # Optional: override CredHub URL
+  # credhub_exporter_username: prometheus     # Optional: override client ID for CredHub access
+  # credhub_exporter_password: secret         # Optional: override client secret for CredHub access
+  # credhub_exporter_deployment_name: my-bosh # Optional: override deployment name for metrics labels
+  
+  # Certificate configuration
+  ca_validity_period: 3y
+  webssl_validity_period: 1y

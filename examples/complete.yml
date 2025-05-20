@@ -1,0 +1,49 @@
+# Complete Prometheus Deployment Example
+#
+# This example includes all major features: Cloud Foundry monitoring,
+# CredHub monitoring, and provided certificates.
+
+---
+kit:
+  name:    prometheus
+  version: latest
+  features:
+    - provided-cert      # Using provided certificates instead of self-signed
+    - monitor-cf         # Monitor Cloud Foundry
+    - monitor-credhub    # Monitor CredHub
+
+params:
+  # Infrastructure configuration
+  network: prometheus
+  static_ip: 10.0.0.20
+  vm_type: prometheus-large
+  disk_type: prometheus-large
+  availability_zones: [z1, z2, z3]  # For high availability
+  
+  # Component access configuration
+  external_domain: prometheus.example.com
+  prometheus_port: 443
+  grafana_port: 8080
+  alertmanager_port: 8082
+  
+  # Cloud Foundry integration
+  cf_env: prod-cf
+  doppler_port: 4443
+  skip_ssl_validation: false
+  
+  # CredHub integration
+  credhub_exodus_path: prod/bosh
+  
+  # You must have these values in your Vault:
+  # - $GENESIS_VAULT_PREFIX/nginx/ssl_certificate:certificate (SSL certificate)
+  # - $GENESIS_VAULT_PREFIX/nginx/ssl_certificate:key (SSL private key)
+  
+  # Optional overrides for exodus data paths
+  # bosh_exodus_path: prod/bosh    # BOSH exodus data path
+  # cf_exodus_path: prod/cf        # CF exodus data path
+
+exodus:
+  # Any custom exodus data can be added here
+  notifications:
+    slack_webhook: ((slack-webhook))
+    email: monitoring@example.com

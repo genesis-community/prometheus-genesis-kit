@@ -1,0 +1,37 @@
+# Cloud Foundry Monitoring Example
+#
+# This example configures Prometheus to monitor a Cloud Foundry deployment
+# using the Firehose API.
+
+---
+kit:
+  name:    prometheus
+  version: latest
+  features:
+    - self-signed-cert
+    - monitor-cf
+    # Uncomment for older CF deployments that don't support the V2 loggregator API
+    # - legacy-firehose
+
+params:
+  # Infrastructure configuration
+  network: prometheus
+  static_ip: 10.0.0.20
+  vm_type: default
+  disk_type: prometheus
+  
+  # Component access configuration
+  external_domain: prometheus.example.com
+  prometheus_port: 443
+  grafana_port: 8080
+  alertmanager_port: 8082
+  
+  # Cloud Foundry integration
+  cf_env: my-cf-env            # The name of your CF deployment environment
+  # cf_exodus_path: my-cf-env/cf  # Optional: customize the exodus path
+  doppler_port: 4443           # Default port for CF Doppler
+  skip_ssl_validation: false   # Set to true if using self-signed certs on CF
+  
+  # Certificate configuration
+  ca_validity_period: 3y
+  webssl_validity_period: 1y

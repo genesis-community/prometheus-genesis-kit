@@ -1,0 +1,28 @@
+# Basic Prometheus Deployment
+# 
+# This example configures a simple, standalone Prometheus deployment
+# with self-signed certificates.
+
+---
+kit:
+  name:    prometheus
+  version: latest
+  features:
+    - self-signed-cert
+
+params:
+  # Infrastructure configuration
+  network: prometheus
+  static_ip: 10.0.0.20
+  vm_type: default
+  disk_type: prometheus
+  
+  # Component access configuration
+  external_domain: prometheus.example.com
+  prometheus_port: 443
+  grafana_port: 8080
+  alertmanager_port: 8082
+  
+  # Certificate configuration
+  ca_validity_period: 3y
+  webssl_validity_period: 1y
