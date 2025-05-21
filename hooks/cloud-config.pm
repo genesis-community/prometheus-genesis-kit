@@ -44,9 +44,21 @@ sub perform {
                 'net_id' => $self->network_reference('id'), # Use same endpoint as openstack
                 'security_groups' => ['default']
               },
+              aws => {
+                'subnet' => $self->network_reference('subnet'),
+              },
             },
           },
         )
+      ],
+      'vm_extensions' => [
+        $self->vm_extension_definition('prometheus-lb',
+          cloud_properties_for_iaas => {
+            aws => {
+              'lb_target_groups' => ['ocfp-ocf-prometheus-lb-tg'],
+            },
+          },
+        ),
       ],
       'vm_types' => [
         $self->vm_type_definition('prometheus',
@@ -71,6 +83,23 @@ sub perform {
                 'size' => 32 # in gigabytes
               },
             },
+            aws => {
+              'instance_type' => $self->for_scale({
+                  dev => 'm6i.large',
+                  prod => 'r6i.xlarge'
+                }, 'm6i.large'),
+              'ephemeral_disk' => {
+                'size' => $self->for_scale({
+                  dev => 32768,
+                  prod => 65536
+                }, 32768),
+                'type' => 'gp3',
+                'encrypted' => $self->TRUE,
+              },
+              'metadata_options' => {
+                'http_tokens' => 'required',
+              },
+            },
           },
         ),
       ],
@@ -78,9 +107,9 @@ sub perform {
         $self->disk_type_definition('prometheus',
           common => {
             disk_size => $self->for_scale({ # add $self->for_feature('internal-blobstore')
-                dev => gigabytes(128),
-                prod => gigabytes(256)
-              }, gigabytes(128)),
+                dev => 131072,
+                prod => 263144
+              }, 131072),
           },
           cloud_properties_for_iaas => {
             openstack => {
@@ -88,6 +117,10 @@ sub perform {
             },
             stackit => {
               'type' => 'storage_premium_perf6', # Use same storage type as openstack
+            },
+            aws => {
+              'type' => 'gp3',
+              'encrypted' => $self->TRUE,
             },
           },
         ),
