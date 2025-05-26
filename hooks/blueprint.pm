@@ -32,10 +32,23 @@ sub perform {
 
   my $exodus_path = $self->env->exodus_base();
   $exodus_path =~ s/prometheus/cf/;
-  my $cf_version = $self->vault->get($exodus_path.":kit_version");
+  my $cf_version = "1.0.0";  # Default fallback
+  my $cf_exodus_path = join(
+    '',
+    $self->env->exodus_mount,
+    scalar($self->env->lookup('params.cf_exodus_path',$self->env->name.'/cf'))
+  );
+  if ($self->env->vault->has($cf_exodus_path, 'kit_version')) {
+    $cf_version = $self->env->vault->get($cf_exodus_path.":kit_version");
+  } else {
+    bail(
+      "Could not find cf kit version in vault at %s",
+      $cf_exodus_path.":kit_version"
+    );
+  }
 
   # Features pre-check: Check for ops features
-  my (@features,$iaas,$db,$abort,$warn) = ();
+  my (@features,$iaas,$db,$abort,$warn);
   for my $feature ($self->features) {
     if ($feature =~ /^(monitor-cf)$/) {
       if ($cf_version && !new_enough($cf_version, "2.0.0-rc0")) {
@@ -55,6 +68,9 @@ sub perform {
       bail(
         "legacy-firehose feature only applicable if monitor-cf feature is active"
       ) unless $self->want_feature('monitor-cf');
+    } elsif ($feature =~ /^(self-signed-cert|\+provided-cert)$/) {
+      # Certificate features - handled by other parts of the system
+      # No additional manifest files needed
     } elsif ( -f $self->env->path("ops/${feature}.yml")) {
       $self->add_files("ops/${feature}.yml");
     } elsif ($feature =~ /^(ocfp)$/) {
@@ -77,7 +93,7 @@ sub perform {
     }
   }
 
-  return 1;
+  return $self->done();
 }
 
 1;

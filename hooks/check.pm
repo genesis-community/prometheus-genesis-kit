@@ -19,16 +19,16 @@ sub init {
   my ($class, %ops) = @_;
   my $obj = $class->SUPER::init(%ops);
   $obj->{ok} = 1; # Start assuming all checks will pass
-	$obj->{files} = [];
-	$obj->check_minimum_genesis_version('3.1.0-rc.20');
+  $obj->{files} = [];
+  $obj->check_minimum_genesis_version('3.1.0-rc.20');
   return $obj;
 }
 
 sub perform {
   my ($self) = @_;
   my $exodus_base = $self->env->exodus_base();
-  my $exodus_base =~ s/prometheus/bosh/;
-  my $prometheus_user = $self->vault->get($exodus_base.":prometheus_user");
+  $exodus_base =~ s/prometheus/bosh/;
+  my $prometheus_user = $self->env->vault->get($exodus_base.":prometheus_user");
   # Check bosh exodus exports prometheus uaa user.
   if ($prometheus_user) {
     $self->env->notify(success => "prometheus bosh uaa user exists. [#G{OK}]");
@@ -37,10 +37,9 @@ sub perform {
       error => "prometheus bosh uaa user does not exist! [#R{FAILED}]".
       "Add the `promtheus-integration` fetaure to bosh redeploy first."
     );
-    $self->{ok} = 0;
   }
   # Return the final result
-  if ($self->{ok}) {
+  if ($self->{ok} == 1) {
     $self->env->notify(success => "environment files [#G{OK}]");
   } else {
     $self->env->notify(error => "environment files [#R{FAILED}]");

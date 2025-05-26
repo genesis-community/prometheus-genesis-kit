@@ -61,25 +61,20 @@ sub perform {
   ) unless $prometheus_password;
 
   info(join("\n",
-      "" ,
-      "#B{Prometheus Information}" ,
-      "" ,
-      "Prometheus endpoint information" ,
-      "  #C{https://$prometheus_url}" ,
-      "" ,
-      "Grafana endpoint information" ,
-      "  #C{https://$grafana_url}" ,
-      "" ,
-      "AlertManager endpoint information" ,
-      "  #C{https://$alertmanager_url}" ,
-      "" ,
-      "HTTP auth credentials" ,
-      "  username: #M{$prometheus_user}" ,
-      "  password: #G{$prometheus_password}" ,
+      "\n#B{Prometheus Information}" ,
+      "\nPrometheus endpoint information" ,
+      "\t#C{https://$prometheus_url}" ,
+      "\nGrafana endpoint information" ,
+      "\t#C{https://$grafana_url}" ,
+      "\nAlertManager endpoint information" ,
+      "\t#C{https://$alertmanager_url}" ,
+      "\nHTTP auth credentials" ,
+      "\tusername: #M{$prometheus_user}" ,
+      "\tpassword: #G{$prometheus_password}" ,
       ""
     ));
 
-  return $self->done(1);
+  return $self->done();
 }
 
 1;

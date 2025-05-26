@@ -45,8 +45,7 @@ sub perform {
   # Offer environment editor
   $self->_offer_environment_editor();
 
-  $self->done();
-  return 1;
+  return $self->done();
 }
 
 sub _identify_network {

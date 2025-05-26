@@ -53,7 +53,7 @@ sub perform {
     return 0;
   }
 
-  return 1;
+  return $self->done();
 }
 
 # Helper methods
