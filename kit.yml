@@ -9,6 +9,14 @@ genesis_version_min: 2.7.10
 required_configs:
   cloud: [ new, blueprint, check ]
 
+supports:
+- aws
+- azure
+- gcp
+- openstack
+- vsphere
+- stackit
+
 credentials:
   base:
     grafanadb:
