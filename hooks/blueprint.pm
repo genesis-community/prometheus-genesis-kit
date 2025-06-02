@@ -13,87 +13,93 @@ use parent qw(Genesis::Hook::Blueprint);
 use Genesis qw/bail new_enough/;
 
 sub init {
-  my $class = shift;
-  my $obj = $class->SUPER::init(@_);
-  $obj->{files} = [];
-  $obj->check_minimum_genesis_version('3.1.0-rc.20');
-  return $obj;
+	my $class = shift;
+	my $obj = $class->SUPER::init(@_);
+	$obj->check_minimum_genesis_version('3.1.0-rc.20');
+	return $obj;
 }
 
 sub perform {
-  my ($self) = @_; # $self is '$blueprint'
+	my ($blueprint) = @_;
+	my $env = $blueprint->env;
 
-  $self->add_files(
-    "manifests/prometheus.yml",
-    "manifests/releases/postgres.yml",
-    "manifests/releases/prometheus.yml",
-    "manifests/releases/bpm.yml"
-  );
+	$blueprint->add_files(
+		"manifests/prometheus.yml",
+		"manifests/releases/postgres.yml",
+		"manifests/releases/prometheus.yml",
+		"manifests/releases/bpm.yml"
+	);
 
-  my $exodus_path = $self->env->exodus_base();
-  $exodus_path =~ s/prometheus/cf/;
-  my $cf_version = "1.0.0";  # Default fallback
-  my $cf_exodus_path = join(
-    '',
-    $self->env->exodus_mount,
-    scalar($self->env->lookup('params.cf_exodus_path',$self->env->name.'/cf'))
-  );
-  if ($self->env->vault->has($cf_exodus_path, 'kit_version')) {
-    $cf_version = $self->env->vault->get($cf_exodus_path.":kit_version");
-  } else {
-    bail(
-      "Could not find cf kit version in vault at %s",
-      $cf_exodus_path.":kit_version"
-    );
-  }
+	my $cf_exodus_path =
+		$env->lookup('cf_env',$env->name).
+		"/".
+		$env->lookup('cf_type','cf');
 
-  # Features pre-check: Check for ops features
-  my (@features,$iaas,$db,$abort,$warn);
-  for my $feature ($self->features) {
-    if ($feature =~ /^(monitor-cf)$/) {
-      if ($cf_version && !new_enough($cf_version, "2.0.0-rc0")) {
-        $self->add_files( "manifests/monitor-cf-v2.yml" );
-        bail(
-          "legacy-firehose is not available for cf v2.x deployments"
-        ) if $self->want_feature('legacy-firehose');
-      } else {
-        $self->add_files( "manifests/monitor-cf.yml" );
-        if ($self->want_feature('legacy-firehose')) {
-          $self->add_files( "manifests/legacy-firehose.yml" );
-        }
-      }
-    } elsif ($feature =~ /^(monitor-*)$/) {
-      $self->add_files("manifests/${feature}.yml");
-    } elsif ($feature =~ /^(legacy-firehose)$/) {
-      bail(
-        "legacy-firehose feature only applicable if monitor-cf feature is active"
-      ) unless $self->want_feature('monitor-cf');
-    } elsif ($feature =~ /^(self-signed-cert|\+provided-cert)$/) {
-      # Certificate features - handled by other parts of the system
-      # No additional manifest files needed
-    } elsif ( -f $self->env->path("ops/${feature}.yml")) {
-      $self->add_files("ops/${feature}.yml");
-    } elsif ($feature =~ /^(ocfp)$/) {
-      $self->add_files(
-        "ocfp/meta.yml",
-        "ocfp/ocfp.yml"
-      );
+	my $cf_v2 = new_enough(
+		$env->exodus_lookup('kit_version','1.0.0',$cf_exodus_path),
+		"2.0.0-rc0"
+	);
 
-      # Add IaaS-specific files if needed
-      my $iaas = $self->iaas;
-      if ($iaas eq 'stackit') {
-        # If we need any stackit-specific overrides in the future, we can add them here
-        # $self->add_files("ocfp/stackit.yml");
-      }
-    } else {
-      bail(
-        "The #c{%s} feature is invalid. See MANUAL.md for list of valid features.",
-        $feature
-      );
-    }
-  }
+	my (@ops_files) = ();
+	for my $feature ($blueprint->features) {
+		if ($feature =~ /^(monitor-cf)$/) {
+			$blueprint->add_files(
+				$cf_v2
+					? "manifests/monitor-cf-v2.yml"
+					:	"manifests/monitor-cf.yml"
+			);
+			if ($blueprint->want_feature('legacy-firehose')) {
+				bail(
+					"legacy-firehose is not available for cf v2.x deployments"
+				) if $cf_v2;
+				$blueprint->add_files("manifests/legacy-firehose.yml");
+			}
 
-  return $self->done();
+		} elsif ($feature =~ /^(monitor-*)$/) {
+			bail(
+				"The feature #c{%s} is not valid for the Prometheus blueprint.",
+				$feature
+			) unless -f $env->kit->path("manifests/${feature}.yml");
+			$blueprint->add_files("manifests/${feature}.yml");
+
+		} elsif ($feature =~ /^(legacy-firehose)$/) {
+			bail(
+				"legacy-firehose feature only applicable if monitor-cf feature is active"
+			) unless $blueprint->want_feature('monitor-cf');
+
+		} elsif ($feature =~ /^(ocfp|self-signed-cert|\+provided-cert)$/) {
+			# Handled elsewhere, so skip
+
+		} elsif ( -f $env->path("ops/${feature}.yml")) {
+			# Ops files are added to the blueprint at the end
+			push @ops_files, "ops/${feature}.yml";
+		} else {
+			bail(
+				"The #c{%s} feature is invalid. See MANUAL.md for list of valid features.",
+				$feature
+			);
+		}
+	}
+
+	if ($blueprint->want_feature('ocfp')) {
+		# OCFP wants to be added after the other features because it modifies them
+		$blueprint->add_files(
+			"ocfp/meta.yml",
+			"ocfp/ocfp.yml"
+		);
+
+		# Add IaaS-specific files if needed
+		my $iaas = $blueprint->iaas;
+		if ($iaas eq 'stackit') {
+			# If we need any stackit-specific overrides in the future, we can add them here
+			# $blueprint->add_files("ocfp/stackit.yml");
+		}
+	}
+
+	# Add the ops files at the end so they can override any previous files
+	$blueprint->add_files(@ops_files);
+
+	return $blueprint->done();
 }
 
 1;
