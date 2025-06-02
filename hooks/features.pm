@@ -1,5 +1,4 @@
 #!/usr/bin/env perl
-# vim: set ts=2 sw=2 sts=2 foldmethod=marker
 package Genesis::Hook::Features::Prometheus v1.13.0;
 
 use strict;
@@ -22,31 +21,12 @@ sub init {
 sub perform {
   my ($self) = @_;
 
-  foreach my $feature (@{$self->{features}}) {
-    if ($feature =~ /(self-signed-cert|legacy-firehose|monitor-cf*)/) {
-      $self->add_feature($feature);
-    } elsif ($feature =~ /^(monitor-*)$/) {
-      if (-f $self->env->path("ops/${feature}.yml")) {
-        $self->add_feature($feature);
-      } else {
-        bail(
-          "Feature [$feature] not supported in this context.".
-          " Supported features are: self-signed-cert, legacy-firehose, and the monitor-cf* family."
-        );
-      }
-    } elsif (! $feature =~ /(self-signed-cert)/) {
-      $self->add_feature('+provided-cert');
-    } elsif ($feature =~ /(ocfp)/) {
-      $self->add_feature($feature);
-    } else {
-      bail(
-        "Feature [$feature] not supported in this context.".
-        " Supported features are: self-signed-cert, legacy-firehose, and the monitor-cf* family."
-      );
-    }
-  }
+  # Do not error check feature compatibility - that is blueprint's job
+  $self->add_feature($_) for $self->{features}->@*;
+  $self->add_feature('+provided-cert') unless $self->has_feature('self-signed-cert');
 
   return $self->done();
 }
 
+# vim: set ts=2 sw=2 sts=2 foldmethod=marker noet
 1;
