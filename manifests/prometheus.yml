@@ -7,12 +7,12 @@ meta:
   bosh_uaa_clients:         (( vault meta.bosh_exodus_src "vault_base" ))
   default:
     azs: [z1]
-  prometheus_port:   (( grab params.prometheus_port   || 8080 ))
-  grafana_port:      (( grab params.grafana_port       || 443 ))
-  alertmanager_port: (( grab params.alertmanager_port || 8082 ))
-  base_domain:       (( grab params.external_domain   || params.static_ip ))
-  environment:                (( grab genesis.env ))
-  skip_ssl_validation:        (( grab params.skip_ssl_validation || false ))
+  prometheus_port:          (( grab params.prometheus_port   || 8080 ))
+  grafana_port:             (( grab params.grafana_port      || 443 ))
+  alertmanager_port:        (( grab params.alertmanager_port || 8082 ))
+  base_domain:              (( grab params.external_domain   || params.static_ip ))
+  environment:              (( grab genesis.env ))
+  skip_ssl_validation:      (( grab params.skip_ssl_validation || false ))
 
 exodus:
   # It would be nice to include `https` in front of all these URLs to make
