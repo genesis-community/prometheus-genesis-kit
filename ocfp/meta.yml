@@ -36,7 +36,7 @@ meta:
     disk_type:  (( concat meta.ocfp.env.cloud "disk-prometheus" ))
     vm_type:    (( concat meta.ocfp.env.cloud "vm-prometheus" ))
     network:    (( concat meta.ocfp.env.cloud "net-prometheus" ))
-    ip:         (( vault meta.ocfp.vault.config "/vpc/subnets/ocfp-0/reserved-ips:prometheus_ip" ))
+    ip:         (( vault meta.ocfp.vault.config "/net/subnets/ocfp-0/reserved-ips:prometheus_ip" ))
     azs:        (( concat genesis.env "-z1"  ))
 
     prometheus_url:   (( concat meta.domains.prometheus ":" meta.ports.prometheus_port ))

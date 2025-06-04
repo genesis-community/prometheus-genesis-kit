@@ -42,7 +42,7 @@ sub perform {
               },
               stackit => {
                 'net_id' => $self->network_reference('id'), # Use same endpoint as openstack
-                'security_groups' => ['default']
+                'security_groups' => $self->network_reference('sgs', 'get_sgs_by_names', 'ocfp', 'default')
               },
               aws => {
                 'subnet' => $self->network_reference('subnet'),
@@ -130,4 +130,10 @@ sub perform {
   $self->done($config);
 }
 
+sub get_sgs_by_names {
+        my ($self, $subnet_data, $ref, @names) = @_;
+        my @ids = map {$subnet_data->{$ref}{$_}{id}} @names;
+        # TODO: Error checking
+        return \@ids
+}
 1;
