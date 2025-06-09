@@ -460,6 +460,7 @@ instance_groups:
     release: prometheus
     properties:
       nginx:
+        server_names_hash_bucket_size: 128
         ssl_cert:       (( vault meta.vault "/nginx/ssl_certificate:certificate" ))
         ssl_key:        (( vault meta.vault "/nginx/ssl_certificate:key" ))
         prometheus:
