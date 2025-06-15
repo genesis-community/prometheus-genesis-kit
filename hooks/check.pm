@@ -1,9 +1,8 @@
-#!/usr/bin/env perl
-package Genesis::Hook::Check::Prometheus v1.13.0; # version of the bosh kit
+# vim: set ts=2 sw=2 sts=2 noet fdm=marker foldlevel=1:
+package Genesis::Hook::Check::Prometheus; # version of the bosh kit
 
-use strict;
-use warnings;
-use v5.20; # Genesis supports min perl v5.20.
+use v5.20;
+use warnings; # Genesis supports min perl v5.20.
 
 # Only needed for development
 BEGIN {push @INC, $ENV{GENESIS_LIB} ? $ENV{GENESIS_LIB} : $ENV{HOME}.'/.genesis/lib'}
@@ -57,3 +56,4 @@ sub check_environment_parameters {
 }
 
 1;
+# vim: set ts=2 sw=2 sts=2 noet fdm=marker foldlevel=1:

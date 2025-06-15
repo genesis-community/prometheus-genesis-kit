@@ -1,8 +1,8 @@
-package Genesis::Hook::Prometheus::PostDeploy v1.13.0;
+# vim: set ts=2 sw=2 sts=2 noet fdm=marker foldlevel=1:
+package Genesis::Hook::Prometheus::PostDeploy;
 
-use strict;
-use warnings;
-use v5.20; # Genesis min perl version is 5.20
+use v5.20;
+use warnings; # Genesis min perl version is 5.20
 
 # Only needed for development
 BEGIN {push @INC, $ENV{GENESIS_LIB} ? $ENV{GENESIS_LIB} : $ENV{HOME}.'/.genesis/lib'}
@@ -49,4 +49,4 @@ sub perform {
 }
 
 1; # End of module
-# vim: set ts=2 sw=2 sts=2 foldmethod=marker
+# vim: set ts=2 sw=2 sts=2 noet fdm=marker foldlevel=1:
