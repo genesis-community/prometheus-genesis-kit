@@ -1,4 +1,3 @@
-# vim: set ts=2 sw=2 sts=2 noet fdm=marker foldlevel=1:
 package Genesis::Hook::Prometheus::PostDeploy;
 
 use v5.20;
@@ -7,7 +6,7 @@ use warnings; # Genesis min perl version is 5.20
 # Only needed for development
 BEGIN {push @INC, $ENV{GENESIS_LIB} ? $ENV{GENESIS_LIB} : $ENV{HOME}.'/.genesis/lib'}
 
-use parent qw(Genesis::Hook::PostDeploy);
+use parent qw(Genesis::Hook);
 
 use Genesis qw/info/;
 use JSON::PP;
@@ -45,7 +44,7 @@ sub perform {
 	}
 
 	# Mark the hook as completed successfully
-	return $self->done();
+	return $self->done(1);
 }
 
 1; # End of module

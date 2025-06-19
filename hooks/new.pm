@@ -1,5 +1,3 @@
-# vim: set ts=2 sw=2 sts=2 noet fdm=marker foldlevel=1:
-# # vim: set ts=2 sw=2 sts=2 noet fdm=marker foldlevel=1:
 package Genesis::Hook::New::Prometheus;
 
 use v5.20;
@@ -92,8 +90,10 @@ sub _get_static_ip {
 sub _configure_ssl {
   my ($self) = @_;
 
-  describe("",
-    "Prometheus will be running on HTTPS, and as such, needs an SSL cert/key.");
+  info(
+    "\n".
+    "Prometheus will be running on HTTPS, and as such, needs an SSL cert/key.\n"
+  );
 
   my $ssl_cert_feature;
   prompt_for('ssl_cert_feature', 'select',
@@ -120,10 +120,12 @@ sub _configure_ssl {
 sub _get_external_domain {
   my ($self) = @_;
 
-  describe("",
-    "If you'd like to access Prometheus via a domain name, please enter it now. If you",
-    "do not have one, and would prefer to access Prometheus via the static IP, leave ",
-    "this field empty.");
+  info(
+    "\n".
+    "If you'd like to access Prometheus via a domain name, please enter it now. If you\n".
+    "do not have one, and would prefer to access Prometheus via the static IP, leave \n".
+    "this field empty.\n"
+  );
 
   my $external_domain;
   prompt_for('external_domain', 'line', '--default \'\'',
@@ -135,10 +137,12 @@ sub _get_external_domain {
 sub _configure_exporters {
   my ($self) = @_;
 
-  describe("",
-    "By default, Prometheus will monitor VM metrics and your BOSH environment. If you",
-    "want more detail, you can select from supported exporters below to gain insight",
-    "into software-specific metrics. Some exporters may require additional configuration.");
+  info(
+    "\n".
+    "By default, Prometheus will monitor VM metrics and your BOSH environment. If you\n".
+    "want more detail, you can select from supported exporters below to gain insight\n".
+    "into software-specific metrics. Some exporters may require additional configuration.\n"
+  );
 
   foreach my $exporter ('cf', 'credhub') {
     my $monitor_exporter;
@@ -191,3 +195,4 @@ sub _offer_environment_editor {
 }
 
 1;
+# vim: set ts=2 sw=2 sts=2 noet fdm=marker foldlevel=1:
