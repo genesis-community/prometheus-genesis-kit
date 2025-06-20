@@ -17,10 +17,10 @@ sub init {
 }
 
 sub perform {
-	my ($blueprint) = @_;
-	my $env = $blueprint->env;
+	my ($self) = @_;
+	my $env = $self->env;
 
-	$blueprint->add_files(
+	$self->add_files(
 		"manifests/prometheus.yml",
 		"manifests/releases/postgres.yml",
 		"manifests/releases/prometheus.yml",
@@ -38,18 +38,18 @@ sub perform {
 	);
 
 	my (@ops_files) = ();
-	for my $feature ($blueprint->features) {
+	for my $feature ($self->features) {
 		if ($feature =~ /^(monitor-cf)$/) {
-			$blueprint->add_files(
+			$self->add_files(
 				$cf_v2
 					? "manifests/monitor-cf-v2.yml"
 					:	"manifests/monitor-cf.yml"
 			);
-			if ($blueprint->want_feature('legacy-firehose')) {
+			if ($self->want_feature('legacy-firehose')) {
 				bail(
 					"legacy-firehose is not available for cf v2.x deployments"
 				) if $cf_v2;
-				$blueprint->add_files("manifests/legacy-firehose.yml");
+				$self->add_files("manifests/legacy-firehose.yml");
 			}
 
 		} elsif ($feature =~ /^(monitor-*)$/) {
@@ -57,12 +57,12 @@ sub perform {
 				"The feature #c{%s} is not valid for the Prometheus blueprint.",
 				$feature
 			) unless -f $env->kit->path("manifests/${feature}.yml");
-			$blueprint->add_files("manifests/${feature}.yml");
+			$self->add_files("manifests/${feature}.yml");
 
 		} elsif ($feature =~ /^(legacy-firehose)$/) {
 			bail(
 				"legacy-firehose feature only applicable if monitor-cf feature is active"
-			) unless $blueprint->want_feature('monitor-cf');
+			) unless $self->want_feature('monitor-cf');
 
 		} elsif ($feature =~ /^(ocfp|self-signed-cert|\+provided-cert)$/) {
 			# Handled elsewhere, so skip
@@ -78,28 +78,25 @@ sub perform {
 		}
 	}
 
-	if ($blueprint->want_feature('ocfp')) {
+	if ($self->want_feature('ocfp')) {
 		# OCFP wants to be added after the other features because it modifies them
-		$blueprint->add_files(
+		$self->add_files(
 			"ocfp/meta.yml",
 			"ocfp/ocfp.yml"
 		);
 
 		# Add IaaS-specific files if needed
-		my $iaas = $blueprint->iaas;
+		my $iaas = $self->iaas;
 		if ($iaas eq 'stackit') {
 			# If we need any stackit-specific overrides in the future, we can add them here
-			# $blueprint->add_files("ocfp/stackit.yml");
+			# $self->add_files("ocfp/stackit.yml");
 		}
 	}
 
 	# Add the ops files at the end so they can override any previous files
-	$blueprint->add_files(@ops_files);
+	$self->add_files(@ops_files);
 
-	return $blueprint->done();
-
-	return $self->done(1);
-
+	return $self->done();
 }
 
 1;

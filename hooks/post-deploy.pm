@@ -6,7 +6,7 @@ use warnings; # Genesis min perl version is 5.20
 # Only needed for development
 BEGIN {push @INC, $ENV{GENESIS_LIB} ? $ENV{GENESIS_LIB} : $ENV{HOME}.'/.genesis/lib'}
 
-use parent qw(Genesis::Hook);
+use parent qw(Genesis::Hook::PostDeploy);
 
 use Genesis qw/info/;
 use JSON::PP;
@@ -32,7 +32,7 @@ sub perform {
 			"For details about the deployment, run\n".
 			"  #G{%s info}\n\n".
 			"To open the Prometheus page:\n".
-			"  #G{%s do open prometheus}\ni\n".
+			"  #G{%s do open prometheus}\n\n".
 			"To open the Grafana page:\n".
 			"  #G{%s do open graphana}\n\n".
 			"To visit the AlertManager page:\n".

@@ -7,23 +7,18 @@ meta:
     vault:
       config_slug:   (( grab params.ocfp_vault_config_slug || genesis.ocfp_env ))
       config:        (( concat genesis.ocfp_config_mount meta.ocfp.vault.config_slug ))
-    certs:
-      trusted:
-        - (( vault genesis.secrets_mount "certs/org:ca" )) # Organization CA, if exists
-        - (( vault genesis.secrets_mount "certs/dbs:ca" )) # External Databases CA
-    
 
   ports:
     prometheus_port:   (( grab params.prometheus_port   || 443 ))
     grafana_port:      (( grab params.grafana_port      || 443 ))
     alertmanager_port: (( grab params.alertmanager_port || 443 ))
 
-  base_domain: (( grab params.external_domain ))
+  # base_domain: (( grab params.external_domain )) is now unique domains
 
   domains:
-    prometheus:   (( concat "prometheus"   meta.base_domain ))
-    grafana:      (( concat "grafana"      meta.base_domain ))
-    alertmanager: (( concat "alertmanager" meta.base_domain ))
+    prometheus:   (( vault meta.ocfp.vault.config "/fqdns:prometheus" ))
+    grafana:      (( vault meta.ocfp.vault.config "/fqdns:grafana" ))
+    alertmanager: (( vault meta.ocfp.vault.config "/fqdns:alertmanager" ))
 
   bosh:
     base_env:            (( grab genesis.bosh_env || params.bosh || genesis.env || params.env ))
