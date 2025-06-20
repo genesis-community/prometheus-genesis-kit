@@ -7,7 +7,7 @@ use warnings; # Genesis supports min perl v5.20.
 BEGIN {push @INC, $ENV{GENESIS_LIB} ? $ENV{GENESIS_LIB} : $ENV{HOME}.'/.genesis/lib'}
 
 # Parent class inheritance
-use parent qw(Genesis::Hook::Info);
+use parent qw(Genesis::Hook);
 
 # Import required functions
 use Genesis qw/bail info/;
@@ -30,7 +30,7 @@ sub perform {
 
   # Display BOSH environment
   info("BOSH env");
-  my ($out, $rc, $err) = run("bosh -A env --tty | sed -e 's/^/  /'");
+  my ($out, $rc, $err) = $self->bosh->execute({interactive => 0},"bosh", "-A", "env", "--tty");
   info($out);
 
   # Display access instructions
