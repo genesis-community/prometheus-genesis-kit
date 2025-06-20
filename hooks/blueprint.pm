@@ -32,10 +32,9 @@ sub perform {
 		"/".
 		$env->lookup('cf_type','cf');
 
-	my $cf_v2 = new_enough(
-		$env->exodus_lookup('kit_version','1.0.0',$cf_exodus_path),
-		"2.0.0-rc0"
-	);
+
+	my $cf_version = $env->exodus_lookup('kit_version','1.0.0',$cf_exodus_path);
+	my $cf_v2 = new_enough(($cf_version)[0], "2.0.0-rc0");
 
 	my (@ops_files) = ();
 	for my $feature ($self->features) {
