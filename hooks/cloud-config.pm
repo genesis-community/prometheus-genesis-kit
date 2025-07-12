@@ -42,15 +42,14 @@ sub perform {
                 'security_groups' => $self->network_reference('sgs', 'get_sgs_by_names', 'ocfp', 'default')
               },
               aws => {
-                'subnet' => $self->network_reference('subnet'),
+                'subnet' => $self->subnet_reference('id'),
               },
             },
           },
         )
       ],
       'vm_extensions' => [
-        $self->vm_extension_definition('prometheus-lb',
-          cloud_properties_for_iaas => {
+        $self->vm_extension_definition('prometheus-lb' => {
             aws => {
               'lb_target_groups' => ['ocfp-ocf-prometheus-lb-tg'],
             },
