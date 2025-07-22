@@ -3,6 +3,7 @@ package Genesis::Hook::Addon::Prometheus::RuntimeConfig;
 use v5.20;
 use warnings; # Genesis min perl version is 5.20
 use Genesis qw/bail info run pushd popd mkfile_or_fail/;
+use Genesis::UI qw/prompt_for_boolean/;
 # Only needed for development
 BEGIN {push @INC, $ENV{GENESIS_LIB} ? $ENV{GENESIS_LIB} : $ENV{HOME}.'./.genesis/lib'}
 
@@ -24,27 +25,51 @@ sub perform {
   my ($self) = @_;
   my $env = $self->env;
 
-  $env->notify(<<EOF);
-releases:
-  - name: node-exporter
-    version: 5.5.0
-    url:     https://github.com/bosh-prometheus/node-exporter-boshrelease/releases/download/v5.5.0/node-exporter-5.5.0.tgz
-    sha1:    e013bead7ca3d0128a56dc71b1294fa0d75eea36
+  if (!$self->was_deployed()) {
+    bail("",
+      "\n#R{[ERROR]} No deployment found.\n".
+      "\tPlease run deploy on this environment before running any addons.\n");
+  }
 
-addons:
-  - name: node_exporter
-    jobs:
-      - name: node_exporter
-        release: node-exporter
-    include:
-      stemcell:
-        - os: ubuntu-jammy
-        - os: ubuntu-bionic
-        - os: ubuntu-xenial
-    properties: {}
-EOF
+  my $config_name = sprintf(
+    "%s.%s.%s",
+    $self->env->name,
+    $self->env->type,
+    "node-exporter"
+  );
 
+  my $config = "  releases:\n".
+               "    - name: node-exporter\n".
+               "      version: 5.5.0\n".
+               "      url:     https://github.com/bosh-prometheus/node-exporter-boshrelease/releases/download/v5.5.0/node-exporter-5.5.0.tgz\n".
+               "      sha1:    e013bead7ca3d0128a56dc71b1294fa0d75eea36\n\n".
+               "  addons:\n".
+               "    - name: node_exporter\n".
+               "      jobs:\n".
+               "        - name: node_exporter\n".
+               "          release: node-exporter\n".
+               "      include:\n".
+               "        stemcell:\n".
+               "          - os: ubuntu-jammy\n".
+               "          - os: ubuntu-bionic\n".
+               "          - os: ubuntu-xenial\n".
+               "      properties: {}\n";
+
+  info($config);
+    if (prompt_for_boolean(
+      "Do you want to save this runtime-config as '$config_name'? [y|n]", 1
+    )) {
+      $self->env->bosh->upload_config($config,'runtime',$config_name);
+    } else {
+      info("Runtime config not uploaded.");
+    }
+  
   return $self->done();
+}
+
+sub was_deployed {
+  my ($self) = @_;
+  $self->env->deployments->current_state eq "deployed";
 }
 
 1;
