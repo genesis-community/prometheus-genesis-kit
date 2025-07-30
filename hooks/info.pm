@@ -56,18 +56,28 @@ sub perform {
   bail(
     "Prometheus password not found in exodus data. Please check your environment."
   ) unless $prometheus_password;
+  my $grafana_user = $self->env->exodus_lookup('grafana_admin_user');
+  bail(
+    "Grafana user not found in exodus data. Please check your environment."
+  ) unless $grafana_user;
+  my $grafana_password = $self->env->exodus_lookup('grafana_admin_password');
+  bail(
+    "Grafana password not found in exodus data. Please check your environment."
+  ) unless $grafana_password;
 
   info(join("\n",
       "\n#B{Prometheus Information}" ,
       "\nPrometheus endpoint information" ,
       "\t#C{https://$prometheus_url}" ,
-      "\nGrafana endpoint information" ,
-      "\t#C{https://$grafana_url}" ,
-      "\nAlertManager endpoint information" ,
-      "\t#C{https://$alertmanager_url}" ,
       "\nHTTP auth credentials" ,
       "\tusername: #M{$prometheus_user}" ,
       "\tpassword: #G{$prometheus_password}" ,
+      "\nGrafana endpoint information" ,
+      "\t#C{https://$grafana_url}" ,
+      "\tusername: #M{$grafana_user}" ,
+      "\tpassword: #G{$grafana_password}" ,
+      "\nAlertManager endpoint information" ,
+      "\t#C{https://$alertmanager_url}" ,
       ""
     ));
 

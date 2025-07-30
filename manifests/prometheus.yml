@@ -13,6 +13,10 @@ meta:
   base_domain:              (( grab params.external_domain   || params.static_ip ))
   environment:              (( grab genesis.env ))
   skip_ssl_validation:      (( grab params.skip_ssl_validation || false ))
+  prometheus_user:          admin
+  prometheus_password:      (( vault meta.vault "/admin:password" ))
+  grafana_admin_user:       admin
+  grafana_admin_password:   (( vault meta.vault "/admin:password" ))
 
 exodus:
   # It would be nice to include `https` in front of all these URLs to make
@@ -23,6 +27,10 @@ exodus:
   prometheus_url:   (( concat instance_groups.prometheus.jobs.nginx.properties.nginx.prometheus.server_name ":" instance_groups.prometheus.jobs.nginx.properties.nginx.prometheus.https_port ))
   grafana_url:      (( concat instance_groups.prometheus.jobs.nginx.properties.nginx.grafana.server_name ":" instance_groups.prometheus.jobs.nginx.properties.nginx.grafana.https_port ))
   alertmanager_url: (( concat instance_groups.prometheus.jobs.nginx.properties.nginx.alertmanager.server_name ":" instance_groups.prometheus.jobs.nginx.properties.nginx.alertmanager.https_port ))
+  prometheus_user:        (( grab meta.prometheus_user ))
+  prometheus_password:    (( grab meta.prometheus_password ))
+  grafana_admin_user:     (( grab meta.grafana_admin_user ))
+  grafana_admin_password: (( grab meta.grafana_admin_password ))
 
 params:
   ca_validity_period: 10y
