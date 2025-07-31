@@ -1,12 +1,13 @@
 package Genesis::Hook::Addon::Prometheus::Open;
-
 use v5.20;
 use warnings; # Genesis min perl version is 5.20
-use Genesis qw/bail info run pushd popd mkfile_or_fail/;
+
 # Only needed for development
-BEGIN {push @INC, $ENV{GENESIS_LIB} ? $ENV{GENESIS_LIB} : $ENV{HOME}.'./.genesis/lib'}
+BEGIN {push @INC, $ENV{GENESIS_LIB} ? $ENV{GENESIS_LIB} : $ENV{HOME}.'/.genesis/lib'}
 
 use parent qw(Genesis::Hook::Addon);
+
+use Genesis qw/bail info run pushd popd mkfile_or_fail/;
 use File::Basename qw/basename/;
 
 sub init {
@@ -18,55 +19,70 @@ sub init {
 
 sub cmd_details {
   return
-  "Provides utilities for accessing and configuring Prometheus. Supports the following options:\n".
+  "Provides web utilities for accessing and configuring Prometheus (macOS & Linux only). Supports the following options:\n".
   "[[  #y{list}                >>List out all supported addons.\n".
-  "[[  #y{open prometheus}    >>[shortcut: vp] open the Prometheus Web UI (macOS & Linux only)\n".
-  "[[  #y{open grafana}       >>[shortcut: vg] open the Grafana dashboard (macOS & Linux only)\n".
-  "[[  #y{open alertmanager}  >>[shortcut: va] open the AlertManager dashboard (macOS & Linux only)\n";
+  "[[  #y{open prometheus}    >>[shortcut: vp] open the Prometheus Web UI\n".
+  "[[  #y{open grafana}       >>[shortcut: vg] open the Grafana dashboard\n".
+  "[[  #y{open alertmanager}  >>[shortcut: va] open the AlertManager dashboard\n";
 }
 
 sub perform {
   my ($self) = @_;
   my $env = $self->env;
-  my $vault = "secret/" . $ENV{GENESIS_VAULT_PREFIX};
-  my $target = $ENV{GENESIS_ENVIRONMENT};
+  my $app = $self->get_app_name();
+	my $url = $self->get_url_for($app);
+	my ($user, $pass, $embed) = $self->get_auth_for($app);
+	my $cmd = $self->get_command_for_os();
 
-  # Get the first argument
-  my $command = $self->{args}[0] || 'list';
+	bail(
+    "The #G{%s} command only works on macOS and Linux, currently.  You may open the web app manually by visiting:\n".
+		"  #Bu{https://%s}\n\n".
+		"Present the following credentials if prompted:\n".
+		"  username: #{%s}\n".
+		"  password: #G{%s}\n\n",
+		$0, $url, $user, $pass
+	) unless $cmd && `command -v $cmd 2>/dev/null`;
 
-  if ($command eq 'list') {
-    $self->list();
-  }
-  elsif ($command eq 'prometheus' || $command eq 'vp') {
-    $self->open_prometheus();
-  }
-  elsif ($command eq 'grafana' || $command eq 'vg') {
-    $self->open_grafana();
-  }
-  elsif ($command eq 'alertmanager' || $command eq 'va') {
-    $self->open_alertmanager();
-  }
-  else {
-    $env->notify("Unrecognized Prometheus Genesis Kit addon.");
-    $self->list();
-    return 0;
-  }
-
-  return $self->done();
+	if ($embed) {
+		system($cmd, "https://$user:$pass\@$url");
+	} else {
+		notice(
+			"Enter the following credentials to access the #C{%s} dashboard once it opens:\n".
+			"  username: %s\n".
+			"  password: %s\n\n",
+			$app, $user, $pass
+		);
+		system($cmd, "https://$url");
+	}
+  $self->done(1);
 }
 
-# Helper methods
-sub list {
-  my ($self) = @_;
-  my $env = $self->env;
+sub get_app_name {
+	my ($self) = @_;
+	my $app = shift @{$self->args};
+	my %shortcuts = (
+		vp => 'prometheus',
+		vg => 'grafana',
+		va => 'alertmanager'
+	);
+	return $shortcuts{$app} // (grep {$_ = $app} values %shortcuts)[0];
+}
 
-  $env->notify("The following addons are defined:");
-  $env->notify("");
-  $env->notify("  list                List out all supported addons.");
-  $env->notify("  open prometheus    [shortcut: vp] open the Prometheus Web UI (macOS & Linux only)");
-  $env->notify("  open grafana       [shortcut: vg] open the Grafana dashboard (macOS & Linux only)");
-  $env->notify("  open alertmanager  [shortcut: va] open the AlertManager dashboard (macOS & Linux only)");
-  $env->notify("");
+sub get_url_for {
+	my ($self, $app) = @_;
+	return $self->env->exodus_lookup("${app}_url") // bail(
+		"Could not find URL for the '%s' web app.", $app
+	);
+}
+
+sub get_auth_for {
+	my ($self, $app) = @_;
+	my $user = $self->env->exodus_lookup("admin_user");
+	my $pass = $self->env->exodus_lookup("admin_password");
+	bail(
+		"Could not find admin credentials for the '%s' web app.", $app
+	) unless $user && $pass;
+	return ($user, $pass, $app ne 'grafana');
 }
 
 sub get_command_for_os {
@@ -83,66 +99,6 @@ sub get_command_for_os {
   else {
     return undef;
   }
-}
-
-sub open_prometheus {
-  my ($self) = @_;
-  my $env = $self->env;
-  my $vault = "secret/" . $ENV{GENESIS_VAULT_PREFIX};
-
-  my $cmd = $self->get_command_for_os();
-  unless ($cmd && `command -v $cmd 2>/dev/null`) {
-    $env->notify("The 'open-prometheus' addon script only works on macOS and Linux, currently.");
-    return 0;
-  }
-
-  my $url = $env->exodus_lookup("prometheus_url");
-  my $password = $self->vault->get("$vault/admin:password");
-
-  system($cmd, "https://admin:$password\@$url");
-  return 1;
-}
-
-sub open_alertmanager {
-  my ($self) = @_;
-  my $env = $self->env;
-  my $vault = "secret/" . $ENV{GENESIS_VAULT_PREFIX};
-
-  my $cmd = $self->get_command_for_os();
-  unless ($cmd && `command -v $cmd 2>/dev/null`) {
-    $env->notify("The 'open-alertmanager' addon script only works on macOS and Linux, currently.");
-    return 0;
-  }
-
-  my $url = $env->exodus_lookup("alertmanager_url");
-  my $password = $self->vault->get("$vault/admin:password");
-
-  system($cmd, "https://admin:$password\@$url");
-  return 1;
-}
-
-sub open_grafana {
-  my ($self) = @_;
-  my $env = $self->env;
-  my $vault = "secret/" . $ENV{GENESIS_VAULT_PREFIX};
-
-  my $cmd = $self->get_command_for_os();
-  unless ($cmd && `command -v $cmd 2>/dev/null`) {
-    $env->notify("The 'open-grafana' addon script only works on macOS and Linux, currently.");
-    return 0;
-  }
-
-  my $url = $env->exodus_lookup("grafana_url");
-  my $password = $self->vault->get("$vault/admin:password");
-
-  $env->notify("Here's the credentials you'll need to sign in: ");
-  $env->notify("");
-  $env->notify("  username: admin");
-  $env->notify("  password: $password");
-  $env->notify("");
-
-  system($cmd, "https://$url");
-  return 1;
 }
 
 1;

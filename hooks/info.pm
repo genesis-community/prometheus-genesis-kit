@@ -1,17 +1,16 @@
-package Genesis::Hook::Info::Prometheus; # ...::[KIT] v[KIT_VERSION]
+package Genesis::Hook::Info::Prometheus v1.13.0;
 
-use v5.20;
-use warnings; # Genesis supports min perl v5.20.
+use v5.20; # Genesis min perl version is 5.20
+use warnings;
 
 # Only needed for development
 BEGIN {push @INC, $ENV{GENESIS_LIB} ? $ENV{GENESIS_LIB} : $ENV{HOME}.'/.genesis/lib'}
 
-# Parent class inheritance
 use parent qw(Genesis::Hook);
 
-# Import required functions
-use Genesis qw/bail info/;
+use Genesis qw/bail info run warning/;
 
+# init - Initialize the hook {{{
 sub init {
   my ($class, %ops) = @_;
   my $obj = $class->SUPER::init(%ops);
@@ -19,6 +18,9 @@ sub init {
   return $obj;
 }
 
+# }}}
+
+# perform - Main hook execution {{{
 sub perform {
   my ($self) = @_;
 
@@ -36,54 +38,46 @@ sub perform {
   # Display access instructions
   my $call_with_env = $self->env->get_call_path_with_env();
 
-  my $prometheus_url = $self->env->exodus_lookup('prometheus_url');
-  bail(
-    "Prometheus URL not found in exodus data. Please check your environment."
-  ) unless $prometheus_url;
-  my $grafana_url = $self->env->exodus_lookup('grafana_url');
-  bail(
-    "Grafana URL not found in exodus data. Please check your environment."
-  ) unless $grafana_url;
-  my $alertmanager_url = $self->env->exodus_lookup('alertmanager_url');
-  bail(
-    "AlertManager URL not found in exodus data. Please check your environment."
-  ) unless $alertmanager_url;
-  my $prometheus_user = $self->env->exodus_lookup('prometheus_user');
-  bail(
-    "Prometheus user not found in exodus data. Please check your environment."
-  ) unless $prometheus_user;
-  my $prometheus_password = $self->env->exodus_lookup('prometheus_password');
-  bail(
-    "Prometheus password not found in exodus data. Please check your environment."
-  ) unless $prometheus_password;
-  my $grafana_user = $self->env->exodus_lookup('grafana_admin_user');
-  bail(
-    "Grafana user not found in exodus data. Please check your environment."
-  ) unless $grafana_user;
-  my $grafana_password = $self->env->exodus_lookup('grafana_admin_password');
-  bail(
-    "Grafana password not found in exodus data. Please check your environment."
-  ) unless $grafana_password;
+	# Gather the necessary information from Exodus
+	my %info = map {($_, $self->exodus_data->{$_}//undef)} qw(
+		prometheus_url
+		grafana_url
+		alertmanager_url
+		admin_user
+		admin_password
+	);
 
-  info(join("\n",
-      "\n#B{Prometheus Information}" ,
-      "\nPrometheus endpoint information" ,
-      "\t#C{https://$prometheus_url}" ,
-      "\nHTTP auth credentials" ,
-      "\tusername: #M{$prometheus_user}" ,
-      "\tpassword: #G{$prometheus_password}" ,
-      "\nGrafana endpoint information" ,
-      "\t#C{https://$grafana_url}" ,
-      "\tusername: #M{$grafana_user}" ,
-      "\tpassword: #G{$grafana_password}" ,
-      "\nAlertManager endpoint information" ,
-      "\t#C{https://$alertmanager_url}" ,
-      ""
-    ));
+	my @missing_exodus_fields = grep {!defined($info{$_})} keys %info;
+	warning(
+		"\nMissing the following data from the last deploy:\n%s\n\n".
+		"Please redeploy in order to generate the necessary information.\n",
+		join("\n", map { "[[  - >>$_" } @missing_exodus_fields)
+	) if @missing_exodus_fields;
+
+	info(
+		"#Bu{Prometheus Information}\n\n".
+		"Prometheus endpoint information\n".
+		"[[  >>#C{https://%s}\n\n".
+		"Grafana endpoint information\n".
+		"[[  >>#C{https://%s}\n\n".
+		"AlertManager endpoint information\n".
+		"[[  >>#C{https://%s}\n\n".
+		"HTTP auth credentials (for all above endpoints)\n".
+		"[[  >>username: #M{%s}\n".
+		"[[  >>password: #G{%s}\n\n",
+		$info{prometheus_url}   // '}#Ri{<unknown>',
+		$info{grafana_url}      // '}#Ri{<unknown>',
+		$info{alertmanager_url} // '}#Ri{<unknown>',
+		$info{admin_user}       // '}#Ri{<unknown>',
+		$info{admin_password}   // '}#Ri{<unknown>',
+	);
 
   return $self->done();
 }
 
-1;
+# }}}
+
+1; # End of module
+# vim: set ts=2 sw=2 sts=2 noet fdm=marker foldlevel=1:
 
 # # vim: set ts=2 sw=2 sts=2 noet fdm=marker foldlevel=1:

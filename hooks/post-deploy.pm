@@ -1,7 +1,7 @@
 package Genesis::Hook::Prometheus::PostDeploy;
 
-use v5.20;
-use warnings; # Genesis min perl version is 5.20
+use v5.20; # Genesis min perl version is 5.20
+use warnings;
 
 # Only needed for development
 BEGIN {push @INC, $ENV{GENESIS_LIB} ? $ENV{GENESIS_LIB} : $ENV{HOME}.'/.genesis/lib'}
@@ -9,16 +9,17 @@ BEGIN {push @INC, $ENV{GENESIS_LIB} ? $ENV{GENESIS_LIB} : $ENV{HOME}.'/.genesis/
 use parent qw(Genesis::Hook::PostDeploy);
 
 use Genesis qw/info/;
-use JSON::PP;
 
-# Initialize the hook
+# init - Initialize the hook {{{
 sub init {
 	my ($class, %ops) = @_;
 	my $self = $class->SUPER::init(%ops);
 	return $self;
 }
 
-# Main hook execution
+# }}}
+
+# perform - Main hook execution {{{
 sub perform {
 	my ($self) = @_;
 	my $env_name = $self->env->name;
@@ -34,7 +35,7 @@ sub perform {
 			"To open the Prometheus page:\n".
 			"  #G{%s do open prometheus}\n\n".
 			"To open the Grafana page:\n".
-			"  #G{%s do open graphana}\n\n".
+			"  #G{%s do open grafana}\n\n".
 			"To visit the AlertManager page:\n".
 			"  #G{%s do open alertmanager}\n\n".
 			"To generate a node exporter runtime config:\n".
@@ -46,6 +47,8 @@ sub perform {
 	# Mark the hook as completed successfully
 	return $self->done(1);
 }
+
+# }}}
 
 1; # End of module
 # vim: set ts=2 sw=2 sts=2 noet fdm=marker foldlevel=1:

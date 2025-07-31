@@ -13,10 +13,8 @@ meta:
   base_domain:              (( grab params.external_domain   || params.static_ip ))
   environment:              (( grab genesis.env ))
   skip_ssl_validation:      (( grab params.skip_ssl_validation || false ))
-  prometheus_user:          admin
-  prometheus_password:      (( vault meta.vault "/admin:password" ))
-  grafana_admin_user:       admin
-  grafana_admin_password:   (( vault meta.vault "/admin:password" ))
+  admin_user:               admin
+  admin_password:           (( vault meta.vault "/admin:password" ))
 
 exodus:
   # It would be nice to include `https` in front of all these URLs to make
@@ -27,10 +25,8 @@ exodus:
   prometheus_url:   (( concat instance_groups.prometheus.jobs.nginx.properties.nginx.prometheus.server_name ":" instance_groups.prometheus.jobs.nginx.properties.nginx.prometheus.https_port ))
   grafana_url:      (( concat instance_groups.prometheus.jobs.nginx.properties.nginx.grafana.server_name ":" instance_groups.prometheus.jobs.nginx.properties.nginx.grafana.https_port ))
   alertmanager_url: (( concat instance_groups.prometheus.jobs.nginx.properties.nginx.alertmanager.server_name ":" instance_groups.prometheus.jobs.nginx.properties.nginx.alertmanager.https_port ))
-  prometheus_user:        (( grab meta.prometheus_user ))
-  prometheus_password:    (( grab meta.prometheus_password ))
-  grafana_admin_user:     (( grab meta.grafana_admin_user ))
-  grafana_admin_password: (( grab meta.grafana_admin_password ))
+  admin_user:       (( grab meta.admin_user ))
+  admin_password:   (( grab meta.admin_password ))
 
 params:
   ca_validity_period: 10y
@@ -56,7 +52,7 @@ instance_groups:
     properties:
       alertmanager:
         mesh:
-          password: (( vault meta.vault "/admin:password" ))
+          password: (( grab meta.admin_password ))
         receivers:
         - name: default
         route:
@@ -446,9 +442,9 @@ instance_groups:
             files:
             - /var/vcap/jobs/system_dashboards/system*.json
         security:
-          admin_user: admin
-          admin_password: (( vault meta.vault "/admin:password" ))
-          secret_key: (( vault meta.vault "/admin:secret_key" ))
+          admin_user:     (( grab meta.admin_user ))
+          admin_password: (( grab meta.admin_password ))
+          secret_key:     (( vault meta.vault "/admin:secret_key" ))
         remote_cache:
           type: database
 
@@ -464,6 +460,7 @@ instance_groups:
         - name: grafana
           password: (( vault meta.vault "/grafanadb:password" ))
 
+# FIXME: nginx frontend should be an optional feature, not a requirement.
   - name: nginx
     release: prometheus
     properties:
@@ -476,15 +473,15 @@ instance_groups:
           https_port:   (( grab meta.prometheus_port ))
           http_port:    (( calc "meta.prometheus_port + 1" ))
           auth_users:
-            - name:      admin
-              password: (( vault meta.vault "/admin:password" ))
+            - name:     (( grab meta.admin_user ))
+              password: (( grab meta.admin_password ))
         alertmanager:
           server_name:  (( grab meta.base_domain ))
           https_port:   (( grab meta.alertmanager_port ))
           http_port:    (( calc "meta.alertmanager_port + 1" ))
           auth_users:
-            - name:      admin
-              password: (( vault meta.vault "/admin:password" ))
+            - name:     (( grab meta.admin_user ))
+              password: (( grab meta.admin_password ))
         grafana:
           server_name:  (( grab meta.base_domain ))
           https_port:   (( grab meta.grafana_port ))
