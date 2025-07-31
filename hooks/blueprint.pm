@@ -68,7 +68,7 @@ sub perform {
 
 		} elsif ( -f $env->path("ops/${feature}.yml")) {
 			# Ops files are added to the blueprint at the end
-			push @ops_files, "ops/${feature}.yml";
+			push @ops_files, $env->path("ops/${feature}.yml");
 		} else {
 			bail(
 				"The #c{%s} feature is invalid. See MANUAL.md for list of valid features.",
