@@ -86,10 +86,9 @@ sub perform {
 
 		# Add IaaS-specific files if needed
 		my $iaas = $self->iaas;
-		if ($iaas eq 'stackit') {
-			# If we need any stackit-specific overrides in the future, we can add them here
-			# $self->add_files("ocfp/stackit.yml");
-		}
+		$self->add_files_if_exists(
+			"ocfp/$iaas/base.yml"
+		)
 	}
 
 	# Add the ops files at the end so they can override any previous files

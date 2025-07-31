@@ -23,9 +23,6 @@ instance_groups:
     - name:       (( grab meta.prometheus.network ))
       static_ips: (( grab meta.prometheus.ip ))
   vm_type:   (( grab meta.prometheus.vm_type ))
-  vm_extensions:
-    - ((replace))
-  #  - prometheus-lb
 
   jobs:
   - name: bosh_exporter

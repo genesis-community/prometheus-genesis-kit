@@ -1,0 +1,6 @@
+instance_groups:
+- name: prometheus
+  vm_extensions:
+    - ((replace))
+    - prometheus-lb
+
