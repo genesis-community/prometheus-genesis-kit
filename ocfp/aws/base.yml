@@ -3,4 +3,3 @@ instance_groups:
   vm_extensions:
     - ((replace))
     - prometheus-lb
-
