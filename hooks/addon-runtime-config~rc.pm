@@ -40,9 +40,9 @@ sub perform {
 
   my $config = "  releases:\n".
                "    - name: node-exporter\n".
-               "      version: 5.5.0\n".
-               "      url:     https://github.com/bosh-prometheus/node-exporter-boshrelease/releases/download/v5.5.0/node-exporter-5.5.0.tgz\n".
-               "      sha1:    e013bead7ca3d0128a56dc71b1294fa0d75eea36\n\n".
+               "      version: 5.7.0\n".
+               "      url:     https://github.com/bosh-prometheus/node-exporter-boshrelease/releases/download/v5.7.0/node-exporter-5.7.0.tgz\n".
+               "      sha1:    8416c4914f251743c94a00eeae56e8f727801f47n\n".
                "  addons:\n".
                "    - name: node_exporter\n".
                "      jobs:\n".
