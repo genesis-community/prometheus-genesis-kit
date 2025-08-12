@@ -39,21 +39,21 @@ sub perform {
   );
 
   my $config = "  releases:\n".
-               "    - name: node-exporter\n".
-               "      version: 5.7.0\n".
-               "      url:     https://github.com/bosh-prometheus/node-exporter-boshrelease/releases/download/v5.7.0/node-exporter-5.7.0.tgz\n".
-               "      sha1:    8416c4914f251743c94a00eeae56e8f727801f47n\n".
+               "  - name: node-exporter\n".
+               "    version: 5.7.0\n".
+               "    url:     https://github.com/bosh-prometheus/node-exporter-boshrelease/releases/download/v5.7.0/node-exporter-5.7.0.tgz\n".
+               "    sha1:    8416c4914f251743c94a00eeae56e8f727801f47n\n".
                "  addons:\n".
-               "    - name: node_exporter\n".
-               "      jobs:\n".
-               "        - name: node_exporter\n".
-               "          release: node-exporter\n".
-               "      include:\n".
-               "        stemcell:\n".
-               "          - os: ubuntu-jammy\n".
-               "          - os: ubuntu-bionic\n".
-               "          - os: ubuntu-xenial\n".
-               "      properties: {}\n";
+               "  - name: node_exporter\n".
+               "    jobs:\n".
+               "      - name: node_exporter\n".
+               "        release: node-exporter\n".
+               "        properties: {}\n".
+               "    include:\n".
+               "      stemcell:\n".
+               "        - os: ubuntu-jammy\n".
+               "        - os: ubuntu-bionic\n".
+               "        - os: ubuntu-xenial\n";
 
   info($config);
     if (prompt_for_boolean(
