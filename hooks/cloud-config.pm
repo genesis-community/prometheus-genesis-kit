@@ -1,4 +1,4 @@
-package Genesis::Hook::CloudConfig::Prometheus;
+package Genesis::Hook::CloudConfig::Prometheus v1.12.1;
 
 use v5.20;
 use warnings;
