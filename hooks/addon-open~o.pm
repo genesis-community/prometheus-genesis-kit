@@ -20,7 +20,6 @@ sub init {
 sub cmd_details {
   return
   "Provides web utilities for accessing and configuring Prometheus (macOS & Linux only). Supports the following options:\n".
-  "[[  #y{list}                >>List out all supported addons.\n".
   "[[  #y{open prometheus}    >>[shortcut: vp] open the Prometheus Web UI\n".
   "[[  #y{open grafana}       >>[shortcut: vg] open the Grafana dashboard\n".
   "[[  #y{open alertmanager}  >>[shortcut: va] open the AlertManager dashboard\n";
@@ -38,7 +37,7 @@ sub perform {
     "The #G{%s} command only works on macOS and Linux, currently.  You may open the web app manually by visiting:\n".
 		"  #Bu{https://%s}\n\n".
 		"Present the following credentials if prompted:\n".
-		"  username: #{%s}\n".
+		"  username: #G{%s}\n".
 		"  password: #G{%s}\n\n",
 		$0, $url, $user, $pass
 	) unless $cmd && `command -v $cmd 2>/dev/null`;
@@ -59,7 +58,7 @@ sub perform {
 
 sub get_app_name {
 	my ($self) = @_;
-	my $app = shift @{$self->args};
+	my $app = shift @{$self->{args}};
 	my %shortcuts = (
 		vp => 'prometheus',
 		vg => 'grafana',
