@@ -1,0 +1,39 @@
+---
+# Opt-in BBS metrics for cf_exporter (feature: monitor-cf-bbs).
+#
+# cf_exporter 2.x sources running-instance counts from Diego BBS rather
+# than the retired CF v2 API. Reaching BBS needs a client cert the cf
+# kit exports to exodus and a bosh-dns alias so the canonical name
+# resolves from the prometheus VM. Enable only once the cf kit exports
+# bbs_ca / bbs_client_cert / bbs_client_key to exodus.
+meta:
+  bbs_tls:
+    ca:   (( vault meta.cf_exodus_src "bbs_ca" ))
+    cert: (( vault meta.cf_exodus_src "bbs_client_cert" ))
+    key:  (( vault meta.cf_exodus_src "bbs_client_key" ))
+  default_cf_network: (( vault meta.cf_exodus_src "core_network" ))
+  cf_network:         (( grab params.cf_network || meta.default_cf_network ))
+
+instance_groups:
+- name: prometheus
+  jobs:
+  - name: cf_exporter
+    properties:
+      cf_exporter:
+        bbs:
+          api_url:         (( grab params.cf_bbs_api_url || "https://bbs.service.cf.internal:8889" ))
+          ca:              (( grab meta.bbs_tls.ca ))
+          cert:            (( grab meta.bbs_tls.cert ))
+          key:             (( grab meta.bbs_tls.key ))
+          skip_ssl_verify: false
+  - name: bosh-dns-aliases
+    release: bosh-dns-aliases
+    properties:
+      aliases:
+      - domain: bbs.service.cf.internal
+        targets:
+        - query: '*'
+          instance_group: diego-api
+          deployment: (( grab params.cf_deployment_name || meta.default_cf_deployment_name ))
+          network: (( grab meta.cf_network ))
+          domain: bosh

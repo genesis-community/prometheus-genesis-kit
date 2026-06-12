@@ -98,6 +98,35 @@ kit:
     - legacy-firehose
 ```
 
+#### `monitor-cf-bbs`
+
+Adds running-instance metrics to the `monitor-cf` feature. cf_exporter
+2.x reads running-instance counts from Diego BBS rather than the retired
+CF v2 API, so without this the `cf_application_instances_running` metric
+and the alerts that depend on it are unavailable.
+
+This is opt-in because it needs the CF deployment to publish its BBS
+client certificate to exodus. Enable it once the cf-genesis-kit release
+in use exports `bbs_ca`, `bbs_client_cert` and `bbs_client_key`. The
+feature colocates a `bosh-dns-aliases` job so the BBS internal name
+resolves from the prometheus VM, which keeps the connection verified.
+
+Requirements:
+- `monitor-cf` feature (cf v2.x)
+- cf-genesis-kit release that exports the bbs client material to exodus
+
+Configuration parameters:
+- `cf_bbs_api_url`: BBS API endpoint (default: https://bbs.service.cf.internal:8889)
+- `cf_network`: BOSH network of the CF diego-api instances (default: derived from CF exodus)
+
+Example:
+```yaml
+kit:
+  features:
+    - monitor-cf
+    - monitor-cf-bbs
+```
+
 #### `monitor-credhub`
 
 Enables monitoring of CredHub metrics and health.
