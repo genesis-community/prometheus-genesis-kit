@@ -326,6 +326,6 @@ Recommendations:
 ## References
 
 - [Prometheus BOSH Release](https://github.com/cloudfoundry-community/prometheus-boshrelease)
-- [Node Exporter BOSH Release](https://github.com/bosh-prometheus/node-exporter-boshrelease)
+- [Node Exporter BOSH Release](https://github.com/cloudfoundry/node-exporter-boshrelease)
 - [Prometheus Documentation](https://prometheus.io/docs/introduction/overview/)
 - [Grafana Documentation](https://grafana.com/docs/)

@@ -28,7 +28,7 @@ Each component is exposed via HTTPS with basic authentication. The kit configure
 
 - Genesis 2.7.10 or higher
 - BOSH Director with UAA
-- [Node Exporter](https://github.com/bosh-prometheus/node-exporter-boshrelease) should be deployed as a BOSH addon to collect system metrics from all VMs
+- [Node Exporter](https://github.com/cloudfoundry/node-exporter-boshrelease) should be deployed as a BOSH addon to collect system metrics from all VMs
 - For monitoring Cloud Foundry: A CF deployment created with cf-genesis-kit v1.1.0 or higher
 - For monitoring BOSH: A BOSH director deployed with bosh-genesis-kit v1.1.2 or higher
 
@@ -157,5 +157,5 @@ For common issues and solutions, please refer to the `docs/troubleshooting.md` d
 This Genesis Kit is released under the MIT license.
 
 [1]: https://github.com/cloudfoundry-community/prometheus-boshrelease
-[2]: https://github.com/bosh-prometheus/node-exporter-boshrelease
+[2]: https://github.com/cloudfoundry/node-exporter-boshrelease
 [3]: MANUAL.md
