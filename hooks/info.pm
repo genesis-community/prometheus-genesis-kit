@@ -1,4 +1,4 @@
-package Genesis::Hook::Info::Prometheus v2.0.0;
+package Genesis::Hook::Info::Prometheus v2.1.0;
 
 use v5.20; # Genesis min perl version is 5.20
 use warnings;

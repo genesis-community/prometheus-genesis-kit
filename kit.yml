@@ -1,5 +1,5 @@
 name:    prometheus
-version: 2.0.1
+version: 2.1.0
 author:  David Lohle <Proplex@users.noreply.github.com>
 docs:    https://github.com/cloudfoundry-community/prometheus-boshrelease
 code:    https://github.com/genesis-community/prometheus-genesis-kit
