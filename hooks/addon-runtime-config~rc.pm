@@ -51,9 +51,7 @@ sub perform {
                "        properties: {}\n".
                "    include:\n".
                "      stemcell:\n".
-               "        - os: ubuntu-jammy\n".
-               "        - os: ubuntu-bionic\n".
-               "        - os: ubuntu-xenial\n";
+               "        - os: ubuntu-noble\n";
 
   info($config);
     if (prompt_for_boolean(

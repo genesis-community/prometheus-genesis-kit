@@ -564,7 +564,7 @@ releases:
   version: 27.2.0
 stemcells:
 - alias: default
-  os: ubuntu-jammy
+  os: ubuntu-noble
   version: latest
 update:
   canaries: 1

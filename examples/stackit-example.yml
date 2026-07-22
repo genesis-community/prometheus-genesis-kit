@@ -13,7 +13,7 @@ params:
   external_domain: prometheus.example.com  # Replace with your actual domain
 
   # Cloud configuration
-  stemcell_os: ubuntu-jammy
+  stemcell_os: ubuntu-noble
   stemcell_version: latest
 
   # Prometheus configuration

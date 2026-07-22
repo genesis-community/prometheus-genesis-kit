@@ -138,7 +138,7 @@ params:
 * `disk_type` - The `persistent_disk_type` that Prometheus should use for storage (default: `prometheus`)
 * `vm_type` - The `vm_type` that Prometheus should be deployed on (default: `default`) 
 * `network` - The `network` that Prometheus should be deployed on (default: `prometheus`)
-* `stemcell_os` - The operating system stemcell you want to deploy on (default: `ubuntu-jammy`)
+* `stemcell_os` - The operating system stemcell you want to deploy on (default: `ubuntu-noble`)
 * `stemcell_version` - The specific version of the stemcell you want to deploy on (default: `latest`)
 * `static_ip` - The static IP to assign to the VM (required, no default)
 * `availability_zones` - The BOSH availability zones to deploy to (default: `[z1]`)

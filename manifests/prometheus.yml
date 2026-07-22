@@ -506,7 +506,7 @@ instance_groups:
 
 stemcells:
 - alias: default
-  os:      (( grab params.stemcell_os      || "ubuntu-jammy" ))
+  os:      (( grab params.stemcell_os      || "ubuntu-noble" ))
   version: (( grab params.stemcell_version || "latest" ))
 
 update:
