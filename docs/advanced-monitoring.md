@@ -13,7 +13,7 @@ The Prometheus Genesis Kit includes default scrape configurations for common BOS
 ```yaml
 ---
 - type: replace
-  path: /instance_groups/name=prometheus/jobs/name=prometheus2/properties/prometheus/scrape_configs/-
+  path: /instance_groups/name=prometheus/jobs/name=prometheus/properties/prometheus/scrape_configs/-
   value:
     job_name: custom_exporter
     static_configs:
@@ -53,7 +53,7 @@ To modify scrape intervals for specific jobs:
 ```yaml
 ---
 - type: replace
-  path: /instance_groups/name=prometheus/jobs/name=prometheus2/properties/prometheus/scrape_configs/job_name=node
+  path: /instance_groups/name=prometheus/jobs/name=prometheus/properties/prometheus/scrape_configs/job_name=node
   value:
     job_name: node
     scrape_interval: 30s
@@ -104,7 +104,7 @@ To modify scrape intervals for specific jobs:
 ```yaml
 ---
 - type: replace
-  path: /instance_groups/name=prometheus/jobs/name=prometheus2/properties/prometheus/rule_files/-
+  path: /instance_groups/name=prometheus/jobs/name=prometheus/properties/prometheus/rule_files/-
   value: /var/vcap/jobs/custom_alerts/*.alerts.yml
 ```
 
@@ -237,7 +237,7 @@ For long-term storage or federation, configure remote write:
 ```yaml
 ---
 - type: replace
-  path: /instance_groups/name=prometheus/jobs/name=prometheus2/properties/prometheus/remote_write
+  path: /instance_groups/name=prometheus/jobs/name=prometheus/properties/prometheus/remote_write
   value:
     - url: https://thanos.example.com/api/v1/receive
       basic_auth:
@@ -269,7 +269,7 @@ For environments with high cardinality or many metrics:
 ```yaml
 ---
 - type: replace
-  path: /instance_groups/name=prometheus/jobs/name=prometheus2/properties/prometheus/storage
+  path: /instance_groups/name=prometheus/jobs/name=prometheus/properties/prometheus/storage
   value:
     tsdb:
       min_block_duration: 2h
@@ -366,7 +366,7 @@ To monitor multiple Prometheus instances, set up federation:
 ```yaml
 ---
 - type: replace
-  path: /instance_groups/name=prometheus/jobs/name=prometheus2/properties/prometheus/scrape_configs/-
+  path: /instance_groups/name=prometheus/jobs/name=prometheus/properties/prometheus/scrape_configs/-
   value:
     job_name: federate
     scrape_interval: 15s

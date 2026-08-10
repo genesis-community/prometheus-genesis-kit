@@ -194,9 +194,11 @@ This guide helps you diagnose and resolve common issues with Prometheus Genesis 
    - **Example**:
      ```yaml
      - type: replace
-       path: /instance_groups/name=prometheus/jobs/name=prometheus2/properties/prometheus/storage/tsdb/retention
+       path: /instance_groups/name=prometheus/jobs/name=prometheus/properties/prometheus/storage
        value:
-         time: 7d
+         tsdb:
+           retention:
+             time: 7d
      ```
 
 3. **High Cardinality Metrics**

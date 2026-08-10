@@ -308,7 +308,7 @@ Recommendations:
 1. Check that the Node Exporter addon is deployed to your VMs
 2. Verify connectivity between Prometheus and target endpoints
 3. Check scrape configuration in Prometheus
-4. Examine Prometheus logs with `bosh logs prometheus/0 prometheus2`
+4. Examine Prometheus logs with `bosh logs prometheus/0 --only prometheus`
 
 #### Cannot Access Web UI
 
