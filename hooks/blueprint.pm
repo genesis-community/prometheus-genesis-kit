@@ -1,4 +1,4 @@
-package Genesis::Hook::Blueprint::Prometheus v2.1.0;
+package Genesis::Hook::Blueprint::Prometheus v3.0.0;
 
 use v5.20;
 use warnings;
