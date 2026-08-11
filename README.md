@@ -4,7 +4,7 @@ This Genesis Kit deploys a production-ready Prometheus monitoring system, includ
 
 ## Overview
 
-The Prometheus Genesis Kit uses the [Prometheus BOSH Release](https://github.com/cloudfoundry-community/prometheus-boshrelease) to deploy a comprehensive monitoring solution with the following components:
+The Prometheus Genesis Kit uses the [Prometheus BOSH Release](https://github.com/cloudfoundry/prometheus-boshrelease) to deploy a comprehensive monitoring solution with the following components:
 
 - **Prometheus** - Time series database and monitoring system
 - **Grafana** - Visualization and dashboarding platform
@@ -28,7 +28,7 @@ Each component is exposed via HTTPS with basic authentication. The kit configure
 
 - Genesis 2.7.10 or higher
 - BOSH Director with UAA
-- [Node Exporter](https://github.com/bosh-prometheus/node-exporter-boshrelease) should be deployed as a BOSH addon to collect system metrics from all VMs
+- [Node Exporter](https://github.com/cloudfoundry/node-exporter-boshrelease) should be deployed as a BOSH addon to collect system metrics from all VMs
 - For monitoring Cloud Foundry: A CF deployment created with cf-genesis-kit v1.1.0 or higher
 - For monitoring BOSH: A BOSH director deployed with bosh-genesis-kit v1.1.2 or higher
 
@@ -156,6 +156,6 @@ For common issues and solutions, please refer to the `docs/troubleshooting.md` d
 
 This Genesis Kit is released under the MIT license.
 
-[1]: https://github.com/cloudfoundry-community/prometheus-boshrelease
-[2]: https://github.com/bosh-prometheus/node-exporter-boshrelease
+[1]: https://github.com/cloudfoundry/prometheus-boshrelease
+[2]: https://github.com/cloudfoundry/node-exporter-boshrelease
 [3]: MANUAL.md

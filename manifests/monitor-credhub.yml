@@ -37,7 +37,7 @@ instance_groups:
   - name: credhub_dashboards
     release: prometheus
 
-  - name: prometheus2
+  - name: prometheus
     properties:
       prometheus:
         rule_files:

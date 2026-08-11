@@ -67,7 +67,7 @@ instance_groups:
             - /var/vcap/jobs/cloudfoundry_dashboards/prometheus*.json
 
 
-  - name: prometheus2
+  - name: prometheus
     properties:
       prometheus:
         rule_files:

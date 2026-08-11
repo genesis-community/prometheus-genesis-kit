@@ -58,7 +58,7 @@ instance_groups:
         route:
           receiver: default
 
-  - name: prometheus2
+  - name: prometheus
     release: prometheus
     properties:
       prometheus:

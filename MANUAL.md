@@ -98,6 +98,35 @@ kit:
     - legacy-firehose
 ```
 
+#### `monitor-cf-bbs`
+
+Adds running-instance metrics to the `monitor-cf` feature. cf_exporter
+2.x reads running-instance counts from Diego BBS rather than the retired
+CF v2 API, so without this the `cf_application_instances_running` metric
+and the alerts that depend on it are unavailable.
+
+This is opt-in because it needs the CF deployment to publish its BBS
+client certificate to exodus. Enable it once the cf-genesis-kit release
+in use exports `bbs_ca`, `bbs_client_cert` and `bbs_client_key`. The
+feature colocates a `bosh-dns-aliases` job so the BBS internal name
+resolves from the prometheus VM, which keeps the connection verified.
+
+Requirements:
+- `monitor-cf` feature (cf v2.x)
+- cf-genesis-kit release that exports the bbs client material to exodus
+
+Configuration parameters:
+- `cf_bbs_api_url`: BBS API endpoint (default: https://bbs.service.cf.internal:8889)
+- `cf_network`: BOSH network of the CF diego-api instances (default: derived from CF exodus)
+
+Example:
+```yaml
+kit:
+  features:
+    - monitor-cf
+    - monitor-cf-bbs
+```
+
 #### `monitor-credhub`
 
 Enables monitoring of CredHub metrics and health.
@@ -279,7 +308,7 @@ Recommendations:
 1. Check that the Node Exporter addon is deployed to your VMs
 2. Verify connectivity between Prometheus and target endpoints
 3. Check scrape configuration in Prometheus
-4. Examine Prometheus logs with `bosh logs prometheus/0 prometheus2`
+4. Examine Prometheus logs with `bosh logs prometheus/0 --only prometheus`
 
 #### Cannot Access Web UI
 
@@ -296,7 +325,7 @@ Recommendations:
 
 ## References
 
-- [Prometheus BOSH Release](https://github.com/cloudfoundry-community/prometheus-boshrelease)
-- [Node Exporter BOSH Release](https://github.com/bosh-prometheus/node-exporter-boshrelease)
+- [Prometheus BOSH Release](https://github.com/cloudfoundry/prometheus-boshrelease)
+- [Node Exporter BOSH Release](https://github.com/cloudfoundry/node-exporter-boshrelease)
 - [Prometheus Documentation](https://prometheus.io/docs/introduction/overview/)
 - [Grafana Documentation](https://grafana.com/docs/)

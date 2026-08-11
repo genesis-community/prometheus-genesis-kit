@@ -44,12 +44,27 @@ sub perform {
 					? "manifests/monitor-cf-v2.yml"
 					:	"manifests/monitor-cf.yml"
 			);
+			# BBS metrics are opt-in: cf_exporter reaches Diego BBS for
+			# running-instance counts, which needs the cf kit to export
+			# the bbs client cert to exodus first.
+			if ($cf_v2 && $self->want_feature('monitor-cf-bbs')) {
+				$self->add_files(
+					"manifests/monitor-cf-bbs.yml",
+					"manifests/releases/bosh-dns-aliases.yml"
+				);
+			}
 			if ($self->want_feature('legacy-firehose')) {
 				bail(
 					"legacy-firehose is not available for cf v2.x deployments"
 				) if $cf_v2;
 				$self->add_files("manifests/legacy-firehose.yml");
 			}
+
+		} elsif ($feature =~ /^(monitor-cf-bbs)$/) {
+			# Wired by the monitor-cf feature above; only valid with it.
+			bail(
+				"monitor-cf-bbs requires the monitor-cf feature"
+			) unless $self->want_feature('monitor-cf');
 
 		} elsif ($feature =~ /^(monitor-*)$/) {
 			bail(

@@ -1,7 +1,7 @@
 name:    prometheus
 version: 2.1.0
 author:  David Lohle <Proplex@users.noreply.github.com>
-docs:    https://github.com/cloudfoundry-community/prometheus-boshrelease
+docs:    https://github.com/cloudfoundry/prometheus-boshrelease
 code:    https://github.com/genesis-community/prometheus-genesis-kit
 
 # 2.6.0 was our last big feature bump
