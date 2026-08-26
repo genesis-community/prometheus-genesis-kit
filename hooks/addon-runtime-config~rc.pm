@@ -40,9 +40,9 @@ sub perform {
 
   my $config = "  releases:\n".
                "  - name: node-exporter\n".
-               "    version: 5.7.0\n".
-               "    url:     https://github.com/cloudfoundry/node-exporter-boshrelease/releases/download/v5.7.0/node-exporter-5.7.0.tgz\n".
-               "    sha1:    8416c4914f251743c94a00eeae56e8f727801f47\n".
+               "    version: 5.8.0\n".
+               "    url:     https://github.com/cloudfoundry/node-exporter-boshrelease/releases/download/v5.8.0/node-exporter-5.8.0.tgz\n".
+               "    sha1:    fe95651a07029512516061113d4ff92c114ae58a\n".
                "  addons:\n".
                "  - name: node_exporter\n".
                "    jobs:\n".
