@@ -2,10 +2,12 @@ package Genesis::Hook::Addon::Prometheus::RuntimeConfig v3.0.0;
 
 use v5.20;
 use warnings; # Genesis min perl version is 5.20
+
+# Only needed for development
+BEGIN {push @INC, $ENV{GENESIS_LIB} ? $ENV{GENESIS_LIB} : $ENV{HOME}.'/.genesis/lib'}
+
 use Genesis qw/bail info run pushd popd mkfile_or_fail/;
 use Genesis::UI qw/prompt_for_boolean/;
-# Only needed for development
-BEGIN {push @INC, $ENV{GENESIS_LIB} ? $ENV{GENESIS_LIB} : $ENV{HOME}.'./.genesis/lib'}
 
 use parent qw(Genesis::Hook::Addon);
 sub init {
