@@ -145,6 +145,12 @@ Configuration parameters:
 - `credhub_exporter_ca_cert`: CA certificate for CredHub (default: from BOSH exodus data)
 - `credhub_exporter_deployment_name`: Deployment name for metrics labels (default: derived from environment)
 
+### Stemcell
+
+#### `resolute`
+
+This experimental feature deploys Prometheus on the ubuntu-resolute stemcell instead of ubuntu-noble. The [Ubuntu Resolute Stemcells](#ubuntu-resolute-stemcells) section explains how to use it.
+
 ### Infrastructure Support
 
 #### `ocfp` (Open Container Framework Platform)
@@ -258,6 +264,30 @@ Default credentials for Prometheus and AlertManager:
 Default credentials for Grafana:
 - Username: `admin`
 - Password: Same as above, stored in your Vault at `$GENESIS_VAULT_PREFIX/admin:password`
+
+## Ubuntu Resolute Stemcells
+
+The kit deploys Prometheus on ubuntu-noble stemcells unless we ask for something else. Adding the `resolute` feature moves the prometheus instance group onto ubuntu-resolute, and it works the same with or without the `ocfp` feature.
+
+```yaml
+kit:
+  features:
+  - self-signed-cert
+  - resolute
+
+params:
+  stemcell_version: "0.184"
+```
+
+The feature is experimental, so we recommend trying it on a canary deployment before we point anything real at it. It sets the stemcell `os` to `ubuntu-resolute`, and `stemcell_version` still selects the version, which defaults to `latest`. We pin it to a resolute version such as `"0.184"`, so that a newer noble upload is never picked up by accident. Because the feature owns the stemcell os, an environment that sets `params.stemcell_os` to anything else is refused, and so is an environment that sets `params.stemcell_os` to `ubuntu-resolute` without turning the feature on.
+
+Before the first deploy we need to do two things on the director.
+
+- Upload the resolute stemcell to the director that deploys Prometheus, since both the compilation VMs and the instances need it.
+
+- Make sure the director's runtime config carries bosh-dns 1.39.31 or later. Earlier bosh-dns releases do not run on resolute.
+
+The feature also moves the bpm release to 1.4.41, because bpm 1.4.20 and 1.4.22 fail to compile on resolute when their tini package needs an older CMake than resolute ships. Deployments on noble keep their current bpm pin. The prometheus release versions are unchanged, and we found no use of runit in them. Resolute ships without runit, so it has no `chpst` command. A job whose start script drops privileges with `chpst` hangs on resolute, and we have to switch it to `setpriv` or bpm before its release can run there. We should check any job we add to the deployment for `chpst` before we move it to resolute. The node-exporter runtime config addon already includes ubuntu-resolute in its stemcell list.
 
 ## Node Exporter Addon
 

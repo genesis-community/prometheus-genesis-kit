@@ -1,0 +1,16 @@
+secret/exodus/resolute/bosh:
+  ca_cert: "mycert"
+  credhub_ca_cert: "credhubcacert"
+  url: "https://mybosh.com"
+  vault_base: /secret/resolute/bosh
+  prometheus_user: prometheus
+  prometheus_password: prompass
+
+secret/exodus/resolute/cf:
+  system_domain: sys.test.cf.domain
+  api_url: api.test.cf.domain
+  vaulted_uaa_clients: secret/resolute/bosh/uaa/clients/prometheus:secret
+  self-signed: true
+
+secret/resolute/bosh/uaa/clients/prometheus:
+  secret: barfoo

@@ -1,0 +1,64 @@
+azs:
+- name: z1
+  cloud_properties:
+    availability_zone: us-east-1a
+- name: z2
+  cloud_properties:
+    availability_zone: us-east-1b
+- name: z3
+  cloud_properties:
+    availability_zone: us-east-1c
+
+vm_types:
+- name: resolute-mgmt.prometheus.vm-prometheus
+  cloud_properties:
+    instance_type: m5.large
+    ephemeral_disk: {size: 25_000}
+- name: default
+  cloud_properties:
+    instance_type: m5.large
+    ephemeral_disk: {size: 25_000}
+
+disk_types:
+- name: resolute-mgmt.prometheus.disk-prometheus
+  disk_size: 50_000
+- name: default
+  disk_size: 3000
+
+networks:
+- name: resolute-mgmt.prometheus.net-prometheus
+  type: manual
+  subnets:
+  - range:    10.0.2.0/24
+    gateway:  10.0.2.1
+    azs:      [z1]
+    dns:      [8.8.8.8]
+    reserved: [10.0.2.1 - 10.0.2.195]
+    static:   [10.0.2.196 - 10.0.2.198]
+    cloud_properties:
+      subnet: subnet-aaa
+  - range:    10.0.3.0/24
+    gateway:  10.0.3.1
+    azs:      [z2]
+    dns:      [8.8.8.8]
+    reserved: [10.0.3.1 - 10.0.3.195]
+    static:   [10.0.3.196 - 10.0.3.198]
+    cloud_properties:
+      subnet: subnet-bbb
+  - range:    10.0.4.0/24
+    gateway:  10.0.4.1
+    azs:      [z3]
+    dns:      [8.8.8.8]
+    reserved: [10.0.4.1 - 10.0.4.195]
+    static:   [10.0.4.196 - 10.0.4.198]
+    cloud_properties:
+      subnet: subnet-ccc
+- name: vip
+  type: vip
+
+compilation:
+  workers: 5
+  reuse_compilation_vms: true
+  az: z1
+  vm_type: default
+  network: resolute-mgmt.prometheus.net-prometheus

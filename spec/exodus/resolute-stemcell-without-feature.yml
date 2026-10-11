@@ -1,0 +1,16 @@
+secret/exodus/resolute-stemcell-without-feature/bosh:
+  ca_cert: "mycert"
+  credhub_ca_cert: "credhubcacert"
+  url: "https://mybosh.com"
+  vault_base: /secret/resolute-stemcell-without-feature/bosh
+  prometheus_user: prometheus
+  prometheus_password: prompass
+
+secret/exodus/resolute-stemcell-without-feature/cf:
+  system_domain: sys.test.cf.domain
+  api_url: api.test.cf.domain
+  vaulted_uaa_clients: secret/resolute-stemcell-without-feature/bosh/uaa/clients/prometheus:secret
+  self-signed: true
+
+secret/resolute-stemcell-without-feature/bosh/uaa/clients/prometheus:
+  secret: barfoo

@@ -1,0 +1,18 @@
+---
+kit:
+  name: dev
+  version: latest
+  features:
+    - ocfp
+    - self-signed-cert
+    - resolute
+
+genesis:
+  env:      resolute-mgmt
+  bosh_env: proto-main
+  entomb:   false
+
+params:
+  auxiliary_vault:    true
+  ocfp_subnet_prefix: ocfp
+  stemcell_version:   "0.184"

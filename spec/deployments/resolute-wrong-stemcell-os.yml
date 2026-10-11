@@ -1,0 +1,17 @@
+---
+kit:
+  name: dev
+  version: latest
+  features:
+    - self-signed-cert
+    - resolute
+
+genesis:
+  env: resolute-wrong-stemcell-os
+
+params:
+  external_domain:      test.domain
+  static_ip:            10.1.1.1
+  persistent_disk_type: default
+  network: prometheus
+  stemcell_os: ubuntu-noble

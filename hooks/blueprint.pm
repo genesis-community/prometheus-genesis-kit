@@ -81,6 +81,9 @@ sub perform {
 		} elsif ($feature =~ /^(ocfp|self-signed-cert|\+provided-cert)$/) {
 			# Handled elsewhere, so skip
 
+		} elsif ($feature eq 'resolute') {
+			# Handled below, after every other fragment, so it wins.
+
 		} elsif ( -f $env->path("ops/${feature}.yml")) {
 			# Ops files are added to the blueprint at the end
 			push @ops_files, $env->path("ops/${feature}.yml");
@@ -104,6 +107,27 @@ sub perform {
 		$self->add_files_if_exists(
 			"ocfp/$iaas/base.yml"
 		)
+	}
+
+	# Ubuntu resolute stemcells (opt-in; the default stays ubuntu-noble).
+	# Added after the other fragments so that it overrides their stemcell defaults.
+	if ($self->want_feature('resolute')) {
+		my $stemcell_os = $env->lookup('params.stemcell_os', 'ubuntu-resolute');
+		bail(
+			"The #c{resolute} feature sets the stemcell os to ubuntu-resolute, but " .
+			"the environment sets #c{params.stemcell_os} to #R{%s}.  " .
+			"Remove that parameter.", $stemcell_os
+		) if $stemcell_os ne 'ubuntu-resolute';
+		$self->add_files(
+			'manifests/resolute.yml',
+			'manifests/releases/bpm-resolute.yml'
+		);
+	} elsif ($env->lookup('params.stemcell_os', 'ubuntu-noble') eq 'ubuntu-resolute') {
+		bail(
+			"The environment sets #c{params.stemcell_os} to ubuntu-resolute " .
+			"without the #c{resolute} feature.  Enable the feature and remove " .
+			"that parameter."
+		);
 	}
 
 	# Add the ops files at the end so they can override any previous files

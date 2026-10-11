@@ -1,0 +1,7 @@
+- type: replace
+  path: /releases?/name=bpm?
+  value:
+    name: "bpm"
+    url: "https://bosh.io/d/github.com/cloudfoundry/bpm-release?v=1.4.41"
+    version: "1.4.41"
+    sha1: "sha256:7b445508d63d2171d892ba33f836087e1e519b9782f44c5fa5290323616ca8e6"

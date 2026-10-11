@@ -54,7 +54,8 @@ sub perform {
                "    include:\n".
                "      stemcell:\n".
                "        - os: ubuntu-jammy\n".
-               "        - os: ubuntu-noble\n";
+               "        - os: ubuntu-noble\n".
+               "        - os: ubuntu-resolute\n";
 
   info($config);
     if (prompt_for_boolean(
