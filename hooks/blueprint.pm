@@ -66,7 +66,7 @@ sub perform {
 				"monitor-cf-bbs requires the monitor-cf feature"
 			) unless $self->want_feature('monitor-cf');
 
-		} elsif ($feature =~ /^(monitor-*)$/) {
+		} elsif ($feature =~ /^(monitor-.+)$/) {
 			bail(
 				"The feature #c{%s} is not valid for the Prometheus blueprint.",
 				$feature
