@@ -291,6 +291,34 @@ The feature also moves the bpm release to 1.4.41, because bpm 1.4.20 and 1.4.22 
 
 The feature also moves the postgres release to 57.0.0, because the postgres-16 and postgres-17 packages in postgres release 54.0.0 build on resolute without installing any binaries, and the postgres job then fails with a missing `pg_ctl`. Release 57.0.0 vendors libicu as its own package, which fixes the build. That release defaults the database to PostgreSQL 18, so the feature keeps `databases.version` at 16 for the Grafana database. Holding it at 16 keeps the data directory on its current major version, so the stemcell move never forces a major `pg_upgrade`. Deployments on noble keep their current postgres pin.
 
+### Postgres collation after the stemcell move
+
+Moving from ubuntu-noble to ubuntu-resolute takes glibc from 2.39 to 2.43, and a postgres server that keeps its data directory notices the change. Each database records the collation version it was created with, so after the move the postgres log fills with warnings such as `database "grafana" has a collation version mismatch`. Text indexes built under the old glibc may order strings differently under the new one, so we rebuild them once and then record the new version. We only need this when an existing deployment moves from noble to resolute with its data kept. A deployment built new on resolute has no mismatch.
+
+We run the fix once for every database on the server, including `postgres` and `template1`, which hold no application data but warn all the same. Open a shell on the prometheus instance with `bosh ssh`.
+
+```
+bosh -d <deployment> ssh prometheus
+```
+
+Then become root with `sudo -i` and run the following. The server trusts the `vcap` user over the local socket in `/tmp`, so no password is needed.
+
+```
+PSQL="sudo -u vcap /var/vcap/packages/postgres-16/bin/psql -h /tmp -p 5432 -U vcap -X"
+for db in grafana postgres template1; do
+  $PSQL -v ON_ERROR_STOP=1 -d $db -c "REINDEX DATABASE \"$db\";"
+  $PSQL -v ON_ERROR_STOP=1 -d $db -c "ALTER DATABASE \"$db\" REFRESH COLLATION VERSION;"
+done
+```
+
+Both statements print the mismatch warning themselves until the refresh completes, which is expected. The reindex is not concurrent and holds locks while it runs, but it is brief on a database of this size. We can confirm the result by comparing the two versions, and every row should show 2.43 on both sides.
+
+```
+$PSQL -d postgres -c "select datname, datcollversion, pg_database_collation_actual_version(oid) as actual from pg_database where datname<>'template0' order by 1"
+```
+
+Nothing needs a restart or a redeploy.
+
 ## Node Exporter Addon
 
 To monitor system metrics from all BOSH-deployed VMs, you need to deploy the Node Exporter as a BOSH addon.
