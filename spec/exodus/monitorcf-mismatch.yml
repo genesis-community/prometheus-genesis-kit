@@ -2,6 +2,8 @@ secret/exodus/monitorcf-mismatch/bosh:
   ca_cert: "mycert"
   url: "https://mybosh.com"
   vault_base: /secret/monitorcf-mismatch/bosh
+  prometheus_user: prometheus
+  prometheus_password: prompass
 
 secret/exodus/monitorcf-mismatch/cf:
   api_url:         "https://api.test.cf.domain"

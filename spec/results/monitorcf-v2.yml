@@ -1,17 +1,24 @@
 exodus:
+  admin_password: <!{meta.vault}/admin:password!>
+  admin_user: admin
   alertmanager_url: test.domain:8082
   bosh: monitorcf-v2
   features: self-signed-cert,monitor-cf
   grafana_url: test.domain:443
+  iaas: null
   is_director: false
   monitor-cf: true
   prometheus_url: test.domain:8080
+  scale: null
+  services: null
   use_create_env: false
 instance_groups:
 - azs:
   - z1
   instances: 1
   jobs:
+  - name: bpm
+    release: bpm
   - name: alertmanager
     properties:
       alertmanager:
@@ -22,7 +29,7 @@ instance_groups:
         route:
           receiver: default
     release: prometheus
-  - name: prometheus2
+  - name: prometheus
     properties:
       prometheus:
         rule_files:
@@ -169,6 +176,9 @@ instance_groups:
             source_labels:
             - __address__
             target_label: __address__
+          scheme: https
+          tls_config:
+            insecure_skip_verify: true
         - file_sd_configs:
           - files:
             - /var/vcap/store/bosh_exporter/bosh_target_groups.json
@@ -416,7 +426,7 @@ instance_groups:
           ca_cert: mycert
           uaa:
             client_id: prometheus
-            client_secret: barfoo
+            client_secret: prompass
           url: https://mybosh.com
         metrics:
           environment: monitorcf-v2
@@ -493,6 +503,7 @@ instance_groups:
           http_port: 8081
           https_port: 8080
           server_name: test.domain
+        server_names_hash_bucket_size: 128
         ssl_cert: <!{meta.vault}/nginx/ssl_certificate:certificate!>
         ssl_key: <!{meta.vault}/nginx/ssl_certificate:key!>
     release: prometheus
@@ -524,22 +535,26 @@ instance_groups:
           environment: monitorcf-v2
         skip_ssl_verify: false
     release: prometheus
-  - name: firehose_exporter
+  - consumes:
+      reverse_log_proxy:
+        deployment: monitorcf-v2-cf
+        from: reverse_log_proxy
+    name: firehose_exporter
     properties:
       firehose_exporter:
         doppler:
-          max_retry_count: 300
           subscription_id: monitorcf-v2
         logging:
-          url: https://log-stream.sys.test.cf.domain
-          use_legacy_firehose: false
+          tls:
+            ca: loggregator-ca
+            cert: rlp-cert
+            key: rlp-key
         metrics:
           environment: monitorcf-v2
         skip_ssl_verify: false
-        uaa:
-          client_id: firehose_exporter
-          client_secret: firehose_exporter.secret
-          url: https://uaa.sys.test.cf.domain
+        web:
+          tls_cert: <!{meta.vault}/nginx/ssl_certificate:certificate!>
+          tls_key: <!{meta.vault}/nginx/ssl_certificate:key!>
     release: prometheus
   - name: cloudfoundry_dashboards
     release: prometheus
@@ -555,13 +570,17 @@ instance_groups:
 name: monitorcf-v2-prometheus
 releases:
 - name: postgres
-  sha1: e44bbe8f8a7cdde1cda67b202e399a239d104db6
-  url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=43
-  version: 43
+  sha1: dbbe92802e79900010bc2cc019833108519a110e
+  url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=54.0.0
+  version: 54.0.0
 - name: prometheus
-  sha1: 8e5a6efcab2bb0323c111ce469a0219dfb3204e4
-  url: https://github.com/bosh-prometheus/prometheus-boshrelease/releases/download/v27.2.0/prometheus-27.2.0.tgz
-  version: 27.2.0
+  sha1: bb5b6637568fe56d71e395f5e1f8cfcb751f885a
+  url: https://bosh.io/d/github.com/cloudfoundry/prometheus-boshrelease?v=31.3.1
+  version: 31.3.1
+- name: bpm
+  sha1: dc0138c87ea5854fea4e21e4ce2e7d110fca52b8
+  url: https://bosh.io/d/github.com/cloudfoundry/bpm-release?v=1.4.30
+  version: 1.4.30
 stemcells:
 - alias: default
   os: ubuntu-noble

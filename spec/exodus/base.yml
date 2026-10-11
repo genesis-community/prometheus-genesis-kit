@@ -3,6 +3,8 @@ secret/exodus/base/bosh:
   credhub_ca_cert: "credhubcacert"
   url: "https://mybosh.com"
   vault_base: /secret/base/bosh
+  prometheus_user: prometheus
+  prometheus_password: prompass
 
 secret/exodus/base/cf:
   system_domain: sys.test.cf.domain

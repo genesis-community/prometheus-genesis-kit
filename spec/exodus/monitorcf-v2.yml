@@ -2,6 +2,8 @@ secret/exodus/monitorcf-v2/bosh:
   ca_cert: "mycert"
   url: "https://mybosh.com"
   vault_base: /secret/monitorcf-v2/bosh
+  prometheus_user: prometheus
+  prometheus_password: prompass
 
 secret/exodus/monitorcf-v2/cf:
   api_url:         "https://api.test.cf.domain"
@@ -20,6 +22,10 @@ secret/exodus/monitorcf-v2/cf:
   firehose_exporter_secret: "firehose_exporter.secret"
 
   kit_version: 2.0.0
+
+  loggregator_ca: "loggregator-ca"
+  loggregator_tls_rlp_cert: "rlp-cert"
+  loggregator_tls_rlp_key: "rlp-key"
 
   system_org:   system
   system_space: system

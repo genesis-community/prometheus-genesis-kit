@@ -2,6 +2,8 @@ secret/exodus/basecert/bosh:
   ca_cert: "mycert"
   url: "https://mybosh.com"
   vault_base: /secret/basecert/bosh
+  prometheus_user: prometheus
+  prometheus_password: prompass
 
 secret/exodus/basecert/cf:
   system_domain: sys.test.cf.domain
