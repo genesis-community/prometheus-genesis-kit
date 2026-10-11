@@ -1,0 +1,14 @@
+- type: replace
+  path: /releases?/name=postgres?
+  value:
+    name: "postgres"
+    url: "https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=57.0.0"
+    version: "57.0.0"
+    sha1: "sha256:fc5f73f57a6b9e7208e4293a7fb7faf11e4fb8fc8bb79db80d0d97e41ab1ee2a"
+
+# postgres-release 57.0.0 defaults the database to PostgreSQL 18.  We keep the
+# major version the earlier releases ran so the Grafana data directory is not
+# put through a major pg_upgrade as a side effect of the stemcell move.
+- type: replace
+  path: /instance_groups/name=prometheus/jobs/name=postgres/properties/databases/version?
+  value: 16

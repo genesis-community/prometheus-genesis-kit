@@ -4,7 +4,8 @@
 # Loaded last by the resolute feature so that it wins over the ubuntu-noble
 # default.  manifests/prometheus.yml and ocfp/meta.yml grab the stemcell os
 # from params.stemcell_os; the version still comes from params.stemcell_version.
-# The bpm release is pinned to 1.4.41 by manifests/releases/bpm-resolute.yml.
+# The bpm release is pinned to 1.4.41 by manifests/releases/bpm-resolute.yml,
+# and the postgres release to 57.0.0 by manifests/releases/postgres-resolute.yml.
 
 params:
   stemcell_os: ubuntu-resolute

@@ -289,6 +289,8 @@ Before the first deploy we need to do two things on the director.
 
 The feature also moves the bpm release to 1.4.41, because bpm 1.4.20 and 1.4.22 fail to compile on resolute when their tini package needs an older CMake than resolute ships. Deployments on noble keep their current bpm pin. The prometheus release versions are unchanged, and we found no use of runit in them. Resolute ships without runit, so it has no `chpst` command. A job whose start script drops privileges with `chpst` hangs on resolute, and we have to switch it to `setpriv` or bpm before its release can run there. We should check any job we add to the deployment for `chpst` before we move it to resolute. The node-exporter runtime config addon already includes ubuntu-resolute in its stemcell list.
 
+The feature also moves the postgres release to 57.0.0, because the postgres-16 and postgres-17 packages in postgres release 54.0.0 build on resolute without installing any binaries, and the postgres job then fails with a missing `pg_ctl`. Release 57.0.0 vendors libicu as its own package, which fixes the build. That release defaults the database to PostgreSQL 18, so the feature keeps `databases.version` at 16 for the Grafana database. Holding it at 16 keeps the data directory on its current major version, so the stemcell move never forces a major `pg_upgrade`. Deployments on noble keep their current postgres pin.
+
 ## Node Exporter Addon
 
 To monitor system metrics from all BOSH-deployed VMs, you need to deploy the Node Exporter as a BOSH addon.

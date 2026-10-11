@@ -120,7 +120,8 @@ sub perform {
 		) if $stemcell_os ne 'ubuntu-resolute';
 		$self->add_files(
 			'manifests/resolute.yml',
-			'manifests/releases/bpm-resolute.yml'
+			'manifests/releases/bpm-resolute.yml',
+			'manifests/releases/postgres-resolute.yml'
 		);
 	} elsif ($env->lookup('params.stemcell_os', 'ubuntu-noble') eq 'ubuntu-resolute') {
 		bail(

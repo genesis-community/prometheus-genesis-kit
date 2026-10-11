@@ -477,6 +477,7 @@ instance_groups:
         roles:
         - name: grafana
           password: <!{meta.vault}/grafanadb:password!>
+        version: 16
     release: postgres
   - name: nginx
     properties:
@@ -529,9 +530,9 @@ instance_groups:
 name: resolute-prometheus
 releases:
 - name: postgres
-  sha1: dbbe92802e79900010bc2cc019833108519a110e
-  url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=54.0.0
-  version: 54.0.0
+  sha1: sha256:fc5f73f57a6b9e7208e4293a7fb7faf11e4fb8fc8bb79db80d0d97e41ab1ee2a
+  url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=57.0.0
+  version: 57.0.0
 - name: prometheus
   sha1: bb5b6637568fe56d71e395f5e1f8cfcb751f885a
   url: https://bosh.io/d/github.com/cloudfoundry/prometheus-boshrelease?v=31.3.1
