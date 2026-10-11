@@ -28,7 +28,7 @@ instance_groups:
           deployment_name: (( concat meta.base_cf_env "-cf" ))
         metrics:
           environment:     (( grab meta.environment ))
-        skip_ssl_verify:   (( grab meta.skip_ssl_verify ))
+        skip_ssl_verify:   (( grab meta.skip_ssl_validation ))
 
   - name: firehose_exporter
     release: prometheus
@@ -46,7 +46,7 @@ instance_groups:
           client_secret:   (( grab meta.uaa_client_secret ))
         metrics:
           environment:     (( grab meta.environment ))
-        skip_ssl_verify:   (( grab meta.skip_ssl_verify ))
+        skip_ssl_verify:   (( grab meta.skip_ssl_validation ))
 
 
   - name: cloudfoundry_dashboards
